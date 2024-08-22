@@ -5,6 +5,7 @@ export enum NodeType {
   TASK,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface INodeData extends Record<string, any> {
   label: string;
   type: NodeType;
