@@ -28,7 +28,10 @@ export function Node({ data }: FlowNodeProps<FlowNode<NodeData>>) {
         ) : data.type === NodeType.GROUP ? (
           <GroupNode minUsers={data.minUsers} maxUsers={data.maxUsers} />
         ) : data.type === NodeType.TASK ? (
-          <TaskNode />
+          <TaskNode
+            participants={data.participants}
+            numArtifacts={data.numArtifacts}
+          />
         ) : data.type === NodeType.ARTIFACT ? (
           <ArtifactNode fileType={data.fileType} />
         ) : (

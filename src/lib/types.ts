@@ -33,6 +33,11 @@ export interface ArtifactNodeData extends INodeData {
 export interface TaskNodeData extends INodeData {
   label: "Task";
   type: NodeType.TASK;
+  participants: {
+    n: number;
+    isGroup: boolean;
+  };
+  numArtifacts: number;
 }
 
 export type NodeData =

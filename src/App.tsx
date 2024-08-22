@@ -41,24 +41,46 @@ const initialNodes: FlowNode<NodeData>[] = [
     id: "3",
     type: "custom",
     position: { x: 20, y: 0 },
-    data: { label: "Task", type: NodeType.TASK },
+    data: {
+      label: "Task",
+      type: NodeType.TASK,
+      participants: {
+        n: 1,
+        isGroup: true,
+      },
+      numArtifacts: 1,
+    },
   },
   {
     id: "4",
     type: "custom",
     position: { x: 30, y: 0 },
-    data: { label: "Group", type: NodeType.GROUP, minUsers: 1, maxUsers: 3 },
+    data: {
+      label: "Task",
+      type: NodeType.TASK,
+      participants: {
+        n: 2,
+        isGroup: false,
+      },
+      numArtifacts: 3,
+    },
   },
   {
     id: "5",
     type: "custom",
     position: { x: 40, y: 0 },
-    data: { label: "Artifact", type: NodeType.ARTIFACT, fileType: "pdf" },
+    data: { label: "Group", type: NodeType.GROUP, minUsers: 1, maxUsers: 3 },
   },
   {
     id: "6",
     type: "custom",
     position: { x: 50, y: 0 },
+    data: { label: "Artifact", type: NodeType.ARTIFACT, fileType: "pdf" },
+  },
+  {
+    id: "7",
+    type: "custom",
+    position: { x: 60, y: 0 },
     data: { label: "Artifact", type: NodeType.ARTIFACT, fileType: "py" },
   },
 ];
