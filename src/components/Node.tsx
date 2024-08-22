@@ -12,9 +12,9 @@ import { ArtifactNode } from "./ArtifactNode";
 
 export function Node({ data }: FlowNodeProps<FlowNode<NodeData>>) {
   return (
-    <div className="min-w-48 flex flex-col rounded outline outline-[0.08rem] outline-neutral-500 font-mono text-slate-300 pb-2 bg-[#141414]">
+    <div className="flex min-w-48 flex-col rounded bg-[#141414] pb-2 font-mono text-slate-300 outline outline-[0.08rem] outline-neutral-500">
       {/* Node header */}
-      <div className="flex items-center py-1 px-2 mb-2 rounded-t text-sm font-medium uppercase">
+      <div className="mb-2 flex items-center rounded-t px-2 py-1 text-sm font-medium uppercase">
         <GoDotFill
           style={{ color: `${NodeColorMap[data.type]}` }}
           className="mr-1"

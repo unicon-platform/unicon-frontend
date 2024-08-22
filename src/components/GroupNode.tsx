@@ -8,7 +8,7 @@ export function GroupNode({
 }: Pick<GroupNodeData, "minUsers" | "maxUsers">) {
   return (
     <>
-      <div className="flex items-center px-2 mb-2">
+      <div className="mb-2 flex items-center px-2">
         <IoPeopleCircle className="mr-1" />
         {minUsers}-{maxUsers}
       </div>
