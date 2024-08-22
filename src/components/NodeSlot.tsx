@@ -8,16 +8,23 @@ interface NodeSlotProps {
 
 export function NodeSlot({ id, label, type }: NodeSlotProps) {
   return (
-    <div className={`flex ${type === "target" ? "flex-row-reverse" : ""} my-1`}>
+    <div
+      className={`${type === "target" ? "flex flex-row-reverse space-x-reverse" : "flex"} items-center my-1 space-x-2`}
+    >
       <Handle
-        className="h-3 w-3 bg-slate-300 rounded-full relative"
+        style={{ border: "0", position: "static" }} // NOTE: Override default position to use flex positioning
+        className={`h-4 w-2 bg-neutral-700 ${type === "target" ? "rounded-tl-full rounded-bl-full" : "rounded-tr-full rounded-br-full"}`}
         id={id}
         type={type}
         position={
           type === "source" ? HandlePosition.Left : HandlePosition.Right
         }
       />
-      {label}
+      <span>{label}</span>
     </div>
   );
+}
+
+export function NodeSlotGroup({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col grow-0">{children}</div>;
 }

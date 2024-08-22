@@ -1,5 +1,5 @@
 import { GroupNodeData } from "../lib/types";
-import { NodeSlot } from "./NodeSlot";
+import { NodeSlot, NodeSlotGroup } from "./NodeSlot";
 import { IoPeopleCircle } from "react-icons/io5";
 
 export function GroupNode({
@@ -12,9 +12,8 @@ export function GroupNode({
         <IoPeopleCircle className="mr-1" />
         {minUsers}-{maxUsers}
       </div>
-      <div className="flex flex-row justify-between py-2">
-        {/* In Handles */}
-        <div className="flex flex-col grow-0 font-mono">
+      <div className="flex flex-row justify-between">
+        <NodeSlotGroup>
           {[...Array(maxUsers)].map((_, i) => (
             <NodeSlot
               id={`Group.In.${i}`}
@@ -22,11 +21,10 @@ export function GroupNode({
               type="source"
             />
           ))}
-        </div>
-        {/* Out Handles */}
-        <div className="flex flex-col grow-0 py-1">
+        </NodeSlotGroup>
+        <NodeSlotGroup>
           <NodeSlot id="Group.Out" label="" type="target" />
-        </div>
+        </NodeSlotGroup>
       </div>
     </>
   );

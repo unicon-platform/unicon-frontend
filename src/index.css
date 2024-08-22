@@ -5,3 +5,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-flow__handle-right,
+.react-flow__handle-left {
+  transform: translate(0, 0);
+}
