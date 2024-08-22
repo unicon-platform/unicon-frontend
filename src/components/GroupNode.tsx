@@ -1,6 +1,7 @@
 import { GroupNodeData } from "../lib/types";
 import { NodeSlot, NodeSlotGroup } from "./NodeSlot";
 import { IoPeopleCircle } from "react-icons/io5";
+import { range } from "../utils";
 
 export function GroupNode({
   minUsers,
@@ -14,7 +15,7 @@ export function GroupNode({
       </div>
       <div className="flex flex-row justify-between">
         <NodeSlotGroup>
-          {[...Array(maxUsers)].map((_, i) => (
+          {range(maxUsers).map((i: number) => (
             <NodeSlot
               id={`Group.In.${i}`}
               label={`User ${i + 1}`}
