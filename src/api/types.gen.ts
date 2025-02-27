@@ -322,7 +322,7 @@ export type Problem = {
     } & MultipleResponseTask) | ({
         type?: 'SHORT_ANSWER_TASK';
     } & ShortAnswerTask)>;
-    started_at: string;
+    started_at?: string | null;
     ended_at?: string | null;
     closed_at?: string | null;
 };
@@ -369,7 +369,7 @@ export type ProblemPublic = {
     } & MultipleResponseTask) | ({
         type?: 'SHORT_ANSWER_TASK';
     } & ShortAnswerTask)>;
-    started_at: string;
+    started_at?: string | null;
     ended_at?: string | null;
     closed_at?: string | null;
     edit: boolean;
@@ -456,6 +456,20 @@ export type ProjectUpdate = {
     name: string;
 };
 
+/**
+ * For every field in this class, only one of the fields is truthy at a time.
+ *
+ * Function Input:
+ * import_as_module: true --> the file we are importing from
+ * arg_metadata: true --> its an argument
+ * kwarg_name: true --> its a keyword argument. (no function will use this too to inject variables)
+ *
+ * Function Output:
+ * Everything below is falsy: --> the result of the function.
+ * handles_error: true --> error of the output. It is actually not safe to use this as an output because it is not serializable.
+ * handles_stdout: true --> stdout from running the function.
+ * handles_stderr: true --> stderr from running the function.
+ */
 export type PyRunFunctionSocket = {
     id: string;
     type?: SocketType;
@@ -465,6 +479,8 @@ export type PyRunFunctionSocket = {
     arg_metadata?: ArgMetadata | null;
     kwarg_name?: string | null;
     handles_error?: boolean;
+    handles_stdout?: boolean;
+    handles_stderr?: boolean;
 };
 
 export type PyRunFunctionStep = {
@@ -474,6 +490,8 @@ export type PyRunFunctionStep = {
     type: StepType;
     function_identifier: string;
     allow_error?: boolean;
+    propagate_stdout?: boolean;
+    propagate_stderr?: boolean;
 };
 
 /**

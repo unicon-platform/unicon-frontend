@@ -94,7 +94,10 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
               payload: {
                 stepId: step.id,
                 socketDir: SocketDir.Output,
-                socket: { ...createSocket("DATA", file.path), data: file },
+                socket: {
+                  ...createSocket("DATA", file.path),
+                  data: file,
+                },
               },
             });
           }

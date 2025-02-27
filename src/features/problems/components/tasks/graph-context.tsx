@@ -143,7 +143,11 @@ interface UpdatePyRunFunctionStepAction extends BaseGraphAction {
     stepId: string;
     functionIdentifier: string;
     functionSignature?: ParsedFunction;
+    propagateStdout: boolean;
+    propagateStderr: boolean;
     allowError: boolean;
+    // UUIDs are currently generate when dispatching the action to synchronise with
+    // the testcase that is also replaying actions to track the graph changes.
     uuids: string[];
   };
 }
@@ -208,6 +212,8 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
   const functionIdentifierChanged = step.function_identifier !== payload.functionIdentifier;
   const functionSignatureChanged = payload.functionSignature !== undefined;
   const allowErrorChanged = step.allow_error !== payload.allowError;
+  const propagateStdoutChanged = step.propagate_stdout !== payload.propagateStdout;
+  const propagateStderrChanged = step.propagate_stderr !== payload.propagateStderr;
 
   if (functionIdentifierChanged) {
     // 1. Update the identifier.
@@ -269,6 +275,22 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     }
   }
 
+  const pushOutputSocket = (label: string, properties: Partial<PyRunFunctionSocket>) => {
+    (state.steps[stepIndex] as PyRunFunctionStep).outputs.push({
+      ...createSocket("DATA", label),
+      id: getUuid(),
+      ...properties,
+    });
+  };
+
+  const removeOutputSocket = (property: "handles_error" | "handles_stderr" | "handles_stdout") => {
+    const outputSocketId = step.outputs.find((socket) => socket[property])?.id;
+    state.steps[stepIndex].outputs = step.outputs.filter((socket) => !socket[property]);
+    state.edges = state.edges.filter(
+      (edge) => edge.from_node_id !== payload.stepId || edge.from_socket_id !== outputSocketId,
+    );
+  };
+
   if (allowErrorChanged) {
     // If allow error is changed to true, add a new output socket.
     // If allow error is changed to false, remove the output socket and outgoing edges.
@@ -277,19 +299,58 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
       allow_error: payload.allowError,
     };
     if (payload.allowError) {
-      (state.steps[stepIndex] as PyRunFunctionStep).outputs.push({
-        ...createSocket("DATA", "Error"),
-        id: getUuid(),
-        handles_error: true,
-      });
+      pushOutputSocket("Error", { handles_error: true });
     } else {
-      const errorSocketId = step.outputs.find((socket) => socket.handles_error)?.id;
-      state.steps[stepIndex].outputs = step.outputs.filter((socket) => !socket.handles_error);
-      state.edges = state.edges.filter(
-        (edge) => edge.from_node_id !== payload.stepId || edge.from_socket_id !== errorSocketId,
-      );
+      removeOutputSocket("handles_error");
     }
   }
+
+  if (propagateStdoutChanged) {
+    // If propagate stdout is changed to true, add a new output socket.
+    // If propagate stdout is changed to false, remove the output socket and outgoing edges.
+    state.steps[stepIndex] = {
+      ...state.steps[stepIndex],
+      propagate_stdout: payload.propagateStdout,
+    };
+    if (payload.propagateStdout) {
+      pushOutputSocket("Stdout", { handles_stdout: true });
+    } else {
+      removeOutputSocket("handles_stdout");
+    }
+  }
+
+  if (propagateStderrChanged) {
+    // If propagate stderr is changed to true, add a new output socket.
+    // If propagate stderr is changed to false, remove the output socket and outgoing edges.
+    state.steps[stepIndex] = {
+      ...state.steps[stepIndex],
+      propagate_stderr: payload.propagateStderr,
+    };
+    if (payload.propagateStderr) {
+      pushOutputSocket("Stderr", { handles_stderr: true });
+    } else {
+      removeOutputSocket("handles_stderr");
+    }
+  }
+
+  // Order of sockets: control, result, stdout?, stderr?, error?
+  (state.steps[stepIndex] as PyRunFunctionStep).outputs?.sort((a, b) => {
+    if (a.type === "CONTROL") return -1;
+    if (b.type === "CONTROL") return 1;
+    // Result socket
+    if (!a.handles_error && !a.handles_error && !a.handles_stdout && !a.handles_stderr) return -1;
+    if (!b.handles_error && !b.handles_error && !b.handles_stdout && !b.handles_stderr) return 1;
+    // Stdout socket
+    if (a.handles_stdout) return -1;
+    if (b.handles_stdout) return 1;
+    // Stderr socket
+    if (a.handles_stderr) return -1;
+    if (b.handles_stderr) return 1;
+    // Error socket
+    if (a.handles_error) return -1;
+    if (b.handles_error) return 1;
+    return 0;
+  });
 
   return state;
 };

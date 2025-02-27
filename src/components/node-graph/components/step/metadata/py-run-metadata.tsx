@@ -23,6 +23,8 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   const [functionIdentifier, setFunctionIdentifier] = useState(step.function_identifier);
 
   const [allowError, setAllowError] = useState(step.allow_error || false);
+  const [propagateStdout, setPropagateStdout] = useState(step.propagate_stdout || false);
+  const [propagateStderr, setPropagateStderr] = useState(step.propagate_stderr || false);
 
   // We find the python file by tracing the connection from the file's input (with import_as_module = true)
   // to the input step's socket containing the file.
@@ -39,7 +41,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   );
   const fileContent = fileSocket && isUniconFile(fileSocket.data) ? (fileSocket.data as UniconFile).content : undefined;
 
-  const { data: functionSignatures } = useQuery(getFunctions(fileContent ?? ""));
+  const { data: functionSignatures } = useQuery({ ...getFunctions(fileContent ?? ""), enabled: !!fileContent });
 
   const onChange = (newFunctionIdentifier: string) => {
     const newFunctionSignature = functionSignatures?.find((signature) => signature.name === newFunctionIdentifier);
@@ -53,7 +55,9 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         stepId: step.id,
         functionIdentifier: newFunctionIdentifier,
         functionSignature: newFunctionSignature,
-        allowError: !!step.allow_error,
+        allowError: allowError,
+        propagateStdout: propagateStdout,
+        propagateStderr: propagateStderr,
         uuids: uuids,
       },
     });
@@ -68,10 +72,47 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           stepId: step.id,
           functionIdentifier,
           allowError: !allowError,
+          propagateStdout: propagateStdout,
+          propagateStderr: propagateStderr,
           uuids: uuids,
         },
       });
       return !allowError;
+    });
+  };
+  const onPropagateStdoutChange = () => {
+    const uuids = [uuid()];
+    setPropagateStdout((propagateStdout) => {
+      dispatch({
+        type: GraphActionType.UpdatePyRunFunctionStep,
+        payload: {
+          stepId: step.id,
+          functionIdentifier,
+          allowError: allowError,
+          propagateStdout: !propagateStdout,
+          propagateStderr: propagateStderr,
+          uuids: uuids,
+        },
+      });
+      return !propagateStdout;
+    });
+  };
+
+  const onPropagateStderrChange = () => {
+    const uuids = [uuid()];
+    setPropagateStderr((propagateStderr) => {
+      dispatch({
+        type: GraphActionType.UpdatePyRunFunctionStep,
+        payload: {
+          stepId: step.id,
+          functionIdentifier,
+          allowError: allowError,
+          propagateStdout: propagateStdout,
+          propagateStderr: !propagateStderr,
+          uuids: uuids,
+        },
+      });
+      return !propagateStderr;
     });
   };
 
@@ -132,6 +173,22 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
           checked={allowError}
           onCheckedChange={onAllowErrorChange}
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <label className="font-mono text-sm text-zinc-400">Propagate Stdout:</label>
+        <Checkbox
+          className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
+          checked={propagateStdout}
+          onCheckedChange={onPropagateStdoutChange}
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <label className="font-mono text-sm text-zinc-400">Propagate Stderr:</label>
+        <Checkbox
+          className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
+          checked={propagateStderr}
+          onCheckedChange={onPropagateStderrChange}
         />
       </div>
     </div>
