@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import { X } from "lucide-react";
 
-import SocketLabelInput from "@/components/node-graph/components/step/node-input";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 
 type OwnProps = {
@@ -36,11 +36,7 @@ const FileEditor: React.FC<OwnProps> = ({
     <div className="flex h-full grow flex-col">
       {/* file tab */}
       <div className="flex w-fit items-center gap-2 border-b border-purple-200 py-1">
-        {editableName ? (
-          <SocketLabelInput value={fileName} onChange={updateFileName} />
-        ) : (
-          <span className="px-1 text-xs">{fileName}</span>
-        )}
+        <SocketLabelInput value={fileName} onChange={updateFileName} canEdit={editableName} />
         {onDeselectFile && (
           <Button className="h-fit p-1" variant="ghost" onClick={onDeselectFile}>
             <X />

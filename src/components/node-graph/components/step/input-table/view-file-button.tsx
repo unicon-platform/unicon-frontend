@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { EyeIcon } from "lucide-react";
 import { useContext, useEffect, useRef } from "react";
 
 import { File as UniconFile, InputStep, StepSocket } from "@/api";
@@ -33,7 +34,7 @@ const ViewFileButton: React.FC<OwnProps> = ({ step, socket }) => {
   if (isBinaryFile) {
     const file = socket.data as UniconFile;
     return (
-      <Button size={"sm"} className="h-fit w-fit px-1 py-1" variant={"secondary"} asChild>
+      <Button size={"sm"} className="h-fit w-fit px-2 py-1" variant="secondary" asChild>
         <a href={url.current} download={file.path.split("/").pop()!}>
           Download file
         </a>
@@ -45,7 +46,7 @@ const ViewFileButton: React.FC<OwnProps> = ({ step, socket }) => {
     <Button
       type="button"
       size={"sm"}
-      className="h-fit w-fit px-1 py-1"
+      className="h-fit w-fit px-2 py-1"
       variant="secondary"
       onClick={() => {
         dispatch({
@@ -57,7 +58,8 @@ const ViewFileButton: React.FC<OwnProps> = ({ step, socket }) => {
         });
       }}
     >
-      View file
+      <EyeIcon className="h-4 w-4" />
+      View File
     </Button>
   );
 };

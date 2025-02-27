@@ -11,7 +11,7 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { CheckboxField, NumberField, SelectField, TextAreaField, TextField } from "@/components/form/fields";
 import FormSection from "@/components/form/form-section";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
-import SocketLabelInput from "@/components/node-graph/components/step/node-input";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -361,6 +361,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                       className={["min-w-[160px]", "py-2"]}
                       value={input.label}
                       onChange={(newLabel) => updateUserInput(index, { newLabel })}
+                      canEdit={true}
                     />
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">

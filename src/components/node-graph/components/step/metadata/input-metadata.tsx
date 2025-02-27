@@ -113,13 +113,13 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     });
   }, [dispatch, step.id]);
 
-  const onChangeValue = (socket: StepSocket) => (newValue: string) => {
+  const onChangeValue = (socket: StepSocket) => (newValue: string | boolean | number | null) => {
     dispatch({
       type: GraphActionType.UpdateSocketMetadata,
       payload: {
         stepId: step.id,
         socketId: socket.id,
-        socketMetadata: { data: JSON.parse(newValue) },
+        socketMetadata: { data: newValue },
       },
     });
   };
@@ -132,7 +132,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       payload: {
         stepId: step.id,
         socketId: socket.id,
-        socketMetadata: { data: "" },
+        socketMetadata: { data: null },
       },
     });
   };

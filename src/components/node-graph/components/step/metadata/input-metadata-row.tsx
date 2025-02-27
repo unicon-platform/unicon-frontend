@@ -1,16 +1,15 @@
-import { Trash } from "lucide-react";
+import { ArrowLeftRightIcon, Trash } from "lucide-react";
 import { useContext } from "react";
 
 import { InputStep, StepSocket } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
+import { NodeSlot } from "@/components/node-graph/components/node-slot";
+import ViewFileButton from "@/components/node-graph/components/step/input-table/view-file-button";
+import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
 import { cn, isUniconFile } from "@/lib/utils";
-
-import { NodeSlot } from "../../node-slot";
-import ViewFileButton from "../input-table/view-file-button";
-import SocketLabelInput from "../node-input";
 
 type OwnProps = {
   socket: StepSocket;
@@ -19,7 +18,7 @@ type OwnProps = {
   onChangeToFile: () => void;
   // this means changing from file to not file
   onChangeToValue: () => void;
-  onChangeValue: (newValue: string) => void;
+  onChangeValue: (newValue: string | number | boolean | null) => void;
   step: InputStep;
   // note: this does not control whether you can connect an edge to this socket
   // connection is always allowed
@@ -48,41 +47,35 @@ const InputMetadataRow: React.FC<OwnProps> = ({
         )}
       </TableCell>
       <TableCell>
-        {isEditable ? (
-          <SocketLabelInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
-        ) : (
-          <span>{socket.label}</span>
-        )}
+        <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={isEditable} />
       </TableCell>
       <TableCell>
         {socket.data && isUniconFile(socket.data) ? (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <ViewFileButton step={step} socket={socket} />
             {isEditable && !socket.data.on_minio && (
               <ConfirmationDialog
                 onConfirm={onChangeToValue}
                 description="Are you sure you want to change this file to a primitive value?"
               >
-                <Button size="sm" className="h-fit w-fit px-1 py-1" variant="secondary" type="button">
-                  Change to value
+                <Button size="sm" className="h-fit w-fit px-2 py-1" variant="secondary" type="button">
+                  Value
+                  <ArrowLeftRightIcon className="h-3 w-3" />
                 </Button>
               </ConfirmationDialog>
             )}
           </div>
         ) : (
-          <div className="flex gap-2">
-            {isEditable ? (
-              <SocketLabelInput value={JSON.stringify(socket.data)} onChange={onChangeValue} />
-            ) : (
-              <span>{JSON.stringify(socket.data)}</span>
-            )}
+          <div className="flex items-center gap-2">
+            <SocketDataInput value={socket.data} onChange={onChangeValue} canEdit={isEditable} />
             {isEditable && (
               <ConfirmationDialog
                 onConfirm={onChangeToFile}
                 description="Are you sure you want to change this value to a file?"
               >
-                <Button size="sm" className="h-fit w-fit px-1 py-1" variant="secondary" type="button">
-                  Change to file
+                <Button size="sm" className="h-fit w-fit px-2 py-1" variant="secondary" type="button">
+                  File
+                  <ArrowLeftRightIcon className="h-3 w-3" />
                 </Button>
               </ConfirmationDialog>
             )}

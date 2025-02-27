@@ -4,12 +4,13 @@ import { twJoin } from "tailwind-merge";
 import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile, StepSocket } from "@/api";
-import SocketLabelInput from "@/components/node-graph/components/step/node-input";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { parseSocketDataString } from "@/lib/compute-graph";
 import { cn, isUniconFile } from "@/lib/utils";
 
 interface NodeSlotProps {
@@ -32,16 +33,8 @@ const DataSocketDefaultValuePopover = ({
   onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
   const debouncedOnValueChanged = useDebouncedCallback((value: string) => {
-    let parsedValue: string | boolean | number | null = value;
-
-    if (value === "") parsedValue = null;
-    else if (value.startsWith('"') && value.endsWith('"')) parsedValue = value.slice(1, -1);
-    else if (value.toLowerCase() === "true") parsedValue = true;
-    else if (value.toLowerCase() === "false") parsedValue = false;
-    else if (!isNaN(Number(value))) parsedValue = Number(value);
-
-    if (onValueChanged) onValueChanged(parsedValue);
-  }, 500);
+    if (onValueChanged) onValueChanged(parseSocketDataString(value));
+  }, 300);
 
   return (
     <Popover>
@@ -125,16 +118,12 @@ const DataSocket = ({
         "flex-row-reverse space-x-reverse": type === "source",
       })}
     >
-      {onEditLabel ? (
-        <SocketLabelInput
-          className={[cn({ "text-right": type === "source" })]}
-          value={socketLabel}
-          onChange={onEditLabel}
-        />
-      ) : (
-        socketLabel && <span className="min-h-[12px]">{socketLabel}</span>
-      )}
-
+      <SocketLabelInput
+        className={[cn({ "text-right": type === "source" })]}
+        value={socketLabel}
+        onChange={onEditLabel ?? (() => {})}
+        canEdit={onEditLabel !== undefined}
+      />
       {type === "target" && <DataSocketDefaultValueDisplay socketData={socket.data} onValueChanged={onEditData} />}
       {onDelete && (
         <Button className="h-fit w-fit p-1" variant="outline" onClick={onDelete} type="button">

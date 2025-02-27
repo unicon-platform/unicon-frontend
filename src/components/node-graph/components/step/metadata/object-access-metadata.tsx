@@ -2,7 +2,7 @@ import { KeyRoundIcon } from "lucide-react";
 import { useContext } from "react";
 
 import { ObjectAccessStep } from "@/api";
-import SocketLabelInput from "@/components/node-graph/components/step/node-input";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
 
 type OwnProps = {
@@ -24,12 +24,10 @@ const ObjectAccessMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             onChange={(newKey) =>
               dispatch({
                 type: GraphActionType.UpdateStepMetadata,
-                payload: {
-                  id: step.id,
-                  stepMetadata: { key: newKey },
-                },
+                payload: { id: step.id, stepMetadata: { key: newKey } },
               })
             }
+            canEdit={true}
           />
         </div>
       ) : (
