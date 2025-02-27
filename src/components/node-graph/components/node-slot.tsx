@@ -1,5 +1,5 @@
 import { Handle, HandleType, Position as HandlePosition, useNodeConnections } from "@xyflow/react";
-import { ArrowBigRightIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { ArrowBigRightIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import { twJoin } from "tailwind-merge";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -78,12 +78,23 @@ const DataSocketDefaultValueDisplay = ({
 }) => {
   // NOTE: File type is not supported yet
   const hasDefaultValue = socketData !== null && socketData !== undefined && !isFile(socketData);
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent click event
+    if (onValueChanged) onValueChanged(null);
+  };
   const content = hasDefaultValue ? (
     <div className="flex items-center gap-2 py-1">
       <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:bg-zinc-800">
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400">Default:</span>
           <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
+          <button
+            type="button"
+            onClick={handleDeleteClick}
+            className="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+          >
+            <XIcon className="h-3 w-3" />
+          </button>
         </div>
       </div>
     </div>
