@@ -77,7 +77,7 @@ const DataSocketDefaultValueDisplay = ({
   };
   const content = hasDefaultValue ? (
     <div className="flex items-center gap-2 py-1">
-      <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:bg-zinc-800">
+      <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:cursor-pointer hover:bg-zinc-800">
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400">Default:</span>
           <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
