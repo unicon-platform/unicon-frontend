@@ -10,7 +10,7 @@ import { cn, isUniconFile } from "@/lib/utils";
 
 import { NodeSlot } from "../../node-slot";
 import ViewFileButton from "../input-table/view-file-button";
-import NodeLabelInput from "../node-input";
+import SocketLabelInput from "../node-input";
 
 type OwnProps = {
   socket: StepSocket;
@@ -49,7 +49,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
       </TableCell>
       <TableCell>
         {isEditable ? (
-          <NodeLabelInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
+          <SocketLabelInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
         ) : (
           <span>{socket.label}</span>
         )}
@@ -72,7 +72,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
         ) : (
           <div className="flex gap-2">
             {isEditable ? (
-              <NodeLabelInput value={JSON.stringify(socket.data)} onChange={onChangeValue} />
+              <SocketLabelInput value={JSON.stringify(socket.data)} onChange={onChangeValue} />
             ) : (
               <span>{JSON.stringify(socket.data)}</span>
             )}

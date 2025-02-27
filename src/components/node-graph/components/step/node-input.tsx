@@ -4,13 +4,13 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { cn } from "@/lib/utils";
 
-type NodeLabelInputProps = {
+type SocketLabelInputProps = {
   className?: ClassValue[];
   value: string;
   onChange: (newValue: string) => void;
 };
 
-const NodeLabelInput: React.FC<NodeLabelInputProps> = ({ className = [], value: externalValue, onChange }) => {
+const SocketLabelInput: React.FC<SocketLabelInputProps> = ({ className = [], value: externalValue, onChange }) => {
   const [localValue, setLocalValue] = useState(externalValue);
   const debouncedOnChange = useDebouncedCallback(onChange, 300);
 
@@ -38,4 +38,4 @@ const NodeLabelInput: React.FC<NodeLabelInputProps> = ({ className = [], value: 
   );
 };
 
-export default NodeLabelInput;
+export default SocketLabelInput;
