@@ -14,7 +14,7 @@ import {
 import { createSocket } from "@/lib/compute-graph";
 import { DragItemType } from "@/lib/drag";
 import { isFolder, TreeFile, TreeFolder } from "@/lib/files";
-import { isFile } from "@/lib/utils";
+import { isUniconFile } from "@/lib/utils";
 
 import InputTable from "../input-table/input-table";
 import InputMetadataRow from "./input-metadata-row";
@@ -84,7 +84,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
               steps.some(
                 (step) =>
                   step.type === "INPUT_STEP" &&
-                  step?.outputs?.some((socket) => isFile(socket.data) && socket.data?.id === file.id),
+                  step?.outputs?.some((socket) => isUniconFile(socket.data) && socket.data?.id === file.id),
               )
             )
               return;
@@ -113,13 +113,13 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     });
   }, [dispatch, step.id]);
 
-  const onChangeValue = (socket: StepSocket) => (newValue: string) => {
+  const onChangeValue = (socket: StepSocket) => (newValue: string | boolean | number | null) => {
     dispatch({
       type: GraphActionType.UpdateSocketMetadata,
       payload: {
         stepId: step.id,
         socketId: socket.id,
-        socketMetadata: { data: JSON.parse(newValue) },
+        socketMetadata: { data: newValue },
       },
     });
   };
@@ -132,7 +132,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       payload: {
         stepId: step.id,
         socketId: socket.id,
-        socketMetadata: { data: "" },
+        socketMetadata: { data: null },
       },
     });
   };

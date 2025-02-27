@@ -57,7 +57,7 @@ function NodeSlotGroup({
 }: {
   type: HandleType;
   sockets: StepSocket[];
-  onEditData?: (socketId: string) => (newSocketData: string | number | boolean) => void;
+  onEditData?: (socketId: string) => (newSocketData: string | number | boolean | null) => void;
   onEditLabel?: (socketId: string) => (newSocketLabel: string) => void;
   onDelete?: (socketId: string) => () => void;
   children?: React.ReactNode;
@@ -123,7 +123,7 @@ export function StepNode({ data }: { data: Step }) {
   };
   const onEditLabel = editableLabel ? _onEditLabel : undefined;
 
-  const _onEditData = (socketId: string) => (newSocketData: string | number | boolean) => {
+  const _onEditData = (socketId: string) => (newSocketData: string | number | boolean | null) => {
     dispatch({
       type: GraphActionType.UpdateSocketData,
       payload: { stepId: data.id, socketId, data: newSocketData },

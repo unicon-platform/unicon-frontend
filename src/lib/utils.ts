@@ -5,7 +5,7 @@ import { useBlocker } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { v4 as randomUUID } from "uuid";
 
-import { File } from "@/api";
+import { File as UniconFile } from "@/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,9 +15,12 @@ export function uuid(): string {
   return randomUUID();
 }
 
-export const isFile = (data: unknown): data is File => {
+export const isUniconFile = (data: unknown): data is UniconFile => {
   if (data === undefined || data === null) return false;
-  return typeof data === "object" && "path" in data && "content" in data;
+  if (typeof data !== "object") return false;
+
+  const requiredProps: (keyof UniconFile)[] = ["path", "content"];
+  return typeof data === "object" && requiredProps.every((prop) => prop in data);
 };
 
 // Referenced from: https://github.com/orgs/react-hook-form/discussions/9841

@@ -6,12 +6,12 @@ import { PlusIcon, Trash, UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
-import { File as ApiFile, InputStep } from "@/api";
+import { File as UniconFile, InputStep } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { CheckboxField, NumberField, SelectField, TextAreaField, TextField } from "@/components/form/fields";
 import FormSection from "@/components/form/form-section";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -20,7 +20,7 @@ import { GraphAction, graphReducer } from "@/features/problems/components/tasks/
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import { getSupportedPythonVersions } from "@/features/problems/queries";
 import { DEFAULT_PY_VERSION, ProgTaskFormT, ProgTaskFormZ } from "@/lib/schema/prog-task-form";
-import { isFile, useSyncFormFieldsMultiple, uuid } from "@/lib/utils";
+import { isUniconFile, useSyncFormFieldsMultiple, uuid } from "@/lib/utils";
 
 import FileInputSection from "./programming/file-inputs-section";
 
@@ -123,13 +123,13 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
         return testcases;
       },
       (fromValue, toValue) => {
-        const idToFile: Record<string, ApiFile> = fromValue.reduce((acc, file) => ({ ...acc, [file.id]: file }), {});
+        const idToFile: Record<string, UniconFile> = fromValue.reduce((acc, file) => ({ ...acc, [file.id]: file }), {});
         const testcases = toValue.map((testcase) => ({
           ...testcase,
           nodes: testcase.nodes.map((node) => {
             if (node.type !== "INPUT_STEP") return node;
             const outputs = (node as InputStep).outputs.map((output) =>
-              isFile(output.data) && output.data.id in idToFile
+              isUniconFile(output.data) && output.data.id in idToFile
                 ? { ...output, data: idToFile[output.data.id] }
                 : output,
             );
@@ -155,7 +155,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
     { newLabel, newFileContent }: { newLabel?: string; newFileContent?: string },
   ) => {
     const oldInput = userInputs.fields[index];
-    const oldFileData = oldInput.data as ApiFile;
+    const oldFileData = oldInput.data as UniconFile;
     userInputs.update(index, {
       ...oldInput,
       label: newLabel ?? oldInput.label,
@@ -357,10 +357,11 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
               {userInputs.fields.map((input, index) => (
                 <Collapsible className="w-full" key={input.id}>
                   <div className="flex items-center gap-4" key={input.id}>
-                    <NodeInput
+                    <SocketLabelInput
                       className={["min-w-[160px]", "py-2"]}
                       value={input.label}
                       onChange={(newLabel) => updateUserInput(index, { newLabel })}
+                      canEdit={true}
                     />
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">
@@ -380,7 +381,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                     <div className="h-[30vh]">
                       <FileEditor
                         fileName={input.label}
-                        fileContent={(input.data as ApiFile).content}
+                        fileContent={(input.data as UniconFile).content}
                         onUpdateFileContent={(newFileContent: string) => updateUserInput(index, { newFileContent })}
                         editableContent={true}
                         editableName={false}

@@ -4,7 +4,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { useCallback, useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 
-import { File as ApiFile, GraphEdgeStr as GraphEdge, InputStep } from "@/api";
+import { File as UniconFile, GraphEdgeStr as GraphEdge, InputStep } from "@/api";
 
 import { GraphAction, GraphActionType, GraphContext, GraphDispatchContext, graphReducer } from "./graph-context";
 import GraphEditor from "./graph-editor";
@@ -17,7 +17,7 @@ type NodeGraphProps = {
   edges: GraphEdge[];
   edit: boolean;
   onChange?: (action: GraphAction) => void;
-  taskFiles: ApiFile[];
+  taskFiles: UniconFile[];
 
   // For testcase settings menu
   settings?: { name?: string; isPrivate?: boolean };

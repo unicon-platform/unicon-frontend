@@ -1,4 +1,4 @@
-import { File, InputStep, Testcase as TestcaseApi } from "@/api";
+import { File as UniconFile, InputStep, Testcase as TestcaseApi } from "@/api";
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -13,7 +13,7 @@ type SettingsChange = {
 type OwnProps = {
   testcases: TestcaseApi[];
   edit: boolean;
-  taskFiles: File[];
+  taskFiles: UniconFile[];
   sharedUserInput?: InputStep;
   onDelete?: (index: number) => () => void;
   onGraphChange?: (index: number) => (action: GraphAction) => void;

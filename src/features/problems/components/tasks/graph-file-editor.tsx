@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { File } from "@/api";
-import { isFile } from "@/lib/utils";
+import { File as UniconFile } from "@/api";
+import { isUniconFile } from "@/lib/utils";
 
 import FileEditor from "./file-editor";
 import { GraphActionType, GraphContext, GraphDispatchContext } from "./graph-context";
@@ -12,7 +12,7 @@ const GraphFileEditor = () => {
 
   const dispatch = useContext(GraphDispatchContext)!;
 
-  const updateFile = (newFile: File) => {
+  const updateFile = (newFile: UniconFile) => {
     dispatch({
       type: GraphActionType.UpdateSocketMetadata,
       payload: {
@@ -37,7 +37,7 @@ const GraphFileEditor = () => {
   const selectedSocket = selectedStep?.outputs?.find((socket) => socket.id === selectedSocketId);
   if (!selectedStep || !selectedSocket) return null;
 
-  if (!isFile(selectedSocket.data)) return null;
+  if (!isUniconFile(selectedSocket.data)) return null;
 
   const file = selectedSocket.data;
   const isUserInput = "is_user" in selectedStep ? selectedStep.is_user : false;

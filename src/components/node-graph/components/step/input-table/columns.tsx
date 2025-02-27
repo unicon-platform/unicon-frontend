@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { InputStep, StepSocket } from "@/api";
-import { isFile } from "@/lib/utils";
+import { isUniconFile } from "@/lib/utils";
 
 import { NodeSlot } from "../../node-slot";
 import ViewFileButton from "./view-file-button";
@@ -17,7 +17,7 @@ export const columns: ColumnDef<StepSocket & { step: InputStep }>[] = [
       const data = row.original.data;
       return (
         <div>
-          {data && isFile(data) ? (
+          {data && isUniconFile(data) ? (
             <ViewFileButton socket={row.original} step={row.original.step} />
           ) : (
             JSON.stringify(data)

@@ -1,23 +1,24 @@
 import { Handle, HandleType, Position as HandlePosition, useNodeConnections } from "@xyflow/react";
-import { ArrowBigRightIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { ArrowBigRightIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import { twJoin } from "tailwind-merge";
 import { useDebouncedCallback } from "use-debounce";
 
-import { StepSocket } from "@/api";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import { File as UniconFile, StepSocket } from "@/api";
+import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn, isFile } from "@/lib/utils";
+import { parseSocketDataString } from "@/lib/compute-graph";
+import { cn, isUniconFile } from "@/lib/utils";
 
 interface NodeSlotProps {
   type: HandleType;
   socket: StepSocket;
   // Edit props
   onEditLabel?: (newSocketLabel: string) => void;
-  onEditData?: (newSocketData: string | boolean | number) => void;
+  onEditData?: (newSocketData: string | boolean | number | null) => void;
   onDelete?: () => void;
   // Styling props
   hideLabel?: boolean;
@@ -29,18 +30,11 @@ const DataSocketDefaultValuePopover = ({
   onValueChanged,
 }: {
   children?: React.ReactNode;
-  onValueChanged?: (newSocketData: string | boolean | number) => void;
+  onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
   const debouncedOnValueChanged = useDebouncedCallback((value: string) => {
-    let parsedValue: string | boolean | number = value;
-
-    if (value.startsWith('"') && value.endsWith('"')) parsedValue = value.slice(1, -1);
-    else if (value.toLowerCase() === "true") parsedValue = true;
-    else if (value.toLowerCase() === "false") parsedValue = false;
-    else if (!isNaN(Number(value))) parsedValue = Number(value);
-
-    if (onValueChanged) onValueChanged(parsedValue);
-  }, 500);
+    if (onValueChanged) onValueChanged(parseSocketDataString(value));
+  }, 300);
 
   return (
     <Popover>
@@ -69,20 +63,33 @@ const DataSocketDefaultValuePopover = ({
 };
 
 const DataSocketDefaultValueDisplay = ({
-  hasDefaultValue,
-  socketDefaultValue,
+  socketData,
   onValueChanged,
 }: {
-  hasDefaultValue: boolean;
-  socketDefaultValue: string | boolean | number;
-  onValueChanged?: (newSocketData: string | boolean | number) => void;
+  socketData: string | boolean | number | UniconFile | null | undefined;
+  onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
+  // NOTE: File type is not supported yet
+  const hasDefaultValue = socketData !== null && socketData !== undefined && !isUniconFile(socketData);
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent click event
+    if (onValueChanged) onValueChanged(null);
+  };
   const content = hasDefaultValue ? (
     <div className="flex items-center gap-2 py-1">
-      <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:bg-zinc-800">
+      <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:cursor-pointer hover:bg-zinc-800">
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400">Default:</span>
-          <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketDefaultValue)}</span>
+          <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
+          {onValueChanged && (
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+            >
+              <XIcon className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -107,27 +114,19 @@ const DataSocket = ({
   onDelete,
 }: Omit<NodeSlotProps, "handleStyle" | "hideLabel">) => {
   const socketLabel = socket.label ?? "";
-  const hasDefaultValue = socket.data && !isFile(socket.data) ? true : false;
-  const socketDefaultValue = socket.data as string | boolean | number;
   return (
     <div
       className={cn("flex grow items-center gap-2 px-2", {
         "flex-row-reverse space-x-reverse": type === "source",
       })}
     >
-      {onEditLabel ? (
-        <NodeInput className={[cn({ "text-right": type === "source" })]} value={socketLabel} onChange={onEditLabel} />
-      ) : (
-        socketLabel && <span className="min-h-[12px]">{socketLabel}</span>
-      )}
-
-      {type === "target" && (
-        <DataSocketDefaultValueDisplay
-          hasDefaultValue={hasDefaultValue}
-          socketDefaultValue={socketDefaultValue}
-          onValueChanged={onEditData}
-        />
-      )}
+      <SocketLabelInput
+        className={[cn({ "text-right": type === "source" })]}
+        value={socketLabel}
+        onChange={onEditLabel ?? (() => {})}
+        canEdit={onEditLabel !== undefined}
+      />
+      {type === "target" && <DataSocketDefaultValueDisplay socketData={socket.data} onValueChanged={onEditData} />}
       {onDelete && (
         <Button className="h-fit w-fit p-1" variant="outline" onClick={onDelete} type="button">
           <TrashIcon />

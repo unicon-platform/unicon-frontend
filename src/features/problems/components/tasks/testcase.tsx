@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { File as ApiFile, InputStep, Testcase as TestcaseApi } from "@/api";
+import { File as UniconFile, InputStep, Testcase as TestcaseApi } from "@/api";
 import NodeGraph from "@/features/problems/components/tasks/node-graph";
 
 import { GraphAction } from "./graph-context";
@@ -8,7 +8,7 @@ import { GraphAction } from "./graph-context";
 type TestcaseProps = {
   index: number;
   testcase: TestcaseApi;
-  taskFiles: ApiFile[];
+  taskFiles: UniconFile[];
   // Node graph editor props
   edit: boolean;
   nodeGraphOnChange?: (action: GraphAction) => void;

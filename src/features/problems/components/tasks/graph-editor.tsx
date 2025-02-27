@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { convertFilesToFileTree } from "@/lib/files";
-import { cn, isFile, uuid } from "@/lib/utils";
+import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
 
 import AddNodeButton from "./add-node-button";
@@ -246,7 +246,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   const selectedSocket = selectedStep?.outputs?.find((socket) => socket.id === selectedSocketId);
 
   const [showFileTree, setShowFileTree] = useState(false);
-  const showFileEditor = selectedSocket && isFile(selectedSocket.data) && !selectedSocket?.data.on_minio;
+  const showFileEditor = selectedSocket && isUniconFile(selectedSocket.data) && !selectedSocket?.data.on_minio;
 
   // Fit view to selected step when it changes
   useEffect(() => {
@@ -264,13 +264,13 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
     onClick: () => {
       // Figure out if this file is in the graph. If yes, select it.
       const step = steps.find((step) =>
-        step.outputs?.find((socket) => isFile(socket.data) && socket.data?.id === file.id),
+        step.outputs?.find((socket) => isUniconFile(socket.data) && socket.data?.id === file.id),
       );
-      const socket = step?.outputs?.find((socket) => isFile(socket.data) && socket.data?.id === file.id);
+      const socket = step?.outputs?.find((socket) => isUniconFile(socket.data) && socket.data?.id === file.id);
       if (!step || !socket) return;
       dispatch({ type: GraphActionType.SelectSocket, payload: { stepId: step.id, socketId: socket.id } });
     },
-    highlighted: isFile(selectedSocket?.data) && selectedSocket?.data.id === file.id,
+    highlighted: isUniconFile(selectedSocket?.data) && selectedSocket?.data.id === file.id,
   }));
 
   return (

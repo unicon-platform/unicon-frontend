@@ -12,8 +12,23 @@ import {
   StepType,
   StringMatchStep,
 } from "@/api";
+import { uuid } from "@/lib/utils";
 
-import { uuid } from "./utils";
+export const parseSocketDataString = (data: string): string | number | boolean | null => {
+  let parsed: string | boolean | number | null = data;
+
+  // Empty string = no data = null
+  if (data === "") parsed = null;
+  // Surrounded by quotes = string
+  else if (data.startsWith('"') && data.endsWith('"')) parsed = data.slice(1, -1);
+  // Lowercase true/false = boolean
+  else if (data.toLowerCase() === "true") parsed = true;
+  else if (data.toLowerCase() === "false") parsed = false;
+  // Number = number
+  else if (!isNaN(Number(data))) parsed = Number(data);
+
+  return parsed;
+};
 
 export const createSocket = (
   type: SocketType,

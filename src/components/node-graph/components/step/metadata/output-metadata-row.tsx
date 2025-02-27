@@ -2,7 +2,7 @@ import { Delete, Plus, Trash } from "lucide-react";
 
 import { Operator, OutputSocket } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,7 +32,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
         />
       </TableCell>
       <TableCell>
-        <NodeInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
+        <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={true} />
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
                     comparison: {
                       ...(socket.comparison ?? {}),
                       operator: value as Operator,
-                      value: socket.comparison?.value ?? "",
+                      value: socket.comparison?.value ?? null,
                     },
                   });
                 }}
@@ -58,19 +58,17 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
                   <SelectItem value=">">&gt;</SelectItem>
                 </SelectContent>
               </Select>{" "}
-              <NodeInput
-                value={JSON.stringify(socket.comparison?.value ?? "")}
+              <SocketDataInput
+                value={socket.comparison?.value as string | boolean | number | null}
                 onChange={(newValue) => {
                   onUpdateSocketMetadata({
                     comparison: {
-                      ...(socket.comparison ?? {
-                        operator: "=",
-                        value: "",
-                      }),
-                      value: JSON.parse(newValue),
+                      ...(socket.comparison ?? { operator: "=", value: null }),
+                      value: newValue,
                     },
                   });
                 }}
+                canEdit={true}
               />
               <Button
                 size={"sm"}
@@ -87,7 +85,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
               size={"sm"}
               className="h-fit w-fit px-1 py-1"
               variant="secondary"
-              onClick={() => onUpdateSocketMetadata({ comparison: { operator: "=", value: "" } })}
+              onClick={() => onUpdateSocketMetadata({ comparison: { operator: "=", value: null } })}
               type="button"
             >
               <Plus className="h-2 w-2" />
@@ -96,11 +94,13 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
         </div>
       </TableCell>
       <TableCell>
-        <Checkbox
-          className="rounded-sm border border-gray-500/50"
-          checked={socket.public || false}
-          onCheckedChange={() => onUpdateSocketMetadata({ public: !socket.public })}
-        ></Checkbox>
+        <div>
+          <Checkbox
+            className="rounded-sm border border-gray-500/50"
+            checked={socket.public || false}
+            onCheckedChange={() => onUpdateSocketMetadata({ public: !socket.public })}
+          />
+        </div>
       </TableCell>
       <TableCell>
         <Button
