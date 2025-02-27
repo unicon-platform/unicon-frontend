@@ -176,7 +176,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         />
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Propagate Stdout:</label>
+        <label className="font-mono text-sm text-zinc-400">Capture Stdout:</label>
         <Checkbox
           className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
           checked={propagateStdout}
@@ -184,7 +184,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         />
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Propagate Stderr:</label>
+        <label className="font-mono text-sm text-zinc-400">Capture Stderr:</label>
         <Checkbox
           className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
           checked={propagateStderr}
@@ -199,14 +199,6 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         <div className="flex flex-col">
           <span className="text-xs text-zinc-400">Function Identifier</span>
           <span className="font-mono font-medium text-white">{(step as PyRunFunctionStep).function_identifier}</span>
-        </div>
-      </div>
-      <div className="pt-3">
-        <div className="flex items-center justify-between rounded-lg border border-zinc-800/50 bg-zinc-900/30 p-2">
-          <span className="font-mono text-xs text-zinc-400">Propagate Error</span>
-          <span className="rounded-md bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-300">
-            {JSON.stringify((step as PyRunFunctionStep).allow_error)}
-          </span>
         </div>
       </div>
     </div>
