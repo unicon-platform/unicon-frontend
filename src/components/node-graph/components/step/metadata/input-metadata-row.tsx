@@ -6,7 +6,7 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
-import { cn, isFile } from "@/lib/utils";
+import { cn, isUniconFile } from "@/lib/utils";
 
 import { NodeSlot } from "../../node-slot";
 import ViewFileButton from "../input-table/view-file-button";
@@ -55,7 +55,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
         )}
       </TableCell>
       <TableCell>
-        {socket.data && isFile(socket.data) ? (
+        {socket.data && isUniconFile(socket.data) ? (
           <div className="flex gap-2">
             <ViewFileButton step={step} socket={socket} />
             {isEditable && !socket.data.on_minio && (

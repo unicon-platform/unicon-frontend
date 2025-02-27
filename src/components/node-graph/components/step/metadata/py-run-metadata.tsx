@@ -3,14 +3,14 @@ import { useNodeConnections, useNodesData } from "@xyflow/react";
 import { ParenthesesIcon, RefreshCcw, TriangleAlert } from "lucide-react";
 import { useContext, useState } from "react";
 
-import { File, InputStep, PyRunFunctionStep } from "@/api";
+import { File as UniconFile, InputStep, PyRunFunctionStep } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
 import { getFunctions } from "@/features/problems/queries";
-import { isFile, uuid } from "@/lib/utils";
+import { isUniconFile, uuid } from "@/lib/utils";
 
 type OwnProps = {
   step: PyRunFunctionStep;
@@ -37,7 +37,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   const fileSocket = (inputNode?.data as InputStep | undefined)?.outputs.find(
     (output) => output.id === connection.sourceHandle,
   );
-  const fileContent = fileSocket && isFile(fileSocket.data) ? (fileSocket.data as File).content : undefined;
+  const fileContent = fileSocket && isUniconFile(fileSocket.data) ? (fileSocket.data as UniconFile).content : undefined;
 
   const { data: functionSignatures } = useQuery(getFunctions(fileContent ?? ""));
 

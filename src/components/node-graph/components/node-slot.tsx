@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn, isFile } from "@/lib/utils";
+import { cn, isUniconFile } from "@/lib/utils";
 
 interface NodeSlotProps {
   type: HandleType;
@@ -77,7 +77,7 @@ const DataSocketDefaultValueDisplay = ({
   onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
   // NOTE: File type is not supported yet
-  const hasDefaultValue = socketData !== null && socketData !== undefined && !isFile(socketData);
+  const hasDefaultValue = socketData !== null && socketData !== undefined && !isUniconFile(socketData);
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering the parent click event
     if (onValueChanged) onValueChanged(null);
