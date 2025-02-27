@@ -9,7 +9,7 @@ import {
   PyRunFunctionStep,
   StepSocket,
 } from "@/api";
-import { File as ApiFile } from "@/api";
+import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
 import { createSocket } from "@/lib/compute-graph";
 
@@ -20,7 +20,7 @@ export type GraphState = {
   selectedStepId: string | null;
   selectedSocketId: string | null;
   edit: boolean;
-  files: ApiFile[];
+  files: UniconFile[];
 };
 
 export enum GraphActionType {
@@ -99,7 +99,7 @@ interface UpdateSocketDataAction extends BaseGraphAction {
   payload: {
     stepId: string;
     socketId: string;
-    data: string | number | boolean;
+    data: string | number | boolean | null;
   };
 }
 

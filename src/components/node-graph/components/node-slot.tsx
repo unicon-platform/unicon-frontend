@@ -3,7 +3,7 @@ import { ArrowBigRightIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { twJoin } from "tailwind-merge";
 import { useDebouncedCallback } from "use-debounce";
 
-import { StepSocket } from "@/api";
+import { File as UniconFile, StepSocket } from "@/api";
 import NodeInput from "@/components/node-graph/components/step/node-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface NodeSlotProps {
   socket: StepSocket;
   // Edit props
   onEditLabel?: (newSocketLabel: string) => void;
-  onEditData?: (newSocketData: string | boolean | number) => void;
+  onEditData?: (newSocketData: string | boolean | number | null) => void;
   onDelete?: () => void;
   // Styling props
   hideLabel?: boolean;
@@ -29,12 +29,13 @@ const DataSocketDefaultValuePopover = ({
   onValueChanged,
 }: {
   children?: React.ReactNode;
-  onValueChanged?: (newSocketData: string | boolean | number) => void;
+  onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
   const debouncedOnValueChanged = useDebouncedCallback((value: string) => {
-    let parsedValue: string | boolean | number = value;
+    let parsedValue: string | boolean | number | null = value;
 
-    if (value.startsWith('"') && value.endsWith('"')) parsedValue = value.slice(1, -1);
+    if (value === "") parsedValue = null;
+    else if (value.startsWith('"') && value.endsWith('"')) parsedValue = value.slice(1, -1);
     else if (value.toLowerCase() === "true") parsedValue = true;
     else if (value.toLowerCase() === "false") parsedValue = false;
     else if (!isNaN(Number(value))) parsedValue = Number(value);
@@ -69,20 +70,20 @@ const DataSocketDefaultValuePopover = ({
 };
 
 const DataSocketDefaultValueDisplay = ({
-  hasDefaultValue,
-  socketDefaultValue,
+  socketData,
   onValueChanged,
 }: {
-  hasDefaultValue: boolean;
-  socketDefaultValue: string | boolean | number;
-  onValueChanged?: (newSocketData: string | boolean | number) => void;
+  socketData: string | boolean | number | UniconFile | null | undefined;
+  onValueChanged?: (newSocketData: string | boolean | number | null) => void;
 }) => {
+  // NOTE: File type is not supported yet
+  const hasDefaultValue = socketData !== null && socketData !== undefined && !isFile(socketData);
   const content = hasDefaultValue ? (
     <div className="flex items-center gap-2 py-1">
       <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:bg-zinc-800">
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400">Default:</span>
-          <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketDefaultValue)}</span>
+          <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
         </div>
       </div>
     </div>
@@ -107,8 +108,6 @@ const DataSocket = ({
   onDelete,
 }: Omit<NodeSlotProps, "handleStyle" | "hideLabel">) => {
   const socketLabel = socket.label ?? "";
-  const hasDefaultValue = socket.data && !isFile(socket.data) ? true : false;
-  const socketDefaultValue = socket.data as string | boolean | number;
   return (
     <div
       className={cn("flex grow items-center gap-2 px-2", {
@@ -121,13 +120,7 @@ const DataSocket = ({
         socketLabel && <span className="min-h-[12px]">{socketLabel}</span>
       )}
 
-      {type === "target" && (
-        <DataSocketDefaultValueDisplay
-          hasDefaultValue={hasDefaultValue}
-          socketDefaultValue={socketDefaultValue}
-          onValueChanged={onEditData}
-        />
-      )}
+      {type === "target" && <DataSocketDefaultValueDisplay socketData={socket.data} onValueChanged={onEditData} />}
       {onDelete && (
         <Button className="h-fit w-fit p-1" variant="outline" onClick={onDelete} type="button">
           <TrashIcon />
