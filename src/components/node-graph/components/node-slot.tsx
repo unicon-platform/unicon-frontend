@@ -4,7 +4,7 @@ import { twJoin } from "tailwind-merge";
 import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile, StepSocket } from "@/api";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import NodeLabelInput from "@/components/node-graph/components/step/node-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,7 +126,11 @@ const DataSocket = ({
       })}
     >
       {onEditLabel ? (
-        <NodeInput className={[cn({ "text-right": type === "source" })]} value={socketLabel} onChange={onEditLabel} />
+        <NodeLabelInput
+          className={[cn({ "text-right": type === "source" })]}
+          value={socketLabel}
+          onChange={onEditLabel}
+        />
       ) : (
         socketLabel && <span className="min-h-[12px]">{socketLabel}</span>
       )}

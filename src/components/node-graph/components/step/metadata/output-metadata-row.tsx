@@ -2,7 +2,7 @@ import { Delete, Plus, Trash } from "lucide-react";
 
 import { Operator, OutputSocket } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import NodeLabelInput from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,7 +32,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
         />
       </TableCell>
       <TableCell>
-        <NodeInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
+        <NodeLabelInput value={socket.label ?? ""} onChange={onEditSocketLabel} />
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
@@ -58,7 +58,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
                   <SelectItem value=">">&gt;</SelectItem>
                 </SelectContent>
               </Select>{" "}
-              <NodeInput
+              <NodeLabelInput
                 value={JSON.stringify(socket.comparison?.value ?? "")}
                 onChange={(newValue) => {
                   onUpdateSocketMetadata({

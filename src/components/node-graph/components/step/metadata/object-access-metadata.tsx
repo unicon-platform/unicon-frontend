@@ -2,7 +2,7 @@ import { KeyRoundIcon } from "lucide-react";
 import { useContext } from "react";
 
 import { ObjectAccessStep } from "@/api";
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import NodeLabelInput from "@/components/node-graph/components/step/node-input";
 import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
 
 type OwnProps = {
@@ -18,7 +18,7 @@ const ObjectAccessMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       {editable ? (
         <div className="flex items-center gap-2">
           <label className="text-nowrap font-mono text-sm text-zinc-400">Key:</label>
-          <NodeInput
+          <NodeLabelInput
             className={["text-sm", "font-mono"]}
             value={step.key}
             onChange={(newKey) =>

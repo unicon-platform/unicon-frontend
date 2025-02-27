@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import { X } from "lucide-react";
 
-import NodeInput from "@/components/node-graph/components/step/node-input";
+import NodeLabelInput from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 
 type OwnProps = {
@@ -40,7 +40,7 @@ const FileEditor: React.FC<OwnProps> = ({
       {/* file tab */}
       <div className="flex w-fit items-center gap-2 border-b border-purple-200 py-1">
         {editableName ? (
-          <NodeInput value={fileName} onChange={updateFileName} />
+          <NodeLabelInput value={fileName} onChange={updateFileName} />
         ) : (
           <span className="px-1 text-xs">{fileName}</span>
         )}
