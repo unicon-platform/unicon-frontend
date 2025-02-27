@@ -81,13 +81,15 @@ const DataSocketDefaultValueDisplay = ({
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400">Default:</span>
           <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
-          <button
-            type="button"
-            onClick={handleDeleteClick}
-            className="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
-          >
-            <XIcon className="h-3 w-3" />
-          </button>
+          {onValueChanged && (
+            <button
+              type="button"
+              onClick={handleDeleteClick}
+              className="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+            >
+              <XIcon className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
     </div>
