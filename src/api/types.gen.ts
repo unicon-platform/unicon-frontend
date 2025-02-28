@@ -322,7 +322,7 @@ export type Problem = {
     } & MultipleResponseTask) | ({
         type?: 'SHORT_ANSWER_TASK';
     } & ShortAnswerTask)>;
-    started_at?: string | null;
+    started_at: string;
     ended_at?: string | null;
     closed_at?: string | null;
 };
@@ -369,7 +369,7 @@ export type ProblemPublic = {
     } & MultipleResponseTask) | ({
         type?: 'SHORT_ANSWER_TASK';
     } & ShortAnswerTask)>;
-    started_at?: string | null;
+    started_at: string;
     ended_at?: string | null;
     closed_at?: string | null;
     edit: boolean;
@@ -488,7 +488,7 @@ export type PyRunFunctionStep = {
     inputs: Array<PyRunFunctionSocket>;
     outputs: Array<PyRunFunctionSocket>;
     type: StepType;
-    function_identifier: string;
+    function_identifier?: string | null;
     allow_error?: boolean;
     propagate_stdout?: boolean;
     propagate_stderr?: boolean;
