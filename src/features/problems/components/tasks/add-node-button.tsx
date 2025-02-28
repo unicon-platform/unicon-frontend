@@ -1,22 +1,13 @@
 import { PlusIcon } from "lucide-react";
+import { DynamicIcon } from "lucide-react/dynamic";
 import React, { useContext, useState } from "react";
 
 import { StepType } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
 import { createDefaultStep } from "@/lib/compute-graph";
-
-import { GraphActionType, GraphDispatchContext } from "./graph-context";
-
-const stepTypesToLabel: Record<StepType, string> = {
-  PY_RUN_FUNCTION_STEP: "PyRunFunctionStep",
-  OBJECT_ACCESS_STEP: "ObjectAccessStep",
-  INPUT_STEP: "InputStep",
-  OUTPUT_STEP: "OutputStep",
-  LOOP_STEP: "LoopStep",
-  IF_ELSE_STEP: "IfElseStep",
-  STRING_MATCH_STEP: "StringMatchStep",
-};
+import { StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 
 const AddNodeButton: React.FC = () => {
   const dispatch = useContext(GraphDispatchContext)!;
@@ -30,24 +21,20 @@ const AddNodeButton: React.FC = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <div className="flex flex-col">
-          {Object.entries(stepTypesToLabel).map(([stepType, label]) => (
-            <Button
-              key={`${stepType}.${label}`}
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => {
-                dispatch({
-                  type: GraphActionType.AddStep,
-                  payload: { step: createDefaultStep(stepType as StepType) },
-                });
-                setOpen(false);
-              }}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
+        {Object.entries(StepTypeAliasMap).map(([stepType, alias], index) => (
+          <Button
+            key={index}
+            variant="ghost"
+            className="w-full justify-start p-2"
+            onClick={() => {
+              dispatch({ type: GraphActionType.AddStep, payload: { step: createDefaultStep(stepType as StepType) } });
+              setOpen(false);
+            }}
+          >
+            <DynamicIcon size={20} name={StepTypeIconMap[stepType as StepType]} />
+            {alias}
+          </Button>
+        ))}
       </PopoverContent>
     </Popover>
   );

@@ -1,6 +1,6 @@
 import { HandleType, useUpdateNodeInternals } from "@xyflow/react";
 import { PlusIcon, TrashIcon } from "lucide-react";
-import { DynamicIcon, IconName } from "lucide-react/dynamic";
+import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
 import { StepSocket, StepType } from "@/api";
@@ -14,19 +14,9 @@ import {
   SocketDir,
 } from "@/features/problems/components/tasks/graph-context";
 import { Step } from "@/features/problems/components/tasks/types";
-import { StepNodeColorMap, StepTypeAliasMap } from "@/lib/colors";
 import { createSocket } from "@/lib/compute-graph";
+import { StepNodeColorMap, StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-
-const STEP_TYPE_ICONS: Record<StepType, IconName> = {
-  PY_RUN_FUNCTION_STEP: "play",
-  OBJECT_ACCESS_STEP: "circle-dot",
-  OUTPUT_STEP: "eye",
-  INPUT_STEP: "text-cursor-input",
-  STRING_MATCH_STEP: "equal",
-  LOOP_STEP: "infinity",
-  IF_ELSE_STEP: "split",
-};
 
 const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean; deleteStep: () => void }) => {
   return (
@@ -35,7 +25,7 @@ const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean;
       style={{ borderColor: StepNodeColorMap[type] }}
     >
       <div className="flex items-center gap-2">
-        <DynamicIcon size={20} name={STEP_TYPE_ICONS[type]} color={StepNodeColorMap[type]} />
+        <DynamicIcon size={20} name={StepTypeIconMap[type]} color={StepNodeColorMap[type]} />
         <span className="text-sm font-medium capitalize">{StepTypeAliasMap[type]}</span>
       </div>
       {edit && (
