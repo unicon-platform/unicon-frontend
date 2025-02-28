@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
-import { StepSocket, StepType } from "@/api";
+import { PyRunFunctionSocket, StepSocket, StepType } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import StepMetadata from "@/components/node-graph/components/step/metadata/step-metadata";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ import { Step } from "@/features/problems/components/tasks/types";
 import { StepNodeColorMap, StepTypeAliasMap } from "@/lib/colors";
 import { createSocket } from "@/lib/compute-graph";
 import { cn } from "@/lib/utils";
+
+import { PyRunSocketSlots } from "./py-run-socket-slots";
 
 const STEP_TYPE_ICONS: Record<StepType, IconName> = {
   PY_RUN_FUNCTION_STEP: "play",
@@ -47,33 +49,39 @@ const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean;
   );
 };
 
-function NodeSlotGroup({
+export function NodeSlotGroup({
   type,
   sockets,
   onEditData,
   onEditLabel,
   onDelete,
   children,
+  forceUneditable = () => false,
 }: {
   type: HandleType;
   sockets: StepSocket[];
   onEditData?: (socketId: string) => (newSocketData: string | number | boolean | null) => void;
   onEditLabel?: (socketId: string) => (newSocketLabel: string) => void;
   onDelete?: (socketId: string) => () => void;
+  // Hide all edit/delete functions for this socket if this function returns true.
+  forceUneditable?: (socket: PyRunFunctionSocket) => boolean;
   children?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      {sockets.map((s) => (
-        <NodeSlot
-          key={s.id}
-          type={type}
-          socket={s}
-          onEditData={onEditData ? onEditData(s.id) : undefined}
-          onEditLabel={onEditLabel ? onEditLabel(s.id) : undefined}
-          onDelete={onDelete ? onDelete(s.id) : undefined}
-        />
-      ))}
+      {sockets.map((s) => {
+        const notEditable = forceUneditable(s as PyRunFunctionSocket);
+        return (
+          <NodeSlot
+            key={s.id}
+            type={type}
+            socket={s}
+            onEditData={onEditData && !notEditable ? onEditData(s.id) : undefined}
+            onEditLabel={onEditLabel && !notEditable ? onEditLabel(s.id) : undefined}
+            onDelete={onDelete && !notEditable ? onDelete(s.id) : undefined}
+          />
+        );
+      })}
       {children}
     </div>
   );
@@ -165,7 +173,7 @@ export function StepNode({ data }: { data: Step }) {
           </div>
           <StepMetadata step={data} editable={editable} />
         </div>
-        {!socketsInMetadata && (
+        {!socketsInMetadata && (!inEditMode || !_isPyRunFunc) && (
           <div className="font-mono text-xs">
             <div className="flex flex-row justify-between gap-8">
               <NodeSlotGroup
@@ -208,6 +216,16 @@ export function StepNode({ data }: { data: Step }) {
               </NodeSlotGroup>
             </div>
           </div>
+        )}
+        {!socketsInMetadata && _isPyRunFunc && inEditMode && (
+          <PyRunSocketSlots
+            stepId={data.id}
+            inDataSockets={inDataSockets}
+            outDataSockets={outDataSockets}
+            addSocket={addSocket}
+            onEditData={_onEditData}
+            onDeleteSocket={_onDeleteSocket}
+          />
         )}
       </div>
     </div>

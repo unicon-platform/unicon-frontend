@@ -11,7 +11,7 @@ import {
 } from "@/api";
 import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket } from "@/lib/compute-graph";
+import { createSocket, isResultSocket } from "@/lib/compute-graph";
 
 export type GraphState = {
   id: string;
@@ -141,7 +141,7 @@ interface UpdatePyRunFunctionStepAction extends BaseGraphAction {
   type: GraphActionType.UpdatePyRunFunctionStep;
   payload: {
     stepId: string;
-    functionIdentifier: string;
+    functionIdentifier: string | null;
     functionSignature?: ParsedFunction;
     propagateStdout: boolean;
     propagateStderr: boolean;
@@ -223,6 +223,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     };
   }
 
+  // This if statement has all logic regarding the INPUTS of the py-run-function-step
   if (functionSignatureChanged && payload.functionSignature) {
     // If args/kwargs have changed, we need to:
     //   1. Replace the input sockets with arguments of the new function signature.
@@ -283,9 +284,15 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     });
   };
 
-  const removeOutputSocket = (property: "handles_error" | "handles_stderr" | "handles_stdout") => {
-    const outputSocketId = step.outputs.find((socket) => socket[property])?.id;
-    state.steps[stepIndex].outputs = step.outputs.filter((socket) => !socket[property]);
+  const removeOutputSocket = (property: "handles_error" | "handles_stderr" | "handles_stdout" | "result") => {
+    const outputSocketId =
+      property === "result"
+        ? step.outputs.find(isResultSocket)?.id
+        : step.outputs.find((socket) => socket[property])?.id;
+    if (!outputSocketId) {
+      return;
+    }
+    state.steps[stepIndex].outputs = step.outputs.filter((socket) => socket.id !== outputSocketId);
     state.edges = state.edges.filter(
       (edge) => edge.from_node_id !== payload.stepId || edge.from_socket_id !== outputSocketId,
     );
@@ -333,13 +340,23 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     }
   }
 
+  if (payload.functionIdentifier === null) {
+    // If there is a result socket, remove it.
+    removeOutputSocket("result");
+  } else {
+    // If there is no result socket, add one.
+    if (!step.outputs.find((socket) => isResultSocket(socket))) {
+      pushOutputSocket("Result", {});
+    }
+  }
+
   // Order of sockets: control, result, stdout?, stderr?, error?
   (state.steps[stepIndex] as PyRunFunctionStep).outputs?.sort((a, b) => {
     if (a.type === "CONTROL") return -1;
     if (b.type === "CONTROL") return 1;
     // Result socket
-    if (!a.handles_error && !a.handles_error && !a.handles_stdout && !a.handles_stderr) return -1;
-    if (!b.handles_error && !b.handles_error && !b.handles_stdout && !b.handles_stderr) return 1;
+    if (isResultSocket(a)) return -1;
+    if (isResultSocket(b)) return 1;
     // Stdout socket
     if (a.handles_stdout) return -1;
     if (b.handles_stdout) return 1;

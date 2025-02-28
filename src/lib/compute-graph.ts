@@ -57,7 +57,7 @@ export const createDefaultStep = (type: StepType) => {
         ...createBaseStep(
           type,
           [{ ...createSocket("DATA", "Module"), import_as_module: true }] as PyRunFunctionSocket[],
-          [createSocket("DATA", "Result")],
+          [],
         ),
         function_identifier: "",
         allow_error: false,
@@ -87,3 +87,6 @@ export const createDefaultStep = (type: StepType) => {
       ) as IfElseStep;
   }
 };
+
+export const isResultSocket = (socket: PyRunFunctionSocket) =>
+  socket.type === "DATA" && !socket.handles_error && !socket.handles_stderr && !socket.handles_stdout;

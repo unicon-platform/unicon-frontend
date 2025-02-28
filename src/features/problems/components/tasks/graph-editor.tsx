@@ -347,6 +347,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
             <Background variant={BackgroundVariant.Dots} style={{ backgroundColor: "#1c1c1c" }} />
             <Controls showInteractive={edit} />
             <MiniMap pannable className="opacity-50 hover:opacity-100" />
+            {/* <DevTools position="bottom-left" /> */}
           </ReactFlow>
         </ResizablePanel>
       </ResizablePanelGroup>
