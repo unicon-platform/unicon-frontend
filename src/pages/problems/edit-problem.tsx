@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import EditProblemForm from "@/features/problems/form/edit-problem-form";
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
-
-import { Unauthorized } from "../error";
+import { Unauthorized } from "@/pages/error";
 
 const EditProblem = () => {
   const id = useProblemId();

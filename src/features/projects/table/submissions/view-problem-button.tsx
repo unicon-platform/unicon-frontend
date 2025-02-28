@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { MiniProblemPublic } from "@/api";
-
-import { useProjectId } from "../../hooks/use-id";
+import { useProjectId } from "@/features/projects/hooks/use-id";
 
 type OwnProps = {
   problem: MiniProblemPublic;

@@ -18,8 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-
-import { useUpdateGroup } from "../queries";
+import { useUpdateGroup } from "@/features/projects/queries";
 
 const groupFormSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),

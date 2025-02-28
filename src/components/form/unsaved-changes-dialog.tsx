@@ -1,4 +1,4 @@
-import ConfirmationDialog from "../confirmation-dialog";
+import ConfirmationDialog from "@/components/confirmation-dialog";
 
 type OwnProps = {
   onConfirm: () => void;

@@ -1,9 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { InputStep, StepSocket } from "@/api";
+import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import { isUniconFile } from "@/lib/utils";
 
-import { NodeSlot } from "../../node-slot";
 import ViewFileButton from "./view-file-button";
 
 export const columns: ColumnDef<StepSocket & { step: InputStep }>[] = [

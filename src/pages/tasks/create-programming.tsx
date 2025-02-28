@@ -6,8 +6,7 @@ import { getProblemById, useCreateTask } from "@/features/problems/queries";
 import { useProblemId, useProjectId } from "@/features/projects/hooks/use-id";
 import ProgrammingForm from "@/features/tasks/forms/programming-form";
 import { ProgTaskFormT, toProgrammingTask } from "@/lib/schema/prog-task-form";
-
-import { Unauthorized } from "../error";
+import { Unauthorized } from "@/pages/error";
 
 const CreateProgramming = () => {
   const [problemId, projectId] = [useProblemId(), useProjectId()];

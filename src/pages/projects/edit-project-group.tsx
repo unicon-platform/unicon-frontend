@@ -21,8 +21,7 @@ import {
   useUpdateGroup,
 } from "@/features/projects/queries";
 import { cn } from "@/lib/utils";
-
-import { Unauthorized } from "../error";
+import { Unauthorized } from "@/pages/error";
 
 const EditProjectGroup = () => {
   const projectId = useProjectId();

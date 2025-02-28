@@ -1,8 +1,7 @@
 import { RolePublicWithInvitationKeys } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { Button } from "@/components/ui/button";
-
-import { useDeleteInvitationKey } from "../../queries";
+import { useDeleteInvitationKey } from "@/features/projects/queries";
 
 type OwnProps = {
   role: RolePublicWithInvitationKeys;

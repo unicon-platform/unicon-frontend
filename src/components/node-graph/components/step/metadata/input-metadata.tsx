@@ -3,6 +3,7 @@ import { useCallback, useContext } from "react";
 import { useDrop } from "react-dnd";
 
 import { InputStep, StepSocket } from "@/api";
+import InputTable from "@/components/node-graph/components/step/input-table/input-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -16,7 +17,6 @@ import { DragItemType } from "@/lib/drag";
 import { isFolder, TreeFile, TreeFolder } from "@/lib/files";
 import { isUniconFile } from "@/lib/utils";
 
-import InputTable from "../input-table/input-table";
 import InputMetadataRow from "./input-metadata-row";
 
 type OwnProps = {

@@ -9,8 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 type Handle = {
   crumb?: (match: UIMatch) => BreadcrumbPart;

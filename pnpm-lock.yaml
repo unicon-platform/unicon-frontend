@@ -198,6 +198,9 @@ importers:
       eslint:
         specifier: ^9.20.1
         version: 9.20.1(jiti@2.4.2)
+      eslint-plugin-no-relative-import-paths:
+        specifier: ^1.6.1
+        version: 1.6.1
       eslint-plugin-react-hooks:
         specifier: 5.1.0-rc-fb9a90fa48-20240614
         version: 5.1.0-rc-fb9a90fa48-20240614(eslint@9.20.1(jiti@2.4.2))
@@ -1691,6 +1694,9 @@ packages:
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+
+  eslint-plugin-no-relative-import-paths@1.6.1:
+    resolution: {integrity: sha512-YZNeOnsOrJcwhFw0X29MXjIzu2P/f5X2BZDPWw1R3VUYBRFxNIh77lyoL/XrMU9ewZNQPcEvAgL/cBOT1P330A==}
 
   eslint-plugin-react-hooks@5.1.0-rc-fb9a90fa48-20240614:
     resolution: {integrity: sha512-xsiRwaDNF5wWNC4ZHLut+x/YcAxksUd9Rizt7LaEn3bV8VyYRpXnRJQlLOfYaVy9esk4DFP4zPPnoNVjq5Gc0w==}
@@ -4242,6 +4248,8 @@ snapshots:
   escalade@3.2.0: {}
 
   escape-string-regexp@4.0.0: {}
+
+  eslint-plugin-no-relative-import-paths@1.6.1: {}
 
   eslint-plugin-react-hooks@5.1.0-rc-fb9a90fa48-20240614(eslint@9.20.1(jiti@2.4.2)):
     dependencies:
