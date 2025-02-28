@@ -12,6 +12,7 @@ import {
   StepType,
   StringMatchStep,
 } from "@/api";
+import { Step } from "@/features/problems/components/tasks/types";
 import { uuid } from "@/lib/utils";
 
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
@@ -28,6 +29,10 @@ export const parseSocketDataString = (data: string): string | number | boolean |
   else if (!isNaN(Number(data))) parsed = Number(data);
 
   return parsed;
+};
+
+export const isRequiredInputStep = (step: Step): boolean => {
+  return step.type === "INPUT_STEP" && ((step as InputStep).is_user ?? false);
 };
 
 export const createSocket = (

@@ -26,21 +26,24 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "@typescript-eslint/no-unused-vars": "off", // Handled by unused-imports
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "error",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
       "no-relative-import-paths/no-relative-import-paths": [
         "warn",
-        { allowSameFolder: true , rootDir: "src", prefix: "@" },
+        { allowSameFolder: true, rootDir: "src", prefix: "@" },
       ],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
-      ],
     },
   },
 );

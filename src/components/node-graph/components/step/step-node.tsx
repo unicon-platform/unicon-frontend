@@ -14,7 +14,7 @@ import {
   SocketDir,
 } from "@/features/problems/components/tasks/graph-context";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket } from "@/lib/compute-graph";
+import { createSocket, isRequiredInputStep } from "@/lib/compute-graph";
 import { StepNodeColorMap, StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +85,7 @@ export function StepNode({ data }: { data: Step }) {
   const inDataSockets = filterSocketsByType(inSockets, "DATA");
   const outDataSockets = filterSocketsByType(outSockets, "DATA");
 
-  const editable = inEditMode && ("is_user" in data ? !data.is_user : true);
+  const editable = inEditMode && !isRequiredInputStep(data);
 
   // `PyRunFunctionStep` is a special case where we don't allow the same level of socket editing
   // as the other steps. This is because the step has its own mechanism to determine the number of
@@ -146,7 +146,7 @@ export function StepNode({ data }: { data: Step }) {
 
   return (
     <div className="rounded-b-lg bg-[#141414]">
-      <NodeHeader type={data.type} edit={inEditMode} deleteStep={deleteStep} />
+      <NodeHeader type={data.type} edit={editable} deleteStep={deleteStep} />
       <div className="flex min-w-52 flex-col gap-2 rounded-b-lg border-x-2 border-b-2 py-3">
         <div className={cn("flex flex-col gap-2", { "flex-col-reverse": !socketsInMetadata })}>
           <div className="flex flex-row justify-between gap-8">

@@ -20,11 +20,12 @@ import {
 import { CopyPlus, ExpandIcon, ShrinkIcon } from "lucide-react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import { GraphEdgeStr as GraphEdge, InputStep } from "@/api";
+import { GraphEdgeStr as GraphEdge } from "@/api";
 import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { isRequiredInputStep } from "@/lib/compute-graph";
 import { convertFilesToFileTree } from "@/lib/files";
 import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
@@ -131,11 +132,8 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
       // Do not allow any deletes if edit mode is disabled
       if (!edit) return false;
 
-      // Filter out user `InputStep` nodes to prevent deletion
-      const userNodes = nodes.filter((node) => {
-        const data = node.data as Step;
-        return data.type === "INPUT_STEP" && (data as InputStep).is_user;
-      });
+      // Filter out user `InputStep` (required inputs) to prevent deletion
+      const userNodes = nodes.filter((node) => isRequiredInputStep(node.data));
       // Preserve user `InputStep` nodes
       const nonUserNodes = nodes.filter((node) => userNodes.indexOf(node) === -1);
       // Preserve outgoing edges of user `InputStep` edges if user `InputStep` nodes are deleted

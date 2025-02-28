@@ -11,7 +11,7 @@ import {
 } from "@/api";
 import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket } from "@/lib/compute-graph";
+import { createSocket, isRequiredInputStep } from "@/lib/compute-graph";
 
 export type GraphState = {
   id: string;
@@ -165,13 +165,8 @@ export type GraphAction =
   | UpdatePyRunFunctionStepAction;
 
 const updateUserInputStep = (state: GraphState, { payload }: UpdateUserInputStepAction) => {
-  const inputSteps = state.steps.filter((node) => node.type === "INPUT_STEP") as InputStep[];
-  const userInputStepIdx = inputSteps.findIndex((node) => node.is_user);
-  if (userInputStepIdx !== -1) {
-    Object.assign(state.steps[userInputStepIdx], {
-      outputs: payload.step.outputs,
-    });
-  }
+  const userInputStepIdx = state.steps.findIndex(isRequiredInputStep);
+  if (userInputStepIdx !== -1) Object.assign(state.steps[userInputStepIdx], { outputs: payload.step.outputs });
   return state;
 };
 
