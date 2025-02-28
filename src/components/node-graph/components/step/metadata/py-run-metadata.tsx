@@ -232,31 +232,31 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       <div className="my-4 flex flex-col items-start gap-2">
         <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
           <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
-            <CircleXIcon className="h-4 w-4" />
+            <CircleXIcon className="h-2 w-2" />
             <span className="font-medium">On error</span>
           </div>
           <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
             {(step as PyRunFunctionStep).allow_error ? "Captured" : "Terminate program"}
           </div>
         </Badge>
-        <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
-          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
-            <MessageCircleMoreIcon className="h-4 w-4" />
-            <span className="font-medium">Stdout</span>
-          </div>
-          <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
-            {(step as PyRunFunctionStep).propagate_stdout ? "Captured" : "Ignored"}
-          </div>
-        </Badge>
-        <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
-          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
-            <MessageCircleXIcon className="h-4 w-4" />
-            <span className="font-medium">Stderr</span>
-          </div>
-          <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
-            {(step as PyRunFunctionStep).propagate_stderr ? "Captured" : "Ignored"}
-          </div>
-        </Badge>
+        <div className="flex gap-2">
+          {(step as PyRunFunctionStep).propagate_stdout && (
+            <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
+              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+                <MessageCircleMoreIcon className="h-4 w-4" />
+                <span className="font-medium">Stdout</span>
+              </div>
+            </Badge>
+          )}
+          {(step as PyRunFunctionStep).propagate_stderr && (
+            <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
+              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+                <MessageCircleXIcon className="h-4 w-4" />
+                <span className="font-medium">Stderr</span>
+              </div>
+            </Badge>
+          )}
+        </div>
       </div>
     </div>
   );
