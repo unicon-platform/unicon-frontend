@@ -182,7 +182,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Propagate Error:</label>
+        <label className="font-mono text-sm text-zinc-400">Capture Error:</label>
         <Checkbox
           className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
           checked={allowError}
