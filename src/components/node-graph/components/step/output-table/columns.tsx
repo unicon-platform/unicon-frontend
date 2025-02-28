@@ -1,8 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { OutputSocket } from "@/api";
-
-import { NodeSlot } from "../../node-slot";
+import { NodeSlot } from "@/components/node-graph/components/node-slot";
 
 export const columns: ColumnDef<OutputSocket>[] = [
   {

@@ -1,6 +1,6 @@
 import { HandleType, useUpdateNodeInternals } from "@xyflow/react";
 import { PlusIcon, TrashIcon } from "lucide-react";
-import { DynamicIcon, IconName } from "lucide-react/dynamic";
+import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
 import { PyRunFunctionSocket, StepSocket, StepType } from "@/api";
@@ -14,21 +14,11 @@ import {
   SocketDir,
 } from "@/features/problems/components/tasks/graph-context";
 import { Step } from "@/features/problems/components/tasks/types";
-import { StepNodeColorMap, StepTypeAliasMap } from "@/lib/colors";
-import { createSocket } from "@/lib/compute-graph";
+import { createSocket, isRequiredInputStep } from "@/lib/compute-graph";
+import { StepNodeColorMap, StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 import { PyRunSocketSlots } from "./py-run-socket-slots";
-
-const STEP_TYPE_ICONS: Record<StepType, IconName> = {
-  PY_RUN_FUNCTION_STEP: "play",
-  OBJECT_ACCESS_STEP: "circle-dot",
-  OUTPUT_STEP: "eye",
-  INPUT_STEP: "text-cursor-input",
-  STRING_MATCH_STEP: "equal",
-  LOOP_STEP: "infinity",
-  IF_ELSE_STEP: "split",
-};
 
 const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean; deleteStep: () => void }) => {
   return (
@@ -37,7 +27,7 @@ const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean;
       style={{ borderColor: StepNodeColorMap[type] }}
     >
       <div className="flex items-center gap-2">
-        <DynamicIcon size={20} name={STEP_TYPE_ICONS[type]} color={StepNodeColorMap[type]} />
+        <DynamicIcon size={20} name={StepTypeIconMap[type]} color={StepNodeColorMap[type]} />
         <span className="text-sm font-medium capitalize">{StepTypeAliasMap[type]}</span>
       </div>
       {edit && (
@@ -103,7 +93,7 @@ export function StepNode({ data }: { data: Step }) {
   const inDataSockets = filterSocketsByType(inSockets, "DATA");
   const outDataSockets = filterSocketsByType(outSockets, "DATA");
 
-  const editable = inEditMode && ("is_user" in data ? !data.is_user : true);
+  const editable = inEditMode && !isRequiredInputStep(data);
 
   // `PyRunFunctionStep` is a special case where we don't allow the same level of socket editing
   // as the other steps. This is because the step has its own mechanism to determine the number of
@@ -164,7 +154,7 @@ export function StepNode({ data }: { data: Step }) {
 
   return (
     <div className="rounded-b-lg bg-[#141414]">
-      <NodeHeader type={data.type} edit={inEditMode} deleteStep={deleteStep} />
+      <NodeHeader type={data.type} edit={editable} deleteStep={deleteStep} />
       <div className="flex min-w-52 flex-col gap-2 rounded-b-lg border-x-2 border-b-2 py-3">
         <div className={cn("flex flex-col gap-2", { "flex-col-reverse": !socketsInMetadata })}>
           <div className="flex flex-row justify-between gap-8">

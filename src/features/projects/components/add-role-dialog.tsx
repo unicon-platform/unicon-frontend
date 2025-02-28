@@ -17,8 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-
-import { useAddRole } from "../queries";
+import { useAddRole } from "@/features/projects/queries";
 
 const roleFormSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),

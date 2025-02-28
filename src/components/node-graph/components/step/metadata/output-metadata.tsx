@@ -2,12 +2,12 @@ import { PlusIcon } from "lucide-react";
 import { useCallback, useContext } from "react";
 
 import { OutputSocket, OutputStep } from "@/api";
+import OutputTable from "@/components/node-graph/components/step/output-table/output-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GraphActionType, GraphDispatchContext, SocketDir } from "@/features/problems/components/tasks/graph-context";
 import { createSocket } from "@/lib/compute-graph";
 
-import OutputTable from "../output-table/output-table";
 import OutputMetadataRow from "./output-metadata-row";
 
 type OwnProps = {

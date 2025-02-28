@@ -19,8 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-
-import { useUpdateOrganisation } from "../queries";
+import { useUpdateOrganisation } from "@/features/organisations/queries";
 
 const organisationFormSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),

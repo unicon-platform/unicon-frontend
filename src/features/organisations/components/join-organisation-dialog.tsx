@@ -16,8 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-
-import { useJoinOrganisation } from "../queries";
+import { useJoinOrganisation } from "@/features/organisations/queries";
 
 type OwnProps = {
   open: boolean;

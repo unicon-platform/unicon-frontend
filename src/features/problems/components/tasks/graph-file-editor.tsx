@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile } from "@/api";
+import { isRequiredInputStep } from "@/lib/compute-graph";
 import { isUniconFile } from "@/lib/utils";
 
 import FileEditor from "./file-editor";
@@ -40,7 +41,7 @@ const GraphFileEditor = () => {
   if (!isUniconFile(selectedSocket.data)) return null;
 
   const file = selectedSocket.data;
-  const isUserInput = "is_user" in selectedStep ? selectedStep.is_user : false;
+  const isUserInput = isRequiredInputStep(selectedStep);
 
   return (
     <FileEditor

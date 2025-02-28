@@ -7,9 +7,8 @@ import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAddFilesToProblem, useDeleteProblemFiles } from "@/features/problems/queries";
 import { formatDateShort } from "@/utils/date";
-
-import { useAddFilesToProblem, useDeleteProblemFiles } from "../queries";
 
 type OwnProps = {
   problemId: number;

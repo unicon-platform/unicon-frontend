@@ -6,8 +6,7 @@ import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-import { getProjectById, useUpdateRoles } from "../../queries";
+import { getProjectById, useUpdateRoles } from "@/features/projects/queries";
 
 type OwnProps = {
   projectId: number;

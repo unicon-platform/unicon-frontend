@@ -2,12 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId, useTaskId } from "@/features/projects/hooks/use-id";
-
-import EditMultipleChoice from "../../features/tasks/forms/edit-multiple-choice";
-import EditMultipleResponse from "../../features/tasks/forms/edit-multiple-response";
-import EditProgramming from "../../features/tasks/forms/edit-programming";
-import EditShortAnswer from "../../features/tasks/forms/edit-short-answer";
-import { NotFound, Unauthorized } from "../error";
+import EditMultipleChoice from "@/features/tasks/forms/edit-multiple-choice";
+import EditMultipleResponse from "@/features/tasks/forms/edit-multiple-response";
+import EditProgramming from "@/features/tasks/forms/edit-programming";
+import EditShortAnswer from "@/features/tasks/forms/edit-short-answer";
+import { NotFound, Unauthorized } from "@/pages/error";
 
 const EditTask = () => {
   const problemId = useProblemId();

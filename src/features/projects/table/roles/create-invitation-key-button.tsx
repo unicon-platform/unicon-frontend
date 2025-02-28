@@ -1,7 +1,6 @@
 import { RolePublicWithInvitationKeys } from "@/api";
 import { Button } from "@/components/ui/button";
-
-import { useCreateInvitationKey } from "../../queries";
+import { useCreateInvitationKey } from "@/features/projects/queries";
 
 type OwnProps = {
   role: RolePublicWithInvitationKeys;

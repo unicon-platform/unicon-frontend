@@ -7,10 +7,10 @@ import { Outlet, useLocation } from "react-router-dom";
 import AppSidebar from "@/components/layout/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getUserProfile } from "@/features/auth/queries";
 import { useUserStore } from "@/store/user/user-store-provider";
 
-import { TooltipProvider } from "../ui/tooltip";
 import Breadcrumb from "./breadcrumb";
 
 const Layout: React.FC<PropsWithChildren> = () => {
