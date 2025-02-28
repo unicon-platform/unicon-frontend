@@ -1,11 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNodeConnections, useNodesData } from "@xyflow/react";
-import { ParenthesesIcon, RefreshCcw, TriangleAlert } from "lucide-react";
+import {
+  CircleXIcon,
+  MessageCircleMoreIcon,
+  MessageCircleXIcon,
+  ParenthesesIcon,
+  RefreshCcw,
+  TriangleAlert,
+} from "lucide-react";
 import { useContext, useState } from "react";
 
 import { File as UniconFile, InputStep, PyRunFunctionStep } from "@/api";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
@@ -188,6 +197,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           checked={allowError}
           onCheckedChange={onAllowErrorChange}
         />
+        <InfoTooltip content="When enabled, errors from the function do not terminate the program and can be piped to other nodes (via the output labeled 'Error')." />
       </div>
       <div className="flex items-center gap-4">
         <label className="font-mono text-sm text-zinc-400">Capture Stdout:</label>
@@ -196,6 +206,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           checked={propagateStdout}
           onCheckedChange={onPropagateStdoutChange}
         />
+        <InfoTooltip content="When enabled, stdout (e.g. from using `print`) can be piped to other nodes." />
       </div>
       <div className="flex items-center gap-4">
         <label className="font-mono text-sm text-zinc-400">Capture Stderr:</label>
@@ -204,6 +215,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           checked={propagateStderr}
           onCheckedChange={onPropagateStderrChange}
         />
+        <InfoTooltip content="When enabled, stderr (e.g. from using `print(..., file=sys.stderr)`) can be piped to other nodes." />
       </div>
     </div>
   ) : (
@@ -216,6 +228,35 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             {(step as PyRunFunctionStep).function_identifier ?? "- (Run file)"}
           </span>
         </div>
+      </div>
+      <div className="my-4 flex flex-col items-start gap-2">
+        <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
+          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+            <CircleXIcon className="h-4 w-4" />
+            <span className="font-medium">On error</span>
+          </div>
+          <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
+            {(step as PyRunFunctionStep).allow_error ? "Captured" : "Terminate program"}
+          </div>
+        </Badge>
+        <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
+          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+            <MessageCircleMoreIcon className="h-4 w-4" />
+            <span className="font-medium">Stdout</span>
+          </div>
+          <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
+            {(step as PyRunFunctionStep).propagate_stdout ? "Captured" : "Ignored"}
+          </div>
+        </Badge>
+        <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
+          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+            <MessageCircleXIcon className="h-4 w-4" />
+            <span className="font-medium">Stderr</span>
+          </div>
+          <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
+            {(step as PyRunFunctionStep).propagate_stderr ? "Captured" : "Ignored"}
+          </div>
+        </Badge>
       </div>
     </div>
   );
