@@ -34,22 +34,24 @@ const Layout: React.FC<PropsWithChildren> = () => {
     <main className="flex h-screen w-screen flex-col overflow-y-auto bg-[#141414]">
       <DndProvider backend={HTML5Backend}>
         <TooltipProvider>
-          <Toaster />
-          <div className="flex max-h-screen w-full text-neutral-300">
-            {user && (
-              <SidebarProvider>
-                <AppSidebar pathname={pathname} />
-                <main className="w-full p-4">
-                  <div className="flex items-center gap-2">
-                    <SidebarTrigger />
-                    <Breadcrumb />
-                  </div>
-                  <Outlet />
-                </main>
-              </SidebarProvider>
-            )}
-            {!user && <Outlet />}
-          </div>
+          <SidebarProvider>
+            <Toaster />
+            <div className="flex max-h-screen w-full text-neutral-300">
+              {user && (
+                <>
+                  <AppSidebar pathname={pathname} />
+                  <main className="w-full p-4">
+                    <div className="flex items-center gap-2">
+                      <SidebarTrigger />
+                      <Breadcrumb />
+                    </div>
+                    <Outlet />
+                  </main>
+                </>
+              )}
+              {!user && <Outlet />}
+            </div>
+          </SidebarProvider>
         </TooltipProvider>
       </DndProvider>
     </main>
