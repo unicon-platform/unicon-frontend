@@ -21,7 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { getOrganisations } from "@/features/organisations/queries";
+import { getOrganisationById, getOrganisations } from "@/features/organisations/queries";
 import { getProjects } from "@/features/projects/queries";
 import { useUserStore } from "@/store/user/user-store-provider";
 
@@ -93,17 +93,20 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
   const { data: projects } = useQuery(getProjects());
   const { data: organisations } = useQuery(getOrganisations());
 
-  if (!user) {
-    return;
-  }
-
   const isProjectPath = pathname.match(/\/projects\/\d+.*/)?.length ?? 0 > 0;
   const currentProjectId = isProjectPath ? Number(pathname.split("/")[2]) : -1;
   const currentProject = projects?.find((project) => project.id == currentProjectId);
 
-  const isOrganisationPath = pathname.match(/\/organisations\/\d+.*/)?.length ?? 0 > 0;
+  const isOrganisationPath = (pathname.match(/\/organisations\/\d+.*/)?.length ?? 0) > 0;
   const currentOrganisationId = isOrganisationPath ? Number(pathname.split("/")[2]) : -1;
-  const currentOrganisation = organisations?.find((organisation) => organisation.id == currentOrganisationId);
+  const { data: currentOrganisation } = useQuery({
+    ...getOrganisationById(currentOrganisationId),
+    enabled: isOrganisationPath,
+  });
+
+  if (!user) {
+    return;
+  }
 
   const signout = async () => {
     await logout({ withCredentials: true });
