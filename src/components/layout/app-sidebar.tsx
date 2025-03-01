@@ -119,7 +119,11 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
           <SidebarMenu>
             {SIDEBAR_ITEMS.map(({ icon, label, path }) => (
               <SidebarMenuItem key={label}>
-                <SidebarMenuButton asChild isActive={pathname === path}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === path}
+                  className="hover:bg-white/5 hover:data-[active=true]:bg-white/5"
+                >
                   <Link to={path}>
                     {icon}
                     <span>{label}</span>
@@ -152,22 +156,28 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </SidebarMenuItem>
-              {PROJECT_SIDEBAR_ITEMS.map(({ icon, label, path, permission }) => {
-                const fullPath = `/projects/${currentProjectId}${path}`;
-                if (permission && !currentProject[permission]) {
-                  return;
-                }
-                return (
-                  <SidebarMenuItem key={path}>
-                    <SidebarMenuButton asChild isActive={pathname === fullPath}>
-                      <Link to={fullPath}>
-                        {icon}
-                        <span>{label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              <div className="mx-3.5 border-l px-2.5 group-data-[collapsible=icon]:mx-0 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:px-0">
+                {PROJECT_SIDEBAR_ITEMS.map(({ icon, label, path, permission }) => {
+                  const fullPath = `/projects/${currentProjectId}${path}`;
+                  if (permission && !currentProject[permission]) {
+                    return;
+                  }
+                  return (
+                    <SidebarMenuItem key={path}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === fullPath}
+                        className="hover:bg-white/5 hover:data-[active=true]:bg-white/5"
+                      >
+                        <Link to={fullPath}>
+                          {icon}
+                          <span>{label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </div>
             </SidebarMenu>
           </SidebarGroup>
         )}
@@ -192,22 +202,28 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </SidebarMenuItem>
-              {ORGANISATION_SIDEBAR_ITEMS.map(({ icon, label, path, permission }) => {
-                const fullPath = `/organisations/${currentOrganisationId}${path}`;
-                if (permission && !currentOrganisation[permission]) {
-                  return;
-                }
-                return (
-                  <SidebarMenuItem key={path}>
-                    <SidebarMenuButton asChild isActive={pathname === fullPath}>
-                      <Link to={fullPath}>
-                        {icon}
-                        <span>{label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              <div className="mx-3.5 border-l px-2.5 group-data-[collapsible=icon]:mx-0 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:px-0">
+                {ORGANISATION_SIDEBAR_ITEMS.map(({ icon, label, path, permission }) => {
+                  const fullPath = `/organisations/${currentOrganisationId}${path}`;
+                  if (permission && !currentOrganisation[permission]) {
+                    return;
+                  }
+                  return (
+                    <SidebarMenuItem key={path}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === fullPath}
+                        className="hover:bg-white/5 hover:data-[active=true]:bg-white/5"
+                      >
+                        <Link to={fullPath}>
+                          {icon}
+                          <span>{label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </div>
             </SidebarMenu>
           </SidebarGroup>
         )}
