@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
+import { uuid } from "@/lib/utils";
 
 type Handle = {
   crumb?: (match: UIMatch) => BreadcrumbPart;
@@ -23,22 +24,21 @@ export type BreadcrumbPart = {
 const Breadcrumb = () => {
   const matches = useMatches() as unknown as UIMatch<unknown, Handle>[];
   const matchesWithBreadcrumbs = matches.filter((match) => !!match.handle?.crumb);
+  const parts = matchesWithBreadcrumbs
+    .flatMap((match: UIMatch<unknown, Handle>) => match.handle.crumb?.(match))
+    .filter((part) => !!part);
   const pathname = useLocation().pathname;
+  console.log(parts);
   return (
     <>
       {matchesWithBreadcrumbs.length > 0 && <Separator orientation="vertical" className="mr-2 h-4" />}
       <ShadcnBreadcrumb>
         <BreadcrumbList>
-          {matchesWithBreadcrumbs.map((match: UIMatch<unknown, Handle>, index) => {
-            // Never happens, since filtered above.
-            if (!match.handle.crumb) {
-              return;
-            }
-            const part = match.handle.crumb(match);
+          {parts.map((part, index) => {
             return (
-              <React.Fragment key={match.id}>
+              <React.Fragment key={uuid()}>
                 {index !== 0 && <BreadcrumbSeparator />}
-                {index !== matchesWithBreadcrumbs.length - 1 && (
+                {index !== parts.length - 1 && (
                   <BreadcrumbItem>
                     {part.href && part.href !== pathname ? (
                       <BreadcrumbLink asChild>
@@ -49,7 +49,7 @@ const Breadcrumb = () => {
                     )}
                   </BreadcrumbItem>
                 )}
-                {index === matchesWithBreadcrumbs.length - 1 && (
+                {index === parts.length - 1 && (
                   <BreadcrumbItem>
                     <BreadcrumbPage>{part.label}</BreadcrumbPage>
                   </BreadcrumbItem>

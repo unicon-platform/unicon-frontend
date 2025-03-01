@@ -99,9 +99,6 @@ export const routes = [
                 },
               },
             ],
-            // handle: {
-            //   crumb: () => ({ label: "Organisations", href: "/organisations" }),
-            // },
           },
           {
             path: "projects",
@@ -183,7 +180,7 @@ export const routes = [
                         element: <SubmissionResults />,
                         handle: {
                           crumb: (match: UIMatch) => ({
-                            label: match.params.id,
+                            label: match.params.submissionId,
                           }),
                         },
                       },
@@ -194,10 +191,13 @@ export const routes = [
                     loader: problemLoader,
                     handle: {
                       crumb: (match: UIMatch<ProblemType>) => {
-                        return {
-                          label: match.data.name,
-                          href: `/projects/${match.params.projectId}/problems/${match.params.problemId}`,
-                        };
+                        return [
+                          { label: "Problems", href: `/projects/${match.params.projectId}` },
+                          {
+                            label: match.data.name,
+                            href: `/projects/${match.params.projectId}/problems/${match.params.problemId}`,
+                          },
+                        ];
                       },
                     },
                     children: [
@@ -207,7 +207,6 @@ export const routes = [
                           { index: true, element: <Problem /> },
                           {
                             path: "edit",
-
                             handle: {
                               crumb: (match: UIMatch) => ({
                                 label: "Edit",
