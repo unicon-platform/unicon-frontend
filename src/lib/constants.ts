@@ -17,7 +17,7 @@ export const StepNodeColorMap: ReadOnlyMap<StepType, string> = {
 export const StepTypeAliasMap: ReadOnlyMap<StepType, string> = {
   INPUT_STEP: "Input",
   OUTPUT_STEP: "Output",
-  PY_RUN_FUNCTION_STEP: "Run Python Function",
+  PY_RUN_FUNCTION_STEP: "Run Python Code",
   OBJECT_ACCESS_STEP: "Access Object",
   STRING_MATCH_STEP: "String Match",
   LOOP_STEP: "Loop",

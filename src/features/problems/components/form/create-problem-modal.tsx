@@ -52,6 +52,9 @@ const problemFormDefault = {
   name: "",
   description: "",
   restricted: false,
+  started_at: null,
+  ended_at: null,
+  closed_at: null,
 };
 
 const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {

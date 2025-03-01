@@ -48,18 +48,16 @@ const TestcaseResult: React.FC<OwnProps> = ({ result, index, testcase, hideDetai
       </div>
       {!hideDetails && (
         <Accordion type="multiple" className="mt-2" defaultValue={[`result-${index}`]}>
-          {/* TODO: hide stdout/stderr for unpriviledged users */}
-
           <AccordionItem value={`stderr-${index}`}>
             <AccordionTrigger>stderr</AccordionTrigger>
             <AccordionContent>
-              <pre>{result.stderr}</pre>
+              <pre className="text-wrap">{result.stderr}</pre>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value={`stdout-${index}`}>
             <AccordionTrigger>stdout</AccordionTrigger>
             <AccordionContent>
-              <pre>{result.stdout}</pre>
+              <pre className="text-wrap">{result.stdout}</pre>
             </AccordionContent>
           </AccordionItem>
 

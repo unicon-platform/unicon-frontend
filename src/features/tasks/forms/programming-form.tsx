@@ -77,6 +77,8 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
     defaultValues: initialValue ?? DEFAULT_FORM_VALUES,
   });
 
+  // console.log(form.formState.errors);
+  console.log(form.getValues("required_user_inputs"));
   const userInputs = useFieldArray({
     control: form.control,
     name: "required_user_inputs",

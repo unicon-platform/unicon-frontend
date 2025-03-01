@@ -42,6 +42,7 @@ const RerunDialog: React.FC<OwnProps> = ({ isSafe, onClose, onSaveWithRerun, onS
             )}
             {!isSafe && (
               <>
+                {/* TODO: change this to alertdialogaction */}
                 <Button variant="destructive" onClick={onSaveWithRerun}>
                   Save and rerun
                 </Button>

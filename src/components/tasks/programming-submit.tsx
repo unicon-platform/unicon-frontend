@@ -118,6 +118,7 @@ export function ProgrammingSubmitForm({
             </Select>
             {selectedAttempt && selectedAttempt.task_results.length > 0 && (
               <Select
+                key={selectedAttempt.id}
                 value={selectedResultIdx?.toString() ?? ""}
                 onValueChange={(value) => setSelectedResultIdx(+value)}
                 disabled={!selectedAttempt.task_results?.length}

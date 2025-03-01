@@ -11,7 +11,7 @@ import {
 } from "@/api";
 import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket, isRequiredInputStep } from "@/lib/compute-graph";
+import { createSocket, isRequiredInputStep, isResultSocket } from "@/lib/compute-graph";
 
 export type GraphState = {
   id: string;
@@ -141,9 +141,13 @@ interface UpdatePyRunFunctionStepAction extends BaseGraphAction {
   type: GraphActionType.UpdatePyRunFunctionStep;
   payload: {
     stepId: string;
-    functionIdentifier: string;
+    functionIdentifier: string | null;
     functionSignature?: ParsedFunction;
+    propagateStdout: boolean;
+    propagateStderr: boolean;
     allowError: boolean;
+    // UUIDs are currently generate when dispatching the action to synchronise with
+    // the testcase that is also replaying actions to track the graph changes.
     uuids: string[];
   };
 }
@@ -203,6 +207,8 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
   const functionIdentifierChanged = step.function_identifier !== payload.functionIdentifier;
   const functionSignatureChanged = payload.functionSignature !== undefined;
   const allowErrorChanged = step.allow_error !== payload.allowError;
+  const propagateStdoutChanged = step.propagate_stdout !== payload.propagateStdout;
+  const propagateStderrChanged = step.propagate_stderr !== payload.propagateStderr;
 
   if (functionIdentifierChanged) {
     // 1. Update the identifier.
@@ -212,6 +218,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     };
   }
 
+  // This if statement has all logic regarding the INPUTS of the py-run-function-step
   if (functionSignatureChanged && payload.functionSignature) {
     // If args/kwargs have changed, we need to:
     //   1. Replace the input sockets with arguments of the new function signature.
@@ -264,6 +271,28 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     }
   }
 
+  const pushOutputSocket = (label: string, properties: Partial<PyRunFunctionSocket>) => {
+    (state.steps[stepIndex] as PyRunFunctionStep).outputs.push({
+      ...createSocket("DATA", label),
+      id: getUuid(),
+      ...properties,
+    });
+  };
+
+  const removeOutputSocket = (property: "handles_error" | "handles_stderr" | "handles_stdout" | "result") => {
+    const outputSocketId =
+      property === "result"
+        ? step.outputs.find(isResultSocket)?.id
+        : step.outputs.find((socket) => socket[property])?.id;
+    if (!outputSocketId) {
+      return;
+    }
+    state.steps[stepIndex].outputs = step.outputs.filter((socket) => socket.id !== outputSocketId);
+    state.edges = state.edges.filter(
+      (edge) => edge.from_node_id !== payload.stepId || edge.from_socket_id !== outputSocketId,
+    );
+  };
+
   if (allowErrorChanged) {
     // If allow error is changed to true, add a new output socket.
     // If allow error is changed to false, remove the output socket and outgoing edges.
@@ -272,19 +301,68 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
       allow_error: payload.allowError,
     };
     if (payload.allowError) {
-      (state.steps[stepIndex] as PyRunFunctionStep).outputs.push({
-        ...createSocket("DATA", "Error"),
-        id: getUuid(),
-        handles_error: true,
-      });
+      pushOutputSocket("Error", { handles_error: true });
     } else {
-      const errorSocketId = step.outputs.find((socket) => socket.handles_error)?.id;
-      state.steps[stepIndex].outputs = step.outputs.filter((socket) => !socket.handles_error);
-      state.edges = state.edges.filter(
-        (edge) => edge.from_node_id !== payload.stepId || edge.from_socket_id !== errorSocketId,
-      );
+      removeOutputSocket("handles_error");
     }
   }
+
+  if (propagateStdoutChanged) {
+    // If propagate stdout is changed to true, add a new output socket.
+    // If propagate stdout is changed to false, remove the output socket and outgoing edges.
+    state.steps[stepIndex] = {
+      ...state.steps[stepIndex],
+      propagate_stdout: payload.propagateStdout,
+    };
+    if (payload.propagateStdout) {
+      pushOutputSocket("Stdout", { handles_stdout: true });
+    } else {
+      removeOutputSocket("handles_stdout");
+    }
+  }
+
+  if (propagateStderrChanged) {
+    // If propagate stderr is changed to true, add a new output socket.
+    // If propagate stderr is changed to false, remove the output socket and outgoing edges.
+    state.steps[stepIndex] = {
+      ...state.steps[stepIndex],
+      propagate_stderr: payload.propagateStderr,
+    };
+    if (payload.propagateStderr) {
+      pushOutputSocket("Stderr", { handles_stderr: true });
+    } else {
+      removeOutputSocket("handles_stderr");
+    }
+  }
+
+  if (payload.functionIdentifier === null) {
+    // If there is a result socket, remove it.
+    removeOutputSocket("result");
+  } else {
+    // If there is no result socket, add one.
+    if (!step.outputs.find((socket) => isResultSocket(socket))) {
+      pushOutputSocket("Result", {});
+    }
+  }
+
+  // Order of sockets: control, result, stdout?, stderr?, error?
+  (state.steps[stepIndex] as PyRunFunctionStep).outputs?.sort((a, b) => {
+    if (a.type === "CONTROL") return -1;
+    if (b.type === "CONTROL") return 1;
+    // Result socket
+    if (isResultSocket(a)) return -1;
+    if (isResultSocket(b)) return 1;
+    // Stdout socket
+    if (a.handles_stdout) return -1;
+    if (b.handles_stdout) return 1;
+    // Stderr socket
+    if (a.handles_stderr) return -1;
+    if (b.handles_stderr) return 1;
+    // Error socket
+    if (a.handles_error) return -1;
+    if (b.handles_error) return 1;
+    return 0;
+  });
 
   return state;
 };
