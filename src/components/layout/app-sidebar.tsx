@@ -4,7 +4,7 @@ import { AiFillSecurityScan } from "react-icons/ai";
 import { GoPeople, GoProject, GoProjectSymlink } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
-import { logout, ProjectPublicWithProblems } from "@/api";
+import { logout, OrganisationPublicWithProjects, ProjectPublicWithProblems } from "@/api";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +30,14 @@ const SIDEBAR_ITEMS = [
   { path: "/projects", icon: <GoProject />, label: "Projects" },
 ];
 
-type SidebarItem = {
+type SidebarItem<Permission> = {
   path: string;
   icon: JSX.Element;
   label: string;
-  permission?: keyof Omit<ProjectPublicWithProblems, "problems">;
+  permission?: Permission;
 };
 
-const ORGANISATION_SIDEBAR_ITEMS: SidebarItem[] = [
+const ORGANISATION_SIDEBAR_ITEMS: SidebarItem<keyof Omit<OrganisationPublicWithProjects, "projects">>[] = [
   {
     path: "",
     icon: <GoProject />,
@@ -47,10 +47,11 @@ const ORGANISATION_SIDEBAR_ITEMS: SidebarItem[] = [
     path: "/users",
     icon: <GoPeople />,
     label: "Users",
+    permission: "edit_roles",
   },
 ];
 
-const PROJECT_SIDEBAR_ITEMS: SidebarItem[] = [
+const PROJECT_SIDEBAR_ITEMS: SidebarItem<keyof Omit<ProjectPublicWithProblems, "problems">>[] = [
   {
     path: "",
     icon: <FileQuestion />,
@@ -136,14 +137,16 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuButton>
                       {<GoProjectSymlink />}
-                      {currentProject.name}
+                      {currentProject.organisation.name} / {currentProject.name}
                       <ChevronDown className="ml-auto" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
                     {projects?.map((project) => (
                       <DropdownMenuItem asChild key={project.id}>
-                        <Link to={`/projects/${project.id}`}>{project.name}</Link>
+                        <Link to={`/projects/${project.id}`}>
+                          {project.organisation.name} / {project.name}
+                        </Link>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -189,11 +192,11 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </SidebarMenuItem>
-              {ORGANISATION_SIDEBAR_ITEMS.map(({ icon, label, path }) => {
+              {ORGANISATION_SIDEBAR_ITEMS.map(({ icon, label, path, permission }) => {
                 const fullPath = `/organisations/${currentOrganisationId}${path}`;
-                // if (permission && !currentOrganisation[permission]) {
-                //   return;
-                // }
+                if (permission && !currentOrganisation[permission]) {
+                  return;
+                }
                 return (
                   <SidebarMenuItem key={path}>
                     <SidebarMenuButton asChild isActive={pathname === fullPath}>

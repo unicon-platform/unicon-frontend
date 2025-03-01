@@ -256,24 +256,31 @@ export type OrganisationPublic = {
     name: string;
     description: string;
     id: number;
+    edit: boolean;
+    edit_roles: boolean;
+    delete: boolean;
 };
 
 export type OrganisationPublicWithMembers = {
     name: string;
     description: string;
     id: number;
+    edit: boolean;
+    edit_roles: boolean;
+    delete: boolean;
     owner: UserPublic;
     members: Array<OrganisationMemberPublic>;
     invitation_keys: Array<OrganisationInvitationKeyPublic> | null;
-    edit_roles: boolean;
 };
 
 export type OrganisationPublicWithProjects = {
     name: string;
     description: string;
     id: number;
-    projects: Array<ProjectPublic>;
+    edit: boolean;
+    edit_roles: boolean;
     delete: boolean;
+    projects: Array<ProjectPublic>;
 };
 
 export type OrganisationRole = 'admin' | 'observer';

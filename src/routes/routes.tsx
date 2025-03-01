@@ -108,10 +108,16 @@ export const routes = [
                 path: ":projectId",
                 handle: {
                   crumb: (match: UIMatch<ProjectPublicWithProblems>) => {
-                    return {
-                      label: match.data.name,
-                      href: "/projects/" + match.data.id,
-                    };
+                    return [
+                      {
+                        label: match.data.organisation.name,
+                        href: "/organisations/" + match.data.organisation.id,
+                      },
+                      {
+                        label: match.data.name,
+                        href: "/projects/" + match.data.id,
+                      },
+                    ];
                   },
                 },
                 loader: projectLoader,
