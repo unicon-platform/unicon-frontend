@@ -145,6 +145,11 @@ export type MiniGroupPublic = {
     name: string;
 };
 
+export type MiniOrganisationPublic = {
+    id: number;
+    name: string;
+};
+
 export type MiniProblemPublic = {
     id: number;
     name: string;
@@ -432,6 +437,7 @@ export type ProjectPublic = {
     create_groups: boolean;
     edit_groups: boolean;
     delete_groups: boolean;
+    organisation: MiniOrganisationPublic;
 };
 
 export type ProjectPublicWithProblems = {
@@ -449,6 +455,7 @@ export type ProjectPublicWithProblems = {
     create_groups: boolean;
     edit_groups: boolean;
     delete_groups: boolean;
+    organisation: MiniOrganisationPublic;
     problems: Array<ProblemBaseWithPermissions>;
 };
 
