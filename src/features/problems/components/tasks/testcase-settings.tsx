@@ -77,21 +77,23 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
               onCheckedChange={() => setIsPrivate((isPrivate) => !isPrivate)}
             />
           </div>
-          <div className="mt-2">
-            <h3 className="text-sm font-[450] text-zinc-400">Visibility</h3>
-            <div className="mt-2 flex flex-col gap-1">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <p>Node graph</p>
-                  <InfoTooltip content="Show the node graph to users. You are advised to uncheck this if you have files that are private (e.g. solution files.)" />
+          {!isPrivate && (
+            <div className="mt-2">
+              <h3 className="text-sm font-[450] text-zinc-400">Visibility</h3>
+              <div className="mt-2 flex flex-col gap-1">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <p>Node graph</p>
+                    <InfoTooltip content="Show the node graph to users. You are advised to uncheck this if you have files that are private (e.g. solution files.)" />
+                  </div>
+                  <Switch
+                    checked={showNodeGraph}
+                    onCheckedChange={() => setShowNodeGraph((showNodeGraph) => !showNodeGraph)}
+                  />
                 </div>
-                <Switch
-                  checked={showNodeGraph}
-                  onCheckedChange={() => setShowNodeGraph((showNodeGraph) => !showNodeGraph)}
-                />
               </div>
             </div>
-          </div>
+          )}
         </div>
         <DialogFooter className="flex sm:justify-between">
           <DialogClose asChild>
