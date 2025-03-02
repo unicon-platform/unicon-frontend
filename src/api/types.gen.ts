@@ -715,6 +715,7 @@ export type Testcase = {
     order_index: number;
     is_private?: boolean;
     name?: string;
+    show_node_graph?: boolean;
 };
 
 export type TestcaseResult = {
