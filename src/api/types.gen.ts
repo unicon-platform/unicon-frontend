@@ -145,6 +145,11 @@ export type MiniGroupPublic = {
     name: string;
 };
 
+export type MiniOrganisationPublic = {
+    id: number;
+    name: string;
+};
+
 export type MiniProblemPublic = {
     id: number;
     name: string;
@@ -251,24 +256,31 @@ export type OrganisationPublic = {
     name: string;
     description: string;
     id: number;
+    edit: boolean;
+    edit_roles: boolean;
+    delete: boolean;
 };
 
 export type OrganisationPublicWithMembers = {
     name: string;
     description: string;
     id: number;
+    edit: boolean;
+    edit_roles: boolean;
+    delete: boolean;
     owner: UserPublic;
     members: Array<OrganisationMemberPublic>;
     invitation_keys: Array<OrganisationInvitationKeyPublic> | null;
-    edit_roles: boolean;
 };
 
 export type OrganisationPublicWithProjects = {
     name: string;
     description: string;
     id: number;
-    projects: Array<ProjectPublic>;
+    edit: boolean;
+    edit_roles: boolean;
     delete: boolean;
+    projects: Array<ProjectPublic>;
 };
 
 export type OrganisationRole = 'admin' | 'observer';
@@ -432,6 +444,7 @@ export type ProjectPublic = {
     create_groups: boolean;
     edit_groups: boolean;
     delete_groups: boolean;
+    organisation: MiniOrganisationPublic;
 };
 
 export type ProjectPublicWithProblems = {
@@ -449,6 +462,7 @@ export type ProjectPublicWithProblems = {
     create_groups: boolean;
     edit_groups: boolean;
     delete_groups: boolean;
+    organisation: MiniOrganisationPublic;
     problems: Array<ProblemBaseWithPermissions>;
 };
 

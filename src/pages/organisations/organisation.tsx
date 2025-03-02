@@ -32,11 +32,13 @@ const Organisation = () => {
           <p className="text-gray-500">{organisation.description}</p>
         </div>
         <div className="flex items-start gap-2">
-          <EditOrganisationDialog organisation={organisation}>
-            <Button variant="ghost" className="hover:text-purple-300">
-              <Edit /> Edit details
-            </Button>
-          </EditOrganisationDialog>
+          {organisation.edit && (
+            <EditOrganisationDialog organisation={organisation}>
+              <Button variant="ghost" className="hover:text-purple-300">
+                <Edit /> Edit details
+              </Button>
+            </EditOrganisationDialog>
+          )}
           {organisation.delete && (
             <ConfirmationDialog
               onConfirm={() => {
@@ -58,9 +60,11 @@ const Organisation = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Projects</h2>
         <Link to={`/organisations/${id}/projects/new`} className="flex gap-1">
-          <Button variant="ghost" className="hover:text-purple-300">
-            <Plus /> New Project
-          </Button>
+          {organisation.edit && (
+            <Button variant="ghost" className="hover:text-purple-300">
+              <Plus /> New Project
+            </Button>
+          )}
         </Link>
       </div>
       <div className="flex flex-col gap-4">
