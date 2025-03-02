@@ -33,7 +33,7 @@ import getLayoutedElements from "@/utils/graph";
 import AddNodeButton from "./add-node-button";
 import { GraphActionType, GraphContext, GraphDispatchContext } from "./graph-context";
 import GraphFileEditor from "./graph-file-editor";
-import TestcaseSettings from "./testcase-settings";
+import TestcaseSettings, { TestcaseSettingsType } from "./testcase-settings";
 import { Step } from "./types";
 
 type RfInstance = ReactFlowInstance<Node<Step>, Edge>;
@@ -43,9 +43,9 @@ type GraphEditorProps = {
   className?: string;
 
   // For testcase settings menu
-  settings?: { name?: string; isPrivate?: boolean };
+  settings?: TestcaseSettingsType;
   onDelete?: () => void;
-  onSettingsChange?: (change: { name?: string; isPrivate?: boolean }) => void;
+  onSettingsChange?: (change: TestcaseSettingsType) => void;
   onDuplicateTestcase?: () => void;
 };
 

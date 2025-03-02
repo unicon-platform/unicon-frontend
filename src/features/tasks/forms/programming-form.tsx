@@ -17,6 +17,7 @@ import { Form, FormLabel } from "@/components/ui/form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { GraphAction, graphReducer } from "@/features/problems/components/tasks/graph-context";
+import { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import { getSupportedPythonVersions } from "@/features/problems/queries";
 import { DEFAULT_PY_VERSION, ProgTaskFormT, ProgTaskFormZ } from "@/lib/schema/prog-task-form";
@@ -218,9 +219,12 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
     });
   };
 
-  const updateTestcaseSettings = (index: number) => (change: { name?: string; isPrivate?: boolean }) => {
+  const updateTestcaseSettings = (index: number) => (change: TestcaseSettingsType) => {
     const testcase = form.getValues("testcases")[index];
-    const newTestcase = { ...testcase, ...{ name: change.name, is_private: change.isPrivate } };
+    const newTestcase = {
+      ...testcase,
+      ...{ name: change.name, is_private: change.isPrivate, show_node_graph: change.showNodeGraph },
+    };
 
     testcases.update(index, newTestcase);
   };

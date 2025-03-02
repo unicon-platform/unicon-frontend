@@ -8,6 +8,7 @@ import { File as UniconFile, GraphEdgeStr as GraphEdge, InputStep } from "@/api"
 
 import { GraphAction, GraphActionType, GraphContext, GraphDispatchContext, graphReducer } from "./graph-context";
 import GraphEditor from "./graph-editor";
+import { TestcaseSettingsType } from "./testcase-settings";
 import { Step } from "./types";
 
 type NodeGraphProps = {
@@ -20,9 +21,9 @@ type NodeGraphProps = {
   taskFiles: UniconFile[];
 
   // For testcase settings menu
-  settings?: { name?: string; isPrivate?: boolean };
+  settings?: TestcaseSettingsType;
   onDelete?: () => void;
-  onSettingsChange?: (change: { name?: string; isPrivate?: boolean }) => void;
+  onSettingsChange?: (change: TestcaseSettingsType) => void;
   onDuplicateTestcase?: () => void;
 };
 

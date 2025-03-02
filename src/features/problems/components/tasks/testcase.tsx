@@ -4,6 +4,7 @@ import { File as UniconFile, InputStep, Testcase as TestcaseApi } from "@/api";
 import NodeGraph from "@/features/problems/components/tasks/node-graph";
 
 import { GraphAction } from "./graph-context";
+import { TestcaseSettingsType } from "./testcase-settings";
 
 type TestcaseProps = {
   index: number;
@@ -17,7 +18,7 @@ type TestcaseProps = {
   sharedUserInput?: InputStep;
   onDelete?: (index: number) => () => void;
   // For testcase settings metadata (e.g. name, private)
-  onSettingsChange?: (change: { name?: string; isPrivate?: boolean }) => void;
+  onSettingsChange?: (change: TestcaseSettingsType) => void;
   onDuplicateTestcase?: () => void;
 };
 
@@ -32,7 +33,7 @@ const Testcase: React.FC<TestcaseProps> = ({
   onSettingsChange,
   onDuplicateTestcase,
 }) => {
-  const settings = { name: testcase.name, isPrivate: testcase.is_private };
+  const settings = { name: testcase.name, isPrivate: testcase.is_private, showNodeGraph: testcase.show_node_graph };
 
   return (
     <NodeGraph

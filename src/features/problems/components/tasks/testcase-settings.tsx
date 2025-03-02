@@ -14,18 +14,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
+export type TestcaseSettingsType = {
+  name?: string;
+  isPrivate?: boolean;
+  showNodeGraph?: boolean;
+};
 
 type OwnProps = {
-  settings: { name?: string; isPrivate?: boolean };
+  settings: TestcaseSettingsType;
   onDelete: () => void;
-  onSettingsChange: (change: { name?: string; isPrivate?: boolean }) => void;
+  onSettingsChange: (change: TestcaseSettingsType) => void;
 };
 
 const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsChange }) => {
   const [name, setName] = useState(settings.name ?? "");
   const [isPrivate, setIsPrivate] = useState(!!settings.isPrivate);
+  const [showNodeGraph, setShowNodeGraph] = useState(!!settings.showNodeGraph);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -39,6 +48,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
         onCloseAutoFocus={() => {
           setName(settings.name ?? "");
           setIsPrivate(!!settings.isPrivate);
+          setShowNodeGraph(!!settings.showNodeGraph);
         }}
       >
         <DialogHeader>
@@ -46,10 +56,9 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
           <DialogDescription />
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <h3 className="text-sm font-[450] text-zinc-400">Main</h3>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
+            <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               value={name}
@@ -61,14 +70,27 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Private?
-            </Label>
+            <Label htmlFor="username">Private?</Label>
             <Checkbox
               id="private"
               checked={isPrivate}
               onCheckedChange={() => setIsPrivate((isPrivate) => !isPrivate)}
             />
+          </div>
+          <div className="mt-2">
+            <h3 className="text-sm font-[450] text-zinc-400">Visibility</h3>
+            <div className="mt-2 flex flex-col gap-1">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <p>Node graph</p>
+                  <InfoTooltip content="Show the node graph to users. You are advised to uncheck this if you have files that are private (e.g. solution files.)" />
+                </div>
+                <Switch
+                  checked={showNodeGraph}
+                  onCheckedChange={() => setShowNodeGraph((showNodeGraph) => !showNodeGraph)}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <DialogFooter className="flex sm:justify-between">
@@ -84,6 +106,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
                 onSettingsChange({
                   name,
                   isPrivate,
+                  showNodeGraph,
                 })
               }
             >
