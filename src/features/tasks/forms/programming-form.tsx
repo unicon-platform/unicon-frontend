@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
-import { PlusIcon, Trash, UploadIcon } from "lucide-react";
+import { EyeIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
@@ -359,16 +359,17 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                 Add input
               </Button>
               {userInputs.fields.map((input, index) => (
-                <Collapsible className="w-full" key={input.id}>
+                <Collapsible className="flex w-full flex-col gap-4" key={input.id}>
                   <div className="flex items-center gap-4" key={input.id}>
                     <SocketLabelInput
-                      className={["min-w-[160px]", "py-2"]}
+                      className={["min-w-[160px]", "py-2", "text-sm"]}
                       value={input.label}
                       onChange={(newLabel) => updateUserInput(index, { newLabel })}
                       canEdit={true}
                     />
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">
+                        <EyeIcon size={15} />
                         View/Edit
                       </Button>
                     </CollapsibleTrigger>
