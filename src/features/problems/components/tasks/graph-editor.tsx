@@ -108,9 +108,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   // Fit graph to viewport after layout is applied
   // This will only be done once after layout is applied and not on every update graph state (e.g. node/edge changes)
   useEffect(() => {
-    if (layoutApplied && rfInstance) {
-      rfInstance.fitView();
-    }
+    if (layoutApplied && rfInstance) rfInstance.fitView();
   }, [layoutApplied, rfInstance]);
 
   // Update ReactFlow internal states when graph state changes
@@ -249,7 +247,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   // Fit view to selected step when it changes
   useEffect(() => {
     if (!rfInstance || !selectedStep) return;
-    rfInstance.fitView({ nodes: [{ id: selectedStep.id }], duration: 1000, maxZoom: 0.8 });
+    rfInstance.fitView({ nodes: [{ id: selectedStep.id }], duration: 1000, maxZoom: 1.0 });
   }, [selectedStep]);
 
   const treeFiles = files.map((file) => ({
@@ -284,13 +282,13 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
         )}
         {showFileEditor && (
           <>
-            <ResizablePanel defaultSize={2} order={0}>
+            <ResizablePanel order={0}>
               <GraphFileEditor />
             </ResizablePanel>
             <ResizableHandle withHandle />
           </>
         )}
-        <ResizablePanel defaultSize={3} order={1}>
+        <ResizablePanel defaultSize={70} order={1}>
           <ReactFlow
             id={graphId}
             onInit={onInit}
