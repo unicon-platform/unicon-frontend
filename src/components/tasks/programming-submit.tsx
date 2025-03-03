@@ -1,7 +1,7 @@
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { File as UniconFile, ProgrammingTask, TaskAttemptResult } from "@/api";
@@ -22,7 +22,7 @@ type AttemptResultsProps = {
   rerunAttempt?: (attemptId: number) => void;
 };
 
-const AttemptResults = ({ problemId, task, attempts, rerunAttempt }: AttemptResultsProps) => {
+const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attempts, rerunAttempt }) => {
   const [selectedResultIdx, setSelectedResultIdx] = useState<number | null>(null);
   const [selectedAttemptIdx, setSelectedAttemptIdx] = useState<number | null>(null);
 
@@ -121,7 +121,7 @@ type ProgrammingSubmitFormProps = {
   canSubmit: boolean;
 };
 
-export function ProgrammingSubmitForm({ problemId, task, canSubmit }: ProgrammingSubmitFormProps) {
+export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ problemId, task, canSubmit }) => {
   const { register, handleSubmit } = useForm();
 
   const { data: attempts, refetch: refetchAttempts } = useQuery({
@@ -143,10 +143,7 @@ export function ProgrammingSubmitForm({ problemId, task, canSubmit }: Programmin
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
   const submitForm: SubmitHandler<Record<string, FileList>> = (formData) => {
     Promise.all(
-      requiredInputs.map(async ({ id, name }) => {
-        const file = formData[id.replace(/\./g, "_")];
-        return { id, data: { name, content: await file[0].text() } };
-      }),
+      requiredInputs.map(async ({ id, name }) => ({ id, data: { name, content: await formData[id][0].text() } })),
     ).then((files) =>
       createAttemptMut.mutate({ task_id: task.id, value: files }, { onSuccess: () => refetchAttempts() }),
     );
@@ -161,7 +158,7 @@ export function ProgrammingSubmitForm({ problemId, task, canSubmit }: Programmin
             {requiredInputs.map(({ id, name }) => (
               <div key={id} className="mt-2 grid w-full max-w-sm items-center gap-2">
                 <Label className="text-md font-mono">{name}</Label>
-                <Input {...register(id.replace(/\./g, "_"), { required: true })} id={id} type="file" />
+                <Input {...register(id, { required: true })} id={id} type="file" />
               </div>
             ))}
             <Button className="mt-6" type="submit">
@@ -181,6 +178,6 @@ export function ProgrammingSubmitForm({ problemId, task, canSubmit }: Programmin
       </TaskSection>
     </div>
   );
-}
+};
 
 export default ProgrammingSubmitForm;

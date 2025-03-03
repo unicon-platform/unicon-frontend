@@ -48,11 +48,11 @@ const GraphFileEditor = () => {
       key={selectedStepId + file.path}
       fileName={file.path.split("/").pop()!}
       fileContent={file.content}
-      onUpdateFileName={updateFileName}
-      onUpdateFileContent={updateFileContent}
-      onDeselectFile={() => dispatch({ type: GraphActionType.DeselectSocket })}
-      editableName={edit && !isUserInput}
-      editableContent={edit && !isUserInput}
+      onFileNameChange={updateFileName}
+      onFileContentChange={updateFileContent}
+      onFileClosed={() => dispatch({ type: GraphActionType.DeselectSocket })}
+      canEditFileName={edit && !isUserInput}
+      canEditFileContent={edit && !isUserInput}
     />
   );
 };

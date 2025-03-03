@@ -386,9 +386,8 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                       <FileEditor
                         fileName={input.label}
                         fileContent={(input.data as UniconFile).content}
-                        onUpdateFileContent={(newFileContent: string) => updateUserInput(index, { newFileContent })}
-                        editableContent={true}
-                        editableName={false}
+                        onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
+                        canEditFileContent
                       />
                     </div>
                   </CollapsibleContent>

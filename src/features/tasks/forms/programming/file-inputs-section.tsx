@@ -188,10 +188,9 @@ const FileInputSection = () => {
             key={selectedFile.id + selectedFile.path}
             fileName={selectedFile.path.split("/").pop()!}
             fileContent={selectedFile.content}
-            onUpdateFileContent={handleFileContentUpdate}
-            onDeselectFile={() => setSelectedFile(null)}
-            editableContent
-            editableName={false}
+            onFileContentChange={handleFileContentUpdate}
+            onFileClosed={() => setSelectedFile(null)}
+            canEditFileContent
           />
         )}
       </div>
