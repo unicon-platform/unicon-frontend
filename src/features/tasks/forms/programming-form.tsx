@@ -383,14 +383,13 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                     </ConfirmationDialog>
                   </div>
                   <CollapsibleContent>
-                    <div className="h-[30vh]">
-                      <FileEditor
-                        fileName={input.label}
-                        fileContent={(input.data as UniconFile).content}
-                        onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
-                        canEditFileContent
-                      />
-                    </div>
+                    <FileEditor
+                      className="h-[30vh]"
+                      fileName={input.label}
+                      fileContent={(input.data as UniconFile).content}
+                      onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
+                      canEditFileContent
+                    />
                   </CollapsibleContent>
                 </Collapsible>
               ))}

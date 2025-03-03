@@ -1,13 +1,12 @@
-import { Label } from "@radix-ui/react-dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcw } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-import { File as UniconFile, ProgrammingTask, TaskAttemptResult } from "@/api";
+import { File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { getTaskAttemptResults, useCreateTaskAttempt, useRerunTaskAttempt } from "@/features/problems/queries";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
@@ -122,8 +121,6 @@ type ProgrammingSubmitFormProps = {
 };
 
 export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ problemId, task, canSubmit }) => {
-  const { register, handleSubmit } = useForm();
-
   const { data: attempts, refetch: refetchAttempts } = useQuery({
     ...getTaskAttemptResults(problemId, task.id),
     refetchInterval: ({ state: { data } }) =>
@@ -133,36 +130,56 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
         : false,
   });
 
-  // NOTE: Assume that all required inputs are files
-  const requiredInputs: { id: string; name: string }[] = task.required_inputs
+  // Filter required inputs to only include file inputs
+  // NOTE: We assume that all required inputs needed for submission are files
+  const requiredFileInputs: (Omit<RequiredInput, "data"> & { data: UniconFile })[] = task.required_inputs
     .filter((input) => isUniconFile(input.data))
-    .map((input) => ({ id: input.id, name: (input.data as UniconFile).path }));
+    .map((input) => ({ ...input, data: input.data as UniconFile }));
+
+  const [fileContents, setFileContents] = useState<Record<string, string>>(
+    Object.fromEntries(requiredFileInputs.map(({ id, data }) => [id, (data as UniconFile).content])),
+  );
 
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
-
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
-  const submitForm: SubmitHandler<Record<string, FileList>> = (formData) => {
-    Promise.all(
-      requiredInputs.map(async ({ id, name }) => ({ id, data: { name, content: await formData[id][0].text() } })),
-    ).then((files) =>
-      createAttemptMut.mutate({ task_id: task.id, value: files }, { onSuccess: () => refetchAttempts() }),
-    );
-  };
+
+  const handleFileChange = useDebouncedCallback(
+    (fileId: string, newContent: string) => setFileContents((prev) => ({ ...prev, [fileId]: newContent })),
+    300,
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const submissionData = requiredFileInputs.map((reqInput) => ({
+        ...reqInput,
+        data: { ...reqInput.data, content: fileContents[reqInput.id] },
+      }));
+      createAttemptMut.mutate({ task_id: task.id, value: submissionData }, { onSuccess: () => refetchAttempts() });
+    },
+    [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts],
+  );
 
   return (
     <div className="flex flex-col gap-6">
       {canSubmit && (
         <TaskSection>
           <TaskSectionHeader content="Submission" />
-          <form onSubmit={handleSubmit(submitForm)}>
-            {requiredInputs.map(({ id, name }) => (
-              <div key={id} className="mt-2 grid w-full max-w-sm items-center gap-2">
-                <Label className="text-md font-mono">{name}</Label>
-                <Input {...register(id, { required: true })} id={id} type="file" />
-              </div>
-            ))}
-            <Button className="mt-6" type="submit">
-              Submit
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              {requiredFileInputs.map(({ id, data }) => (
+                <FileEditor
+                  key={id}
+                  className="h-[40vh]"
+                  fileName={data.path}
+                  fileContent={fileContents[id] || data.content}
+                  onFileContentChange={(newContent) => handleFileChange(id, newContent)}
+                  canEditFileContent={true}
+                />
+              ))}
+            </div>
+            <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending}>
+              {createAttemptMut.isPending ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </TaskSection>

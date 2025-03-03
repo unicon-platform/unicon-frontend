@@ -92,6 +92,7 @@ type FileEditorProps = {
   onFileClosed?: () => void;
   canEditFileName?: boolean;
   canEditFileContent?: boolean;
+  className?: string;
 };
 
 // Assumes debouncing is handled by the parent component onUpdateFileName and onUpdateFileContent
@@ -103,6 +104,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
   onFileClosed,
   canEditFileName = false,
   canEditFileContent = false,
+  className,
 }) => {
   const updateFileName = (newValue: string) => {
     if (onFileNameChange) onFileNameChange(newValue);
@@ -114,7 +116,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
   const fileExtension = fileName.split(".").pop() || "";
 
   return (
-    <div className="flex h-full grow flex-col">
+    <div className={cn("flex h-full grow flex-col", className)}>
       <div className="flex border-b border-[#333] bg-[#1e1e1e]">
         <FileTab
           fileName={fileName}
