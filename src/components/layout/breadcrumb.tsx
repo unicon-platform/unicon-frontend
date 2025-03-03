@@ -28,7 +28,6 @@ const Breadcrumb = () => {
     .flatMap((match: UIMatch<unknown, Handle>) => match.handle.crumb?.(match))
     .filter((part) => !!part);
   const pathname = useLocation().pathname;
-  console.log(parts);
   return (
     <>
       {matchesWithBreadcrumbs.length > 0 && <Separator orientation="vertical" className="mr-2 h-4" />}

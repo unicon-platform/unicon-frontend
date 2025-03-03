@@ -221,7 +221,6 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
       const sourceSocket = sourceStep?.outputs?.find((socket) => socket.id === sourceHandle);
       const targetSocket = targetStep?.inputs?.find((socket) => socket.id === targetHandle);
       // This should never happen but just in case
-      console.log({ sourceStep, targetStep, sourceSocket, targetSocket });
       if (!sourceStep || !targetStep || !sourceSocket || !targetSocket) return false;
 
       // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
