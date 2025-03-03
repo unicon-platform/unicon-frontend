@@ -1,12 +1,13 @@
 import { HandleType, useUpdateNodeInternals } from "@xyflow/react";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon, TrashIcon, UserRoundIcon } from "lucide-react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
-import { PyRunFunctionSocket, PyRunFunctionStep, StepSocket, StepType } from "@/api";
+import { InputStep, PyRunFunctionSocket, PyRunFunctionStep, StepSocket } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import StepMetadata from "@/components/node-graph/components/step/metadata/step-metadata";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   GraphActionType,
   GraphContext,
@@ -20,15 +21,26 @@ import { cn } from "@/lib/utils";
 
 import { PyRunSocketSlots } from "./py-run-socket-slots";
 
-const NodeHeader = ({ type, edit, deleteStep }: { type: StepType; edit: boolean; deleteStep: () => void }) => {
+const NodeHeader = ({ step, edit, deleteStep }: { step: Step; edit: boolean; deleteStep: () => void }) => {
+  const isUserInputNode = step.type === "INPUT_STEP" && ((step as InputStep).is_user ?? false);
   return (
     <div
       className="w-content flex items-center justify-between gap-10 rounded-t border-2 p-2"
-      style={{ borderColor: StepNodeColorMap[type] }}
+      style={{ borderColor: StepNodeColorMap[step.type] }}
     >
       <div className="flex items-center gap-2">
-        <DynamicIcon size={20} name={StepTypeIconMap[type]} color={StepNodeColorMap[type]} />
-        <span className="text-sm font-medium capitalize">{StepTypeAliasMap[type]}</span>
+        <DynamicIcon size={20} name={StepTypeIconMap[step.type]} color={StepNodeColorMap[step.type]} />
+        <span className="text-sm font-medium capitalize">{StepTypeAliasMap[step.type]}</span>
+        {isUserInputNode && (
+          <Tooltip>
+            <TooltipTrigger>
+              <UserRoundIcon size={15} className="text-muted-foreground" strokeWidth={3} />
+            </TooltipTrigger>
+            <TooltipContent className="text-xs" side="right">
+              Inputs required for submission
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
       {edit && (
         <Button className="h-fit w-fit bg-transparent px-2" variant="secondary" onClick={deleteStep} type="button">
@@ -154,10 +166,6 @@ export function StepNode({ data }: { data: Step }) {
     [data.id, dispatch],
   );
 
-  if (data.type === "INPUT_STEP") {
-    console.log(data.outputs);
-  }
-
   const deleteStep = useCallback(
     () => dispatch({ type: GraphActionType.DeleteStep, payload: { id: data.id } }),
     [data.id, dispatch],
@@ -165,7 +173,7 @@ export function StepNode({ data }: { data: Step }) {
 
   return (
     <div className="rounded-b-lg bg-[#141414]">
-      <NodeHeader type={data.type} edit={editable} deleteStep={deleteStep} />
+      <NodeHeader step={data} edit={editable} deleteStep={deleteStep} />
       <div className="flex min-w-52 flex-col gap-2 rounded-b-lg border-x-2 border-b-2 py-3">
         <div className={cn("flex flex-col gap-2", { "flex-col-reverse": !socketsInMetadata })}>
           <div className="flex flex-row justify-between gap-8">
