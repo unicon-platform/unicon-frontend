@@ -350,9 +350,36 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
             </div>
           </FormSection>
           <hr />
-          <FileInputSection />
+          <FormSection
+            title="Files"
+            description={
+              <p>
+                Files that are used in testcases
+                <br />
+                <br />
+                <ul className="list-disc">
+                  <li>
+                    You can access these files in the testcase graph editor by clicking on the "Show Files" button
+                  </li>
+                  <li className="mt-2">To use it in a testcase, simply drag and drop it into the graph editor</li>
+                </ul>
+              </p>
+            }
+          >
+            <FileInputSection />
+          </FormSection>
           <hr />
-          <FormSection title="User File Inputs">
+          <FormSection
+            title="Required User Inputs"
+            description={
+              <p>
+                Files that the user must provide for submission
+                <br />
+                <br />
+                You can choose to provide a template for each file using the "View/Edit" button
+              </p>
+            }
+          >
             <div className="flex flex-col items-start gap-4">
               <Button variant="secondary" type="button" onClick={addUserInput}>
                 <PlusIcon />

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { createFile } from "@/api";
-import FormSection from "@/components/form/form-section";
 import FileInputButton from "@/components/form/inputs/file-input-button";
 import { FileTree } from "@/components/ui/file-tree";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
@@ -170,7 +169,7 @@ const FileInputSection = () => {
   };
 
   return (
-    <FormSection title="Files">
+    <>
       <div className="flex gap-2">
         <FileInputButton multiple buttonText="Upload File" onFileChange={handleUploadFiles} />
         <FileInputButton buttonText="Upload Folder" webkitdirectory="true" onFileChange={handleUploadFiles} />
@@ -194,7 +193,7 @@ const FileInputSection = () => {
           />
         )}
       </div>
-    </FormSection>
+    </>
   );
 };
 
