@@ -4,9 +4,9 @@ import { File as UniconFile, InputStep, OutputStep, Testcase as TestcaseApi } fr
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
 
-import { getProblemById } from "../../queries";
 import { GraphAction } from "./graph-context";
 import Testcase from "./testcase";
 
