@@ -1,16 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { RefreshCcw } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { getTaskAttemptResults, useCreateTaskAttempt, useRerunTaskAttempt } from "@/features/problems/queries";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
+import { formatFileSize, isTextFile } from "@/lib/files";
 import { isUniconFile } from "@/lib/utils";
+import { formatDateShort } from "@/utils/date";
 
 import TaskResultCard from "./submission-results/task-result";
 
@@ -114,6 +117,97 @@ const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attemp
   );
 };
 
+type EditorProps = {
+  fileName: string;
+  defaultContent: string | File;
+  onFileContentChange: (newContent: string | File) => void;
+};
+
+const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContentChange }) => {
+  const [content, setContent] = useState<string | File>(defaultContent);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (isTextFile(file)) {
+      // If file is a text file, extract text content directly
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileContent = e.target?.result as string;
+        setContent(fileContent);
+        onFileContentChange(fileContent);
+      };
+      reader.readAsText(file);
+    } else {
+      setContent(file);
+      onFileContentChange(file);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <FileTextIcon size={20} />
+          <h3 className="font-medium">{fileName}</h3>
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipContent side="right" align="center">
+              <p>
+                Upload a file<br></br>
+                The file name do not need to be same, it will be renamed automatically
+              </p>
+            </TooltipContent>
+            <input type="file" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
+            <TooltipTrigger asChild type="button">
+              {/* Proxy click event to HTML input element above */}
+              <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <UploadIcon size={10} />
+              </Button>
+            </TooltipTrigger>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      {!(content instanceof File) ? (
+        <FileEditor
+          className="h-[40vh]"
+          fileName={fileName}
+          fileContent={content}
+          onFileContentChange={onFileContentChange}
+          canEditFileContent={true}
+        />
+      ) : (
+        <div className="w-fit rounded-md border p-6">
+          <div className="flex items-start gap-4">
+            <div className="rounded-md bg-primary/10 p-4">
+              <FileIcon className="h-7 w-7" />
+            </div>
+            <div className="flex-1">
+              <h3 className="mb-2 text-lg font-medium">{content.name}</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Size</p>
+                  <p className="text-sm">{formatFileSize(content.size)}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Type</p>
+                  <p className="text-sm">{content.type || "Unknown"}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Last Modified</p>
+                  <p className="text-sm">{formatDateShort(content.lastModified)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 type ProgrammingSubmitFormProps = {
   problemId: number;
   task: ProgrammingTask;
@@ -136,17 +230,19 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
     .filter((input) => isUniconFile(input.data))
     .map((input) => ({ ...input, data: input.data as UniconFile }));
 
-  const [fileContents, setFileContents] = useState<Record<string, string>>(
+  const [fileContents, setFileContents] = useState<Record<string, string | File>>(
     Object.fromEntries(requiredFileInputs.map(({ id, data }) => [id, (data as UniconFile).content])),
   );
 
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
 
-  const handleFileChange = useDebouncedCallback(
-    (fileId: string, newContent: string) => setFileContents((prev) => ({ ...prev, [fileId]: newContent })),
+  const debouncedSetFileContents = useDebouncedCallback(
+    (fileId: string, newContent: string | File) => setFileContents((prev) => ({ ...prev, [fileId]: newContent })),
     300,
   );
+  const handleFileChange = (fileId: string) => (newContent: string | File) =>
+    debouncedSetFileContents(fileId, newContent);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -168,13 +264,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
               {requiredFileInputs.map(({ id, data }) => (
-                <FileEditor
-                  key={id}
-                  className="h-[40vh]"
+                <Editor
                   fileName={data.path}
-                  fileContent={fileContents[id] || data.content}
-                  onFileContentChange={(newContent) => handleFileChange(id, newContent)}
-                  canEditFileContent={true}
+                  defaultContent={fileContents[id] || data.content}
+                  onFileContentChange={handleFileChange(id)}
                 />
               ))}
             </div>

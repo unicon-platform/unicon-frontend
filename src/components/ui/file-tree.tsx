@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
 import { DragItemType } from "@/lib/drag";
-import { cleanFilePath, FileTreeType, isFolder, TreeFile, TreeFolder } from "@/lib/files";
+import { FileTreeType, isFolder, removeLeadingSlash, TreeFile, TreeFolder } from "@/lib/files";
 import { cn } from "@/lib/utils";
 
 import { Button } from "./button";
@@ -138,7 +138,7 @@ function Tree({
     if (oldName === newName) {
       return;
     }
-    const newPath = cleanFilePath(item.path.split("/").slice(0, -1).join("/") + "/" + newName);
+    const newPath = removeLeadingSlash(item.path.split("/").slice(0, -1).join("/") + "/" + newName);
     const success = onPathChange?.(item.path, newPath);
     if (!success) {
       toast.toast({
