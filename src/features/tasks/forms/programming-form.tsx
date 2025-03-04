@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
-import { PlusIcon, Trash, UploadIcon } from "lucide-react";
+import { EyeIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
@@ -78,8 +78,6 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
     defaultValues: initialValue ?? DEFAULT_FORM_VALUES,
   });
 
-  // console.log(form.formState.errors);
-  console.log(form.getValues("required_user_inputs"));
   const userInputs = useFieldArray({
     control: form.control,
     name: "required_user_inputs",
@@ -352,25 +350,53 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
             </div>
           </FormSection>
           <hr />
-          <FileInputSection />
+          <FormSection
+            title="Files"
+            description={
+              <p>
+                Files that are used in testcases
+                <br />
+                <br />
+                <ul className="list-disc">
+                  <li>
+                    You can access these files in the testcase graph editor by clicking on the "Show Files" button
+                  </li>
+                  <li className="mt-2">To use it in a testcase, simply drag and drop it into the graph editor</li>
+                </ul>
+              </p>
+            }
+          >
+            <FileInputSection />
+          </FormSection>
           <hr />
-          <FormSection title="User File Inputs">
+          <FormSection
+            title="Required User Inputs"
+            description={
+              <p>
+                Files that the user must provide for submission
+                <br />
+                <br />
+                You can choose to provide a template for each file using the "View/Edit" button
+              </p>
+            }
+          >
             <div className="flex flex-col items-start gap-4">
               <Button variant="secondary" type="button" onClick={addUserInput}>
                 <PlusIcon />
                 Add input
               </Button>
               {userInputs.fields.map((input, index) => (
-                <Collapsible className="w-full" key={input.id}>
+                <Collapsible className="flex w-full flex-col gap-4" key={input.id}>
                   <div className="flex items-center gap-4" key={input.id}>
                     <SocketLabelInput
-                      className={["min-w-[160px]", "py-2"]}
+                      className={["min-w-[160px]", "py-2", "text-sm"]}
                       value={input.label}
                       onChange={(newLabel) => updateUserInput(index, { newLabel })}
                       canEdit={true}
                     />
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">
+                        <EyeIcon size={15} />
                         View/Edit
                       </Button>
                     </CollapsibleTrigger>
@@ -384,15 +410,13 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                     </ConfirmationDialog>
                   </div>
                   <CollapsibleContent>
-                    <div className="h-[30vh]">
-                      <FileEditor
-                        fileName={input.label}
-                        fileContent={(input.data as UniconFile).content}
-                        onUpdateFileContent={(newFileContent: string) => updateUserInput(index, { newFileContent })}
-                        editableContent={true}
-                        editableName={false}
-                      />
-                    </div>
+                    <FileEditor
+                      className="h-[30vh]"
+                      fileName={input.label}
+                      fileContent={(input.data as UniconFile).content}
+                      onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
+                      canEditFileContent
+                    />
                   </CollapsibleContent>
                 </Collapsible>
               ))}

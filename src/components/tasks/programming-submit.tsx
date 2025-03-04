@@ -1,170 +1,319 @@
-import { Label } from "@radix-ui/react-dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
-import { RefreshCcw } from "lucide-react";
-import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-import { File as UniconFile, ProgrammingTask } from "@/api";
+import { createFile, File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { getTaskAttemptResults, useCreateTaskAttempt, useRerunTaskAttempt } from "@/features/problems/queries";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
+import { formatFileSize, isTextFile } from "@/lib/files";
 import { isUniconFile } from "@/lib/utils";
+import { formatDateShort } from "@/utils/date";
 
 import TaskResultCard from "./submission-results/task-result";
 
-const DEFAULT_REFETCH_INTERVAL: number = 5000;
+type AttemptResultsProps = {
+  problemId: number; // The problem ID that the task belongs to
+  task: ProgrammingTask; // The task that the attempts and results belong to
+  attempts: TaskAttemptResult[]; // The task attempt results to display
+  rerunAttempt?: (attemptId: number) => void;
+};
 
-export function ProgrammingSubmitForm({
-  problemId,
-  task,
-  canSubmit,
-}: {
+const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attempts, rerunAttempt }) => {
+  const [selectedResultIdx, setSelectedResultIdx] = useState<number | null>(null);
+  const [selectedAttemptIdx, setSelectedAttemptIdx] = useState<number | null>(null);
+
+  // Always default to the latest attempt and the latest result
+  useEffect(() => {
+    if (attempts.length === 0) return;
+    const latestAttemptIdx = attempts.length - 1;
+    // NOTE: It is guaranteed that every attempt has at least one result
+    const latestResultIdx = attempts[latestAttemptIdx].task_results.length - 1;
+    setSelectedAttemptIdx(latestAttemptIdx);
+    setSelectedResultIdx(latestResultIdx);
+  }, [attempts]);
+
+  // When an attempt is selected, select the latest result
+  useEffect(() => {
+    if (selectedAttemptIdx === null) return;
+    const latestResultIdx = attempts[selectedAttemptIdx].task_results.length - 1;
+    setSelectedResultIdx(latestResultIdx);
+  }, [selectedAttemptIdx]);
+
+  const selectedAttempt = selectedAttemptIdx !== null ? attempts[selectedAttemptIdx] : null;
+  // Sort attempts by recency (by ID which is monotonically increasing)
+  const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id);
+
+  const attemptResults = selectedAttempt?.task_results ?? [];
+  // Sort results by recency
+  // NOTE: Results are stored in ascending (earliest -> latest) order (guaranteed by the API),
+  // therefore we reverse the order
+  const attemptResultsDesc = [...attemptResults].reverse();
+  const selectedResult = selectedResultIdx !== null ? attemptResults[selectedResultIdx] : null;
+
+  return (
+    <div className="relative flex flex-col gap-4">
+      <div className="flex gap-4">
+        <Select
+          value={selectedAttemptIdx?.toString() ?? ""}
+          onValueChange={(value) => setSelectedAttemptIdx(+value)}
+          disabled={attempts.length == 0}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select an attempt" />
+          </SelectTrigger>
+          <SelectContent>
+            {attemptsDesc.map((attempt, index) => (
+              // The value is the index in reverse order since it is sorted by recency
+              <SelectItem key={attempt.id} value={`${attempts.length - index - 1}`}>
+                Attempt #{attempts.length - index}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {selectedAttempt && attemptResultsDesc && (
+          <Select
+            key={selectedAttempt.id}
+            value={selectedResultIdx?.toString() ?? ""}
+            onValueChange={(value) => setSelectedResultIdx(+value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a result" />
+            </SelectTrigger>
+            <SelectContent>
+              {attemptResultsDesc.map((taskResult, index) => (
+                // The value is the index in reverse order since it is sorted by recency
+                <SelectItem key={taskResult.id} value={`${attemptResultsDesc.length - index - 1}`}>
+                  Result #{selectedAttempt.task_results.length - index}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {rerunAttempt && selectedAttempt && (
+          <Button onClick={() => rerunAttempt(selectedAttempt.id)}>
+            <RefreshCcw />
+            Rerun
+          </Button>
+        )}
+      </div>
+      {selectedAttemptIdx !== null && selectedAttempt && selectedResult && (
+        <TaskResultCard
+          title={`Attempt ${selectedAttemptIdx + 1}`}
+          taskAttempt={{
+            ...selectedAttempt,
+            task_results: [selectedResult],
+            task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
+          }}
+          problemId={problemId}
+        />
+      )}
+    </div>
+  );
+};
+
+type EditorProps = {
+  fileName: string;
+  defaultContent: string | File;
+  onFileContentChange: (newContent: string | File) => void;
+};
+
+const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContentChange }) => {
+  const [content, setContent] = useState<string | File>(defaultContent);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (isTextFile(file)) {
+      // If file is a text file, extract text content directly
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fileContent = e.target?.result as string;
+        setContent(fileContent);
+        onFileContentChange(fileContent);
+      };
+      reader.readAsText(file);
+    } else {
+      setContent(file);
+      onFileContentChange(file);
+    }
+  };
+
+  const resetFile = useCallback(() => {
+    setContent(defaultContent);
+    onFileContentChange(defaultContent);
+  }, [onFileContentChange]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <FileTextIcon size={20} />
+          <h3 className="font-medium">{fileName}</h3>
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipContent side="right" align="center">
+              <p>
+                Upload a file<br></br>
+                The file name does not need to be same, it will be renamed automatically
+              </p>
+            </TooltipContent>
+            <input type="file" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
+            <TooltipTrigger asChild type="button">
+              {/* Proxy click event to HTML input element above */}
+              <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <UploadIcon size={10} />
+              </Button>
+            </TooltipTrigger>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      {!(content instanceof File) ? (
+        <FileEditor
+          className="h-[40vh]"
+          fileName={fileName}
+          fileContent={content}
+          onFileContentChange={onFileContentChange}
+          canEditFileContent={true}
+        />
+      ) : (
+        <div className="w-fit rounded-md border p-6">
+          <div className="flex items-start gap-4">
+            <div className="rounded-md bg-primary/10 p-4">
+              <FileIcon className="h-7 w-7" />
+            </div>
+            <div className="flex-1">
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <h3 className="text-lg font-medium">{content.name}</h3>
+                <Button variant="ghost" size="icon" type="button" onClick={resetFile}>
+                  <XIcon />
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Size</p>
+                  <p className="text-sm">{formatFileSize(content.size)}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Type</p>
+                  <p className="text-sm">{content.type || "Unknown"}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Last Modified</p>
+                  <p className="text-sm">{formatDateShort(content.lastModified)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+type ProgrammingSubmitFormProps = {
   problemId: number;
   task: ProgrammingTask;
   canSubmit: boolean;
-}) {
-  const { register, handleSubmit } = useForm();
-  const rerunAttemptMutation = useRerunTaskAttempt(problemId);
+};
 
-  const createTaskAttemptMutation = useCreateTaskAttempt(problemId, task.id);
-  const { data: taskAttemptResults, refetch } = useQuery({
+export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ problemId, task, canSubmit }) => {
+  const { data: attempts, refetch: refetchAttempts } = useQuery({
     ...getTaskAttemptResults(problemId, task.id),
     refetchInterval: ({ state: { data } }) =>
       // Only refetch if there is a pending task result
-      data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status == "PENDING"))
-        ? DEFAULT_REFETCH_INTERVAL
+      data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status === "PENDING"))
+        ? 5000
         : false,
   });
 
-  const [selectedAttemptIdx, setSelectedAttemptIdx] = useState<number | null>(null);
-  const [selectedResultIdx, setSelectedResultIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (taskAttemptResults?.length) {
-      const lastAttemptIdx = taskAttemptResults.length - 1;
-      setSelectedAttemptIdx(lastAttemptIdx);
-      setSelectedResultIdx(taskAttemptResults[lastAttemptIdx]?.task_results.length - 1);
-    }
-  }, [taskAttemptResults]);
-
-  // NOTE: Assume that all required inputs are files
-  const requiredInputs: { id: string; name: string }[] = task.required_inputs
+  // Filter required inputs to only include file inputs
+  // NOTE: We assume that all required inputs needed for submission are files
+  const requiredFileInputs: (Omit<RequiredInput, "data"> & { data: UniconFile })[] = task.required_inputs
     .filter((input) => isUniconFile(input.data))
-    .map((input) => ({ id: input.id, name: (input.data as UniconFile).path }));
+    .map((input) => ({ ...input, data: input.data as UniconFile }));
 
-  const submitForm: SubmitHandler<Record<string, FileList>> = (formData) => {
-    Promise.all(
-      requiredInputs.map(async ({ id, name }) => {
-        const file = formData[id.replace(/\./g, "_")];
-        const content = await file[0].text();
-        return { id, data: { name, content } };
-      }),
-    ).then((files) => {
-      createTaskAttemptMutation.mutate({ task_id: task.id, value: files }, { onSuccess: () => refetch() });
-    });
-  };
+  const [fileContents, setFileContents] = useState<Record<string, string | File>>(
+    Object.fromEntries(requiredFileInputs.map(({ id, data }) => [id, (data as UniconFile).content])),
+  );
 
-  const selectedAttempt =
-    taskAttemptResults && selectedAttemptIdx !== null ? taskAttemptResults[selectedAttemptIdx] : undefined;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const rerunAttemptMut = useRerunTaskAttempt(problemId);
+  const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
+
+  const debouncedSetFileContents = useDebouncedCallback(
+    (fileId: string, newContent: string | File) => setFileContents((prev) => ({ ...prev, [fileId]: newContent })),
+    300,
+  );
+  const handleFileChange = (fileId: string) => (newContent: string | File) =>
+    debouncedSetFileContents(fileId, newContent);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+      try {
+        const submissionPromises = requiredFileInputs.map(async (reqInput) => {
+          const content = fileContents[reqInput.id];
+          if (content instanceof File) {
+            const response = await createFile({ body: { file: content } });
+            return { ...reqInput, data: { ...reqInput.data, key: response.data, content: "", on_minio: true } };
+          } else {
+            return { ...reqInput, data: { ...reqInput.data, content } };
+          }
+        });
+        const submissionData = await Promise.all(submissionPromises);
+        createAttemptMut.mutate(
+          { task_id: task.id, value: submissionData },
+          {
+            onSuccess: () => refetchAttempts(),
+            onSettled: () => setIsSubmitting(false),
+          },
+        );
+      } catch (error) {
+        console.error("Error during submission:", error);
+        setIsSubmitting(false);
+      }
+    },
+    [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts, task.id],
+  );
 
   return (
     <div className="flex flex-col gap-6">
       {canSubmit && (
         <TaskSection>
           <TaskSectionHeader content="Submission" />
-          <form onSubmit={handleSubmit(submitForm)}>
-            {requiredInputs.map(({ id, name }) => (
-              <div key={id} className="mt-2 grid w-full max-w-sm items-center gap-2">
-                <Label className="text-md font-mono">{name}</Label>
-                <Input {...register(id.replace(/\./g, "_"), { required: true })} id={id} type="file" />
-              </div>
-            ))}
-            <Button className="mt-6" type="submit">
-              Submit
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              {requiredFileInputs.map(({ id, data }) => (
+                <Editor fileName={data.path} defaultContent={data.content} onFileContentChange={handleFileChange(id)} />
+              ))}
+            </div>
+            <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending}>
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </TaskSection>
       )}
       <TaskSection>
         <TaskSectionHeader content="Results" />
-        <div className="relative flex flex-col gap-4">
-          <div className="flex gap-4">
-            <Select
-              value={selectedAttemptIdx?.toString() ?? ""}
-              onValueChange={(value) => {
-                setSelectedAttemptIdx(+value);
-                if (taskAttemptResults && taskAttemptResults[+value]?.task_results.length > 0) {
-                  setSelectedResultIdx(taskAttemptResults[+value]?.task_results.length - 1);
-                }
-              }}
-              disabled={!taskAttemptResults?.length}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select an attempt" />
-              </SelectTrigger>
-              <SelectContent>
-                {taskAttemptResults
-                  ?.slice()
-                  .reverse()
-                  .map((taskAttempt, index) => (
-                    <SelectItem key={taskAttempt.id} value={`${taskAttemptResults.length - index - 1}`}>
-                      Attempt #{taskAttemptResults.length - index}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            {selectedAttempt && selectedAttempt.task_results.length > 0 && (
-              <Select
-                key={selectedAttempt.id}
-                value={selectedResultIdx?.toString() ?? ""}
-                onValueChange={(value) => setSelectedResultIdx(+value)}
-                disabled={!selectedAttempt.task_results?.length}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a result" />
-                </SelectTrigger>
-                <SelectContent>
-                  {selectedAttempt.task_results
-                    ?.slice()
-                    .reverse()
-                    .map((taskResult, index) => (
-                      <SelectItem key={taskResult.id} value={`${selectedAttempt.task_results.length - index - 1}`}>
-                        Result #{selectedAttempt.task_results.length - index}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            )}
-            {canSubmit && selectedAttempt && (
-              <Button onClick={() => rerunAttemptMutation.mutate(selectedAttempt.id)}>
-                <RefreshCcw />
-                Rerun
-              </Button>
-            )}
-          </div>
-          {selectedAttemptIdx !== null && taskAttemptResults?.length && selectedAttempt ? (
-            <TaskResultCard
-              title={`Attempt ${selectedAttemptIdx + 1}`}
-              taskAttempt={{
-                ...selectedAttempt,
-                task_results: selectedAttempt.task_results.filter((_result, index) => index === selectedResultIdx),
-                task: {
-                  ...task,
-                  problem_id: problemId,
-                  autograde: task.autograde ?? false,
-                  other_fields: { ...task },
-                },
-              }}
-              problemId={problemId}
-            />
-          ) : null}
-        </div>
+        <AttemptResults
+          problemId={problemId}
+          task={task}
+          attempts={attempts ?? []}
+          rerunAttempt={rerunAttemptMut.mutate}
+        />
       </TaskSection>
     </div>
   );
-}
+};
 
 export default ProgrammingSubmitForm;

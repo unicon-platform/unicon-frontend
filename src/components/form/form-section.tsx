@@ -1,14 +1,16 @@
 import { PropsWithChildren } from "react";
 
-type OwnProps = {
+type FormSectionProps = {
   title: string;
+  description?: React.ReactNode;
 } & PropsWithChildren;
 
-const FormSection: React.FC<OwnProps> = ({ title, children }) => {
+const FormSection: React.FC<FormSectionProps> = ({ title, description, children }) => {
   return (
     <div className="flex w-full items-start">
-      <div className="sticky top-0">
-        <h2 className="min-w-[200px] text-lg font-medium">{title}</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="w-[250px] text-lg font-medium">{title}</h2>
+        {description && <div className={"w-[180px] text-sm text-muted-foreground"}>{description}</div>}
       </div>
       <div className="flex w-full flex-col gap-4">{children}</div>
     </div>

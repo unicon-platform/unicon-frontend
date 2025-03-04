@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { createFile } from "@/api";
-import FormSection from "@/components/form/form-section";
 import FileInputButton from "@/components/form/inputs/file-input-button";
 import { FileTree } from "@/components/ui/file-tree";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { useToast } from "@/hooks/use-toast";
-import { cleanFilePath, convertFilesToFileTree } from "@/lib/files";
+import { convertFilesToFileTree, isTextFile, removeLeadingSlash } from "@/lib/files";
 import { FileT, ProgTaskFormT } from "@/lib/schema/prog-task-form";
 import { uuid } from "@/lib/utils";
 
@@ -29,7 +28,7 @@ const movePath = (filePath: string, oldPath: string, newPath: string) => {
   if (!shouldPathBeMoved(filePath, oldPath)) {
     return filePath;
   }
-  return cleanFilePath(filePath.replace(oldPath, newPath));
+  return removeLeadingSlash(filePath.replace(oldPath, newPath));
 };
 
 const FileInputSection = () => {
@@ -37,7 +36,7 @@ const FileInputSection = () => {
 
   const toast = useToast();
   const handleUploadFile = (file: File) => {
-    const filePath = cleanFilePath(file.webkitRelativePath || file.name);
+    const filePath = removeLeadingSlash(file.webkitRelativePath || file.name);
     // If filePath already exists, reject the upload.
     if (form.getValues("files").some((file) => file.path === filePath)) {
       toast.toast({
@@ -47,7 +46,7 @@ const FileInputSection = () => {
       return;
     }
     // If file is a text file, extract text content to File format for socket.
-    if (file.type.startsWith("text") || file.type === "" || file.type === "application/json") {
+    if (isTextFile(file)) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const fileContent = (e.target?.result as string).trim();
@@ -124,7 +123,7 @@ const FileInputSection = () => {
 
     form.setValue("files", newFilesValue);
     if (selectedFile && selectedFile.path.startsWith(oldPath)) {
-      const newSelectedFilePath = cleanFilePath(selectedFile.path.replace(oldPath, newPath));
+      const newSelectedFilePath = removeLeadingSlash(selectedFile.path.replace(oldPath, newPath));
       setSelectedFile({ ...selectedFile, path: newSelectedFilePath });
     }
 
@@ -170,7 +169,7 @@ const FileInputSection = () => {
   };
 
   return (
-    <FormSection title="Files">
+    <>
       <div className="flex gap-2">
         <FileInputButton multiple buttonText="Upload File" onFileChange={handleUploadFiles} />
         <FileInputButton buttonText="Upload Folder" webkitdirectory="true" onFileChange={handleUploadFiles} />
@@ -188,14 +187,13 @@ const FileInputSection = () => {
             key={selectedFile.id + selectedFile.path}
             fileName={selectedFile.path.split("/").pop()!}
             fileContent={selectedFile.content}
-            onUpdateFileContent={handleFileContentUpdate}
-            onDeselectFile={() => setSelectedFile(null)}
-            editableContent
-            editableName={false}
+            onFileContentChange={handleFileContentUpdate}
+            onFileClosed={() => setSelectedFile(null)}
+            canEditFileContent
           />
         )}
       </div>
-    </FormSection>
+    </>
   );
 };
 

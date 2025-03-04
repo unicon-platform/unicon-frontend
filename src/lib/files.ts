@@ -1,7 +1,15 @@
-// This class is used for managing an array of files and converting them to file trees.
+export const isTextFile = (f: File): boolean =>
+  f.type.startsWith("text") || f.type === "" || f.type === "application/json";
 
-// Note: This is a file. It is NOT a folder.
-export type FileType = {
+export const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} bytes`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+// File tree abstraction
+
+type FileType = {
   id: string;
   path: string;
   content: string;
@@ -21,27 +29,15 @@ export type TreeFolder = {
   children: (TreeFolder | TreeFile)[];
 };
 
-export const isFolder = (item: TreeFolder | TreeFile): item is TreeFolder => {
-  return "children" in item;
-};
-
-export const getName = (path: string) => {
-  return path.split("/").pop();
-};
+export const isFolder = (item: TreeFolder | TreeFile): item is TreeFolder => "children" in item;
 
 export type FileTreeType = (TreeFolder | TreeFile)[];
 
-export const cleanFilePath = (path: string) => path.replace(/^\//, "");
+export const removeLeadingSlash = (path: string) => path.replace(/^\//, "");
 
 const sortFileTree = (files: FileTreeType) => {
-  files.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
-  for (const item of files) {
-    if (isFolder(item)) {
-      sortFileTree(item.children);
-    }
-  }
+  files.sort((a, b) => a.name.localeCompare(b.name));
+  for (const item of files) if ("children" in item) sortFileTree(item.children);
 };
 
 export const convertFilesToFileTree = (files: FileType[]): FileTreeType => {
@@ -70,12 +66,7 @@ export const convertFilesToFileTree = (files: FileType[]): FileTreeType => {
       }
     }
     const fileName = pathParts[pathParts.length - 1];
-    if (fileName) {
-      currentTree.push({
-        name: fileName,
-        ...file,
-      });
-    }
+    if (fileName) currentTree.push({ name: fileName, ...file });
   }
   sortFileTree(tree);
   return tree;
