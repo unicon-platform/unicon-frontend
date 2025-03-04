@@ -113,10 +113,18 @@ export type IfElseStep = {
     type: StepType;
 };
 
+export type InputSocket = {
+    id: string;
+    type?: SocketType;
+    label?: string;
+    data?: string | number | number | boolean | File | null;
+    public?: boolean;
+};
+
 export type InputStep = {
     id: string;
-    inputs?: Array<StepSocket>;
-    outputs: Array<StepSocket>;
+    inputs?: Array<InputSocket>;
+    outputs: Array<InputSocket>;
     type: StepType;
     is_user?: boolean;
 };
