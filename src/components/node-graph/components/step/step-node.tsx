@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
-import { PyRunFunctionSocket, StepSocket, StepType } from "@/api";
+import { PyRunFunctionSocket, PyRunFunctionStep, StepSocket, StepType } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import StepMetadata from "@/components/node-graph/components/step/metadata/step-metadata";
 import { Button } from "@/components/ui/button";
@@ -99,6 +99,7 @@ export function StepNode({ data }: { data: Step }) {
   // as the other steps. This is because the step has its own mechanism to determine the number of
   // inputs and outputs, along with the labels for each socket.
   const _isPyRunFunc = data.type === "PY_RUN_FUNCTION_STEP";
+  const _isPyRunFuncWithNoFunction = _isPyRunFunc && !(data as PyRunFunctionStep).function_identifier;
   const editableLabel = editable && !_isPyRunFunc;
   const canAddSockets = editable && !_isPyRunFunc;
   const canDeleteSockets = editable && !_isPyRunFunc;
@@ -141,11 +142,21 @@ export function StepNode({ data }: { data: Step }) {
     (socketDir: SocketDir) => () => {
       dispatch({
         type: GraphActionType.AddSocket,
-        payload: { stepId: data.id, socketDir, socket: createSocket("DATA", "") },
+        payload: {
+          stepId: data.id,
+          socketDir,
+          socket: {
+            ...createSocket("DATA", ""),
+          },
+        },
       });
     },
     [data.id, dispatch],
   );
+
+  if (data.type === "INPUT_STEP") {
+    console.log(data.outputs);
+  }
 
   const deleteStep = useCallback(
     () => dispatch({ type: GraphActionType.DeleteStep, payload: { id: data.id } }),
@@ -163,60 +174,60 @@ export function StepNode({ data }: { data: Step }) {
           </div>
           <StepMetadata step={data} editable={editable} />
         </div>
-        {!socketsInMetadata && (!inEditMode || !_isPyRunFunc) && (
-          <div className="font-mono text-xs">
-            <div className="flex flex-row justify-between gap-8">
-              <NodeSlotGroup
-                type="target"
-                sockets={inDataSockets}
-                onEditData={onEditData}
-                onEditLabel={onEditLabel}
-                onDelete={onDeleteSocket}
-              >
-                {canAddSockets && (
-                  <Button
-                    size={"sm"}
-                    className="ml-2 h-fit w-fit px-1 py-1"
-                    variant="secondary"
-                    onClick={addSocket(SocketDir.Input)}
-                    type="button"
-                  >
-                    <PlusIcon />
-                  </Button>
-                )}
-              </NodeSlotGroup>
-              <NodeSlotGroup
-                type="source"
-                sockets={outDataSockets}
-                onEditData={onEditData}
-                onEditLabel={onEditLabel}
-                onDelete={onDeleteSocket}
-              >
-                {canAddSockets && (
-                  <Button
-                    size={"sm"}
-                    className="mr-2 h-fit w-fit self-end px-1 py-1"
-                    variant="secondary"
-                    onClick={addSocket(SocketDir.Output)}
-                    type="button"
-                  >
-                    <PlusIcon />
-                  </Button>
-                )}
-              </NodeSlotGroup>
+        {!socketsInMetadata &&
+          (!inEditMode || !_isPyRunFuncWithNoFunction ? (
+            <div className="font-mono text-xs">
+              <div className="flex flex-row justify-between gap-8">
+                <NodeSlotGroup
+                  type="target"
+                  sockets={inDataSockets}
+                  onEditData={onEditData}
+                  onEditLabel={onEditLabel}
+                  onDelete={onDeleteSocket}
+                >
+                  {canAddSockets && (
+                    <Button
+                      size={"sm"}
+                      className="ml-2 h-fit w-fit px-1 py-1"
+                      variant="secondary"
+                      onClick={addSocket(SocketDir.Input)}
+                      type="button"
+                    >
+                      <PlusIcon />
+                    </Button>
+                  )}
+                </NodeSlotGroup>
+                <NodeSlotGroup
+                  type="source"
+                  sockets={outDataSockets}
+                  onEditData={onEditData}
+                  onEditLabel={onEditLabel}
+                  onDelete={onDeleteSocket}
+                >
+                  {canAddSockets && (
+                    <Button
+                      size={"sm"}
+                      className="mr-2 h-fit w-fit self-end px-1 py-1"
+                      variant="secondary"
+                      onClick={addSocket(SocketDir.Output)}
+                      type="button"
+                    >
+                      <PlusIcon />
+                    </Button>
+                  )}
+                </NodeSlotGroup>
+              </div>
             </div>
-          </div>
-        )}
-        {!socketsInMetadata && _isPyRunFunc && inEditMode && (
-          <PyRunSocketSlots
-            stepId={data.id}
-            inDataSockets={inDataSockets}
-            outDataSockets={outDataSockets}
-            addSocket={addSocket}
-            onEditData={_onEditData}
-            onDeleteSocket={_onDeleteSocket}
-          />
-        )}
+          ) : (
+            <PyRunSocketSlots
+              stepId={data.id}
+              inDataSockets={inDataSockets}
+              outDataSockets={outDataSockets}
+              addSocket={addSocket}
+              onEditData={_onEditData}
+              onDeleteSocket={_onDeleteSocket}
+            />
+          ))}
       </div>
     </div>
   );

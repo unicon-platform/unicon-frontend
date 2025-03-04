@@ -2,7 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { useCallback, useContext } from "react";
 import { useDrop } from "react-dnd";
 
-import { InputStep, StepSocket } from "@/api";
+import { InputSocket, InputStep, StepSocket } from "@/api";
 import InputTable from "@/components/node-graph/components/step/input-table/input-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -66,6 +66,18 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     });
   };
 
+  const updateSocketMetadata = (metadataIndex: number) => (newMetadata: Partial<InputSocket>) => {
+    const { id: _, ...newMetadataWithoutId } = newMetadata;
+    dispatch({
+      type: GraphActionType.UpdateSocketMetadata,
+      payload: {
+        stepId: step.id,
+        socketId: sockets[metadataIndex].id,
+        socketMetadata: newMetadataWithoutId,
+      },
+    });
+  };
+
   const [, drop] = useDrop<TreeFile | TreeFolder>(
     () => ({
       accept: DragItemType.File,
@@ -97,6 +109,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
                 socket: {
                   ...createSocket("DATA", file.path),
                   data: file,
+                  public: true,
                 },
               },
             });
@@ -112,7 +125,14 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   const addOutputSocket = useCallback(() => {
     dispatch({
       type: GraphActionType.AddSocket,
-      payload: { stepId: step.id, socketDir: SocketDir.Output, socket: createSocket("DATA", "") },
+      payload: {
+        stepId: step.id,
+        socketDir: SocketDir.Output,
+        socket: {
+          ...createSocket("DATA", ""),
+          ...(["INPUT_STEP", "OUTPUT_STEP"].includes(step.type) ? { public: true } : {}),
+        },
+      },
     });
   }, [dispatch, step.id]);
 
@@ -147,11 +167,12 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           <TableHead></TableHead>
           <TableHead>Label</TableHead>
           <TableHead>Value</TableHead>
+          <TableHead>Public</TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sockets.map((socket) => (
+        {sockets.map((socket, index) => (
           <InputMetadataRow
             key={socket.id}
             socket={socket}
@@ -160,6 +181,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             onChangeToFile={handleSocketChangeToFile(socket)}
             onChangeToValue={onChangeToValue(socket)}
             onChangeValue={onChangeValue(socket)}
+            onUpdateSocketMetadata={updateSocketMetadata(index)}
             step={step}
             isEditable={editable && socket.type !== "CONTROL"}
           />

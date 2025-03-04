@@ -42,7 +42,14 @@ const OutputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   const addInputSocket = useCallback(() => {
     dispatch({
       type: GraphActionType.AddSocket,
-      payload: { stepId: step.id, socketDir: SocketDir.Input, socket: createSocket("DATA", "") },
+      payload: {
+        stepId: step.id,
+        socketDir: SocketDir.Input,
+        socket: {
+          ...createSocket("DATA", ""),
+          ...(["INPUT_STEP", "OUTPUT_STEP"].includes(step.type) ? { public: true } : {}),
+        },
+      },
     });
   }, [dispatch, step]);
 

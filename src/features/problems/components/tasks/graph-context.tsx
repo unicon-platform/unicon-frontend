@@ -3,6 +3,7 @@ import { ImmerReducer } from "use-immer";
 
 import {
   GraphEdgeStr as GraphEdge,
+  InputSocket,
   InputStep,
   ParsedFunction,
   PyRunFunctionSocket,
@@ -72,7 +73,7 @@ export enum SocketDir {
 
 interface AddSocketAction extends BaseGraphAction {
   type: GraphActionType.AddSocket;
-  payload: { stepId: string; socketDir: SocketDir; socket: StepSocket };
+  payload: { stepId: string; socketDir: SocketDir; socket: StepSocket | InputSocket };
 }
 
 interface DeleteSocketAction extends BaseGraphAction {

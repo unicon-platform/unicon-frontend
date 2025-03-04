@@ -232,7 +232,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       <div className="my-4 flex flex-col items-start gap-2">
         <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
           <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
-            <CircleXIcon className="h-2 w-2" />
+            <CircleXIcon className="h-4 w-4" />
             <span className="font-medium">On error</span>
           </div>
           <div className="flex h-full items-center gap-2 break-all px-2 py-1 font-mono font-medium">
