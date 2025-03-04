@@ -162,7 +162,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContent
             <TooltipContent side="right" align="center">
               <p>
                 Upload a file<br></br>
-                The file name do not need to be same, it will be renamed automatically
+                The file name does not need to be same, it will be renamed automatically
               </p>
             </TooltipContent>
             <input type="file" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
