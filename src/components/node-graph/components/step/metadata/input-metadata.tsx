@@ -109,6 +109,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
                 socket: {
                   ...createSocket("DATA", file.path),
                   data: file,
+                  public: true,
                 },
               },
             });
@@ -124,7 +125,14 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   const addOutputSocket = useCallback(() => {
     dispatch({
       type: GraphActionType.AddSocket,
-      payload: { stepId: step.id, socketDir: SocketDir.Output, socket: createSocket("DATA", "") },
+      payload: {
+        stepId: step.id,
+        socketDir: SocketDir.Output,
+        socket: {
+          ...createSocket("DATA", ""),
+          ...(["INPUT_STEP", "OUTPUT_STEP"].includes(step.type) ? { public: true } : {}),
+        },
+      },
     });
   }, [dispatch, step.id]);
 

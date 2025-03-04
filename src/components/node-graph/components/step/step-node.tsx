@@ -142,11 +142,21 @@ export function StepNode({ data }: { data: Step }) {
     (socketDir: SocketDir) => () => {
       dispatch({
         type: GraphActionType.AddSocket,
-        payload: { stepId: data.id, socketDir, socket: createSocket("DATA", "") },
+        payload: {
+          stepId: data.id,
+          socketDir,
+          socket: {
+            ...createSocket("DATA", ""),
+          },
+        },
       });
     },
     [data.id, dispatch],
   );
+
+  if (data.type === "INPUT_STEP") {
+    console.log(data.outputs);
+  }
 
   const deleteStep = useCallback(
     () => dispatch({ type: GraphActionType.DeleteStep, payload: { id: data.id } }),
