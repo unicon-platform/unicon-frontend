@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon } from "lucide-react";
+import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
+import { createFile, File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -145,6 +145,11 @@ const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContent
     }
   };
 
+  const resetFile = useCallback(() => {
+    setContent(defaultContent);
+    onFileContentChange(defaultContent);
+  }, [onFileContentChange]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
@@ -185,7 +190,12 @@ const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContent
               <FileIcon className="h-7 w-7" />
             </div>
             <div className="flex-1">
-              <h3 className="mb-2 text-lg font-medium">{content.name}</h3>
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <h3 className="text-lg font-medium">{content.name}</h3>
+                <Button variant="ghost" size="icon" type="button" onClick={resetFile}>
+                  <XIcon />
+                </Button>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Size</p>
@@ -234,6 +244,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
     Object.fromEntries(requiredFileInputs.map(({ id, data }) => [id, (data as UniconFile).content])),
   );
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
 
@@ -245,15 +257,33 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
     debouncedSetFileContents(fileId, newContent);
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      const submissionData = requiredFileInputs.map((reqInput) => ({
-        ...reqInput,
-        data: { ...reqInput.data, content: fileContents[reqInput.id] },
-      }));
-      createAttemptMut.mutate({ task_id: task.id, value: submissionData }, { onSuccess: () => refetchAttempts() });
+      setIsSubmitting(true);
+      try {
+        const submissionPromises = requiredFileInputs.map(async (reqInput) => {
+          const content = fileContents[reqInput.id];
+          if (content instanceof File) {
+            const response = await createFile({ body: { file: content } });
+            return { ...reqInput, data: { ...reqInput.data, key: response.data, content: "", on_minio: true } };
+          } else {
+            return { ...reqInput, data: { ...reqInput.data, content } };
+          }
+        });
+        const submissionData = await Promise.all(submissionPromises);
+        createAttemptMut.mutate(
+          { task_id: task.id, value: submissionData },
+          {
+            onSuccess: () => refetchAttempts(),
+            onSettled: () => setIsSubmitting(false),
+          },
+        );
+      } catch (error) {
+        console.error("Error during submission:", error);
+        setIsSubmitting(false);
+      }
     },
-    [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts],
+    [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts, task.id],
   );
 
   return (
@@ -264,15 +294,11 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
               {requiredFileInputs.map(({ id, data }) => (
-                <Editor
-                  fileName={data.path}
-                  defaultContent={fileContents[id] || data.content}
-                  onFileContentChange={handleFileChange(id)}
-                />
+                <Editor fileName={data.path} defaultContent={data.content} onFileContentChange={handleFileChange(id)} />
               ))}
             </div>
             <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending}>
-              {createAttemptMut.isPending ? "Submitting..." : "Submit"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </TaskSection>
