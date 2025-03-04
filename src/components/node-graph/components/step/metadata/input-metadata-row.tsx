@@ -1,18 +1,19 @@
 import { ArrowLeftRightIcon, Trash } from "lucide-react";
 import { useContext } from "react";
 
-import { InputStep, StepSocket } from "@/api";
+import { InputSocket, InputStep } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import ViewFileButton from "@/components/node-graph/components/step/input-table/view-file-button";
 import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
 import { cn, isUniconFile } from "@/lib/utils";
 
 type OwnProps = {
-  socket: StepSocket;
+  socket: InputSocket;
   onDelete: () => void;
   onEditSocketLabel: (newValue: string) => void;
   onChangeToFile: () => void;
@@ -23,6 +24,7 @@ type OwnProps = {
   // note: this does not control whether you can connect an edge to this socket
   // connection is always allowed
   isEditable: boolean;
+  onUpdateSocketMetadata: (newMetadata: Partial<InputSocket>) => void;
 };
 
 const InputMetadataRow: React.FC<OwnProps> = ({
@@ -34,6 +36,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
   onChangeValue,
   step,
   isEditable,
+  onUpdateSocketMetadata,
 }) => {
   const { selectedSocketId, selectedStepId } = useContext(GraphContext)!;
   const rowIsSelected = selectedSocketId === socket.id && selectedStepId === step.id;
@@ -81,6 +84,15 @@ const InputMetadataRow: React.FC<OwnProps> = ({
             )}
           </div>
         )}
+      </TableCell>
+      <TableCell>
+        <div>
+          <Checkbox
+            className="rounded-sm border border-gray-500/50"
+            checked={socket.public || false}
+            onCheckedChange={() => onUpdateSocketMetadata({ public: !socket.public })}
+          />
+        </div>
       </TableCell>
       <TableCell>
         <NodeSlot

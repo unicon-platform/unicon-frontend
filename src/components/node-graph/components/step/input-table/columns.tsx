@@ -1,12 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-import { InputStep, StepSocket } from "@/api";
+import { InputSocket, InputStep } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import { isUniconFile } from "@/lib/utils";
 
 import ViewFileButton from "./view-file-button";
 
-export const columns: ColumnDef<StepSocket & { step: InputStep }>[] = [
+export const columns: ColumnDef<InputSocket & { step: InputStep }>[] = [
   {
     accessorFn: (row) => row.label,
     header: "Label",
@@ -24,6 +24,12 @@ export const columns: ColumnDef<StepSocket & { step: InputStep }>[] = [
           )}
         </div>
       );
+    },
+  },
+  {
+    header: "Public",
+    cell: ({ row }) => {
+      return <div>{row.original.public ? "Yes" : "No"}</div>;
     },
   },
   {
