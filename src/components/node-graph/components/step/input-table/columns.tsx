@@ -51,6 +51,7 @@ export const columns: ColumnDef<InputSocket & { step: InputStep }>[] = [
           socket={socket}
           type="source"
           hideLabel
+          hideType
           handleStyle={{ width: "20px", borderRadius: "10px", right: "-12px" }}
         />
       );

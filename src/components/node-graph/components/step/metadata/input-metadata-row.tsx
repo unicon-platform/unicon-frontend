@@ -100,6 +100,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
           socket={socket}
           type="source"
           hideLabel
+          hideType
         />
       </TableCell>
     </TableRow>

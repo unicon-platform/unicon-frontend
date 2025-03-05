@@ -22,6 +22,7 @@ interface NodeSlotProps {
   onDelete?: () => void;
   // Styling props
   hideLabel?: boolean;
+  hideType?: boolean;
   handleStyle?: React.CSSProperties;
 }
 
@@ -126,6 +127,7 @@ const DataSocket = ({
         onChange={onEditLabel ?? (() => {})}
         canEdit={onEditLabel !== undefined}
       />
+
       {type === "target" && <DataSocketDefaultValueDisplay socketData={socket.data} onValueChanged={onEditData} />}
       {onDelete && (
         <Button className="h-fit w-fit p-1" variant="outline" onClick={onDelete} type="button">
@@ -158,46 +160,64 @@ export function NodeSlot({
   onEditData,
   onDelete,
   hideLabel = false,
+  hideType = false,
   handleStyle,
 }: NodeSlotProps) {
   const connections = useNodeConnections({ handleType: type, handleId: socket.id });
   const hasConnections = connections.length > 0;
   return (
-    <div
-      className={twJoin(
-        "relative my-1 flex items-center space-x-2",
-        type === "source" && "flex-row-reverse space-x-reverse",
-      )}
-    >
-      <Handle
-        style={{
-          width: "12px",
-          height: "12px",
-          backgroundColor: hasConnections ? "white" : "black",
-          border: "1px solid white",
-          ...(handleStyle ?? {}),
-        }} // NOTE: Override default position to use flex positioning
+    <div>
+      <div
         className={twJoin(
-          "bg-neutral-700",
-          type === "target" && "rounded-bl-full rounded-tl-full",
-          type === "source" && "rounded-br-full rounded-tr-full",
+          "relative my-1 flex items-center space-x-2",
+          type === "source" && "flex-row-reverse space-x-reverse",
         )}
-        id={socket.id}
-        type={type}
-        position={type === "target" ? HandlePosition.Left : HandlePosition.Right}
-      />
-      {!hideLabel &&
-        (socket.type === "CONTROL" ? (
-          <ControlSocket socket={socket} type={type} />
-        ) : (
-          <DataSocket
-            type={type}
-            socket={socket}
-            onEditData={onEditData}
-            onEditLabel={onEditLabel}
-            onDelete={onDelete}
-          />
-        ))}
+      >
+        <Handle
+          style={{
+            width: "12px",
+            height: "12px",
+            backgroundColor: hasConnections ? "white" : "black",
+            border: "1px solid white",
+            ...(handleStyle ?? {}),
+          }} // NOTE: Override default position to use flex positioning
+          className={twJoin(
+            "bg-neutral-700",
+            type === "target" && "rounded-bl-full rounded-tl-full",
+            type === "source" && "rounded-br-full rounded-tr-full",
+          )}
+          id={socket.id}
+          type={type}
+          position={type === "target" ? HandlePosition.Left : HandlePosition.Right}
+        />
+        {!hideLabel &&
+          (socket.type === "CONTROL" ? (
+            <ControlSocket socket={socket} type={type} />
+          ) : (
+            <div className="flex flex-col gap-2">
+              <DataSocket
+                type={type}
+                socket={socket}
+                onEditData={onEditData}
+                onEditLabel={onEditLabel}
+                onDelete={onDelete}
+              />
+            </div>
+          ))}
+      </div>
+      {!hideType && (
+        <div className={cn("flex px-4", type === "source" && "justify-end")}>
+          {socket.data_type && (
+            // TODO: Move this to another component
+            <Badge
+              className={"w-fit border-dashed border-blue-300 text-[0.5rem] leading-[0.75rem]"}
+              variant={"outline"}
+            >
+              {socket.data_type} {socket.data_type_metadata && `- ${socket.data_type_metadata.name}`}
+            </Badge>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import {
-  File,
+  File as UniconFile,
   IfElseStep,
   InputStep,
   LoopStep,
@@ -11,9 +11,10 @@ import {
   StepSocket,
   StepType,
   StringMatchStep,
+  UniconType,
 } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { uuid } from "@/lib/utils";
+import { isUniconFile, uuid } from "@/lib/utils";
 
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
   let parsed: string | boolean | number | null = data;
@@ -31,6 +32,15 @@ export const parseSocketDataString = (data: string): string | number | boolean |
   return parsed;
 };
 
+export const getDataType = (data: string | number | boolean | null | unknown): UniconType => {
+  if (data === null) return "null";
+  else if (isUniconFile(data)) return "UniconFile";
+  else if (typeof data === "string") return "text";
+  else if (typeof data === "number") return "number";
+  else if (typeof data === "boolean") return "boolean";
+  return "unknown";
+};
+
 export const isRequiredInputStep = (step: Step): boolean => {
   return step.type === "INPUT_STEP" && ((step as InputStep).is_user ?? false);
 };
@@ -38,8 +48,22 @@ export const isRequiredInputStep = (step: Step): boolean => {
 export const createSocket = (
   type: SocketType,
   label?: string,
-  data: string | number | boolean | File | null = null,
-) => ({ id: uuid(), type, label, data });
+  data: string | number | boolean | UniconFile | null = null,
+  dataType?: UniconType | null,
+  dataTypeMetadata?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+) => {
+  if (dataType === undefined && type === "DATA") {
+    // We make a guess for the type.
+    if (dataTypeMetadata !== undefined) dataType = "PythonObject";
+    else if (typeof data === "string") dataType = "text";
+    else if (typeof data === "number") dataType = "number";
+    else if (typeof data === "boolean") dataType = "boolean";
+    else if (data === null) dataType = "null";
+    else if (isUniconFile(data)) dataType = "UniconFile";
+    else dataType = "unknown";
+  }
+  return { id: uuid(), type, label, data, data_type: dataType, data_type_metadata: dataTypeMetadata };
+};
 
 const createBaseStep = (type: StepType, inputs: StepSocket[], outputs: StepSocket[]) => ({
   id: uuid(),
@@ -56,12 +80,13 @@ export const createDefaultStep = (type: StepType) => {
         is_user: false,
       } as InputStep;
     case "OUTPUT_STEP":
+      // TODO: Change type when expected changes
       return createBaseStep(type, [createSocket("DATA")], []) as OutputStep;
     case "PY_RUN_FUNCTION_STEP":
       return {
         ...createBaseStep(
           type,
-          [{ ...createSocket("DATA", "Module"), import_as_module: true }] as PyRunFunctionSocket[],
+          [{ ...createSocket("DATA", "Module", null, "UniconFile"), import_as_module: true }] as PyRunFunctionSocket[],
           [],
         ),
         function_identifier: "",
@@ -69,14 +94,18 @@ export const createDefaultStep = (type: StepType) => {
       } as PyRunFunctionStep;
     case "OBJECT_ACCESS_STEP":
       return {
-        ...createBaseStep(type, [createSocket("DATA", "Object")], [createSocket("DATA", "Value")]),
+        ...createBaseStep(
+          type,
+          [createSocket("DATA", "Object", null, "PythonObject", { name: "dict" })],
+          [createSocket("DATA", "Value", null, "unknown")],
+        ),
         key: "",
       } as ObjectAccessStep;
     case "STRING_MATCH_STEP":
       return createBaseStep(
         type,
-        [createSocket("DATA", "Operand 1"), createSocket("DATA", "Operand 2")],
-        [createSocket("DATA", "Match?")],
+        [createSocket("DATA", "Operand 1", null, "unknown"), createSocket("DATA", "Operand 2", null, "unknown")],
+        [createSocket("DATA", "Match?", null, "boolean")],
       ) as StringMatchStep;
     case "LOOP_STEP":
       return createBaseStep(
