@@ -15,7 +15,7 @@ import {
 import { createSocket } from "@/lib/compute-graph";
 import { DragItemType } from "@/lib/drag";
 import { isFolder, TreeFile, TreeFolder } from "@/lib/files";
-import { isUniconFile } from "@/lib/utils";
+import { isUniconFile, uuid } from "@/lib/utils";
 
 import InputMetadataRow from "./input-metadata-row";
 
@@ -57,6 +57,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         socketMetadata: {
           label: "file.py",
           data: {
+            id: uuid(),
             path: "file.py",
             content: "print('Hello World')",
             trusted: true,
