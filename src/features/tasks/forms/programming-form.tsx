@@ -353,9 +353,8 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
           <FormSection
             title="Files"
             description={
-              <p>
-                Files that are used in testcases
-                <br />
+              <>
+                <p>Files that are used in testcases</p>
                 <br />
                 <ul className="list-disc">
                   <li>
@@ -363,7 +362,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                   </li>
                   <li className="mt-2">To use it in a testcase, simply drag and drop it into the graph editor</li>
                 </ul>
-              </p>
+              </>
             }
           >
             <FileInputSection />
