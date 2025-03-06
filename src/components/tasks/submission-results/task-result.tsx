@@ -1,79 +1,110 @@
-import { TaskAttemptPublic } from "@/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { format, formatDuration, formatRelative, intervalToDuration } from "date-fns";
+import { TimerIcon } from "lucide-react";
+
+import { TaskAttemptPublic, TaskResult } from "@/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 import MultipleChoiceResult from "./result-types/multiple-choice-result";
 import MultipleResponseResult from "./result-types/multiple-response-result";
 import ProgrammingResult from "./result-types/programming-result";
 
-type OwnProps = {
-  title: string;
-  taskAttempt: TaskAttemptPublic;
+type StatusIndicatorProps = {
+  color: string;
+  pulse?: boolean;
+};
+
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({ color, pulse }) => {
+  return (
+    <span className="relative flex h-4 w-4">
+      <span className={cn("absolute inline-flex h-full w-full rounded-full", color, { "animate-ping": pulse })} />
+      <span className={cn("absolute inline-flex h-full w-full rounded-full", color)} />
+    </span>
+  );
+};
+
+type TaskResultCardProps = {
   problemId: number;
+  taskAttempt: TaskAttemptPublic;
+  title: string;
 };
 
-const taskStatusToColor = (status: string) => {
-  switch (status) {
-    case "PENDING":
-      return "bg-yellow-400";
-    case "SUCCESS":
-      return "bg-green-400";
-    case "SKIPPED":
-      return "bg-gray-400";
-  }
-};
+const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, title }) => {
+  const attemptResult: TaskResult = taskAttempt.task_results[0];
+  if (!attemptResult) return <></>;
 
-const parseDateTime = (dateTimeString: string) => new Date(dateTimeString).toLocaleString();
+  const renderTiming = () => {
+    return (
+      <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
+        <Tooltip>
+          <TooltipTrigger>
+            <span>{formatRelative(attemptResult.started_at, new Date())}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top" align="center">
+            <span className="text-sm">{format(attemptResult.started_at, "dd MMM yyyy, HH:mm:ss")}</span>
+          </TooltipContent>
+        </Tooltip>
+        {attemptResult.completed_at && (
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
+                <TimerIcon size={15} />
+                {formatDuration(
+                  intervalToDuration({
+                    start: attemptResult.started_at,
+                    end: attemptResult.completed_at,
+                  }),
+                  { format: ["hours", "minutes", "seconds"] },
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" align="center">
+              <span className="text-sm">
+                Completed at {format(attemptResult.completed_at, "dd MMM yyyy, HH:mm:ss")}
+              </span>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
 
-const TaskResultCard: React.FC<OwnProps> = ({ title, taskAttempt, problemId }) => {
-  const taskResult = taskAttempt.task_results[0];
-
-  if (!taskResult) {
-    // TODO: Consider rendering something
-    return;
-  }
+  const renderResult = () => {
+    switch (taskAttempt.task.type) {
+      case "PROGRAMMING_TASK":
+        return <ProgrammingResult taskAttempt={taskAttempt} problemId={problemId} />;
+      case "MULTIPLE_CHOICE_TASK":
+        return <MultipleChoiceResult taskAttempt={taskAttempt} />;
+      case "SHORT_ANSWER_TASK":
+        return (
+          <pre className="whitespace-pre-wrap rounded-md bg-gray-900 p-4 text-gray-100">
+            {JSON.stringify(attemptResult.result, null, 2)}
+          </pre>
+        );
+      case "MULTIPLE_RESPONSE_TASK":
+        return <MultipleResponseResult taskAttempt={taskAttempt} />;
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-4 font-mono">
-          <span className="relative flex h-4 w-4">
-            <span
-              className={cn(
-                "absolute inline-flex h-full w-full rounded-full",
-                taskStatusToColor(taskResult.status),
-                taskResult.status === "PENDING" ? "animate-ping" : "",
-              )}
-            ></span>
-            <span
-              className={cn("absolute inline-flex h-4 w-4 rounded-full", taskStatusToColor(taskResult.status))}
-            ></span>
-          </span>
+        <CardTitle className="flex items-center gap-4">
+          <StatusIndicator
+            color={TaskEvalStatusColorMap[attemptResult.status]}
+            pulse={attemptResult.status == "PENDING"}
+          />
           <span className="text-lg font-medium">{title}</span>
+          {renderTiming()}
         </CardTitle>
-        {taskResult.status != "SKIPPED" && (
-          <CardDescription className="flex flex-col gap-1 py-2 font-mono text-sm">
-            <span>STARTED: {parseDateTime(taskResult.started_at)}</span>
-            {taskResult.completed_at && <span>FINISHED: {parseDateTime(taskResult.completed_at)}</span>}
-          </CardDescription>
-        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-2 font-mono">
-        {taskResult.status == "SKIPPED" ? (
+        {attemptResult.status == "SKIPPED" ? (
           <span className="text-gray-300">Manual grading is required!</span>
         ) : (
-          <>
-            {taskAttempt.task.type === "PROGRAMMING_TASK" && (
-              <ProgrammingResult taskAttempt={taskAttempt} problemId={problemId} />
-            )}
-            {taskAttempt.task.type === "MULTIPLE_CHOICE_TASK" && <MultipleChoiceResult taskAttempt={taskAttempt} />}
-            {taskAttempt.task.type === "SHORT_ANSWER_TASK" && (
-              <pre className="whitespace-pre-wrap rounded-md bg-gray-900 p-4 text-gray-100">
-                {JSON.stringify(taskResult.result, null, 2)}
-              </pre>
-            )}
-            {taskAttempt.task.type === "MULTIPLE_RESPONSE_TASK" && <MultipleResponseResult taskAttempt={taskAttempt} />}
-          </>
+          renderResult()
         )}
       </CardContent>
     </Card>
