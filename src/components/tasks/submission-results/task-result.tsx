@@ -1,4 +1,4 @@
-import { format, formatDuration, formatRelative, intervalToDuration } from "date-fns";
+import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
 import { TimerIcon } from "lucide-react";
 
 import { TaskAttemptPublic, TaskResult } from "@/api";
@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { relativeTime } from "@/utils/date";
 
 import MultipleChoiceResult from "./result-types/multiple-choice-result";
 import MultipleResponseResult from "./result-types/multiple-response-result";
@@ -33,6 +34,8 @@ type TaskResultCardProps = {
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, title }) => {
   const attemptResult: TaskResult = taskAttempt.task_results[0];
+  const startedAtDate = parseISO(attemptResult.started_at);
+
   if (!attemptResult) return <></>;
 
   const renderTiming = () => {
@@ -40,10 +43,10 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
         <Tooltip>
           <TooltipTrigger>
-            <span>{formatRelative(attemptResult.started_at, new Date())}</span>
+            <span>{relativeTime(startedAtDate)}</span>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
-            <span className="text-sm">{format(attemptResult.started_at, "dd MMM yyyy, HH:mm:ss")}</span>
+            <span className="text-sm">Started at {format(startedAtDate, "dd MMM yyyy, HH:mm:ss")}</span>
           </TooltipContent>
         </Tooltip>
         {attemptResult.completed_at && (
@@ -53,8 +56,8 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
                 <TimerIcon size={15} />
                 {formatDuration(
                   intervalToDuration({
-                    start: attemptResult.started_at,
-                    end: attemptResult.completed_at,
+                    start: startedAtDate,
+                    end: parseISO(attemptResult.completed_at),
                   }),
                   { format: ["hours", "minutes", "seconds"] },
                 )}

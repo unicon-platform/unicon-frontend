@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { differenceInDays, differenceInHours, format, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { FileIcon, Pencil } from "lucide-react";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,10 +12,9 @@ import { DraftBadge, RestrictedBadge } from "@/features/problems/components/badg
 import { getProblemById, useCreateProblemSubmission } from "@/features/problems/queries";
 import { useProblemId, useProjectId } from "@/features/projects/hooks/use-id";
 import TaskCard from "@/features/tasks/components/task-card";
+import { relativeTimeDetailed } from "@/utils/date";
 
 const TimeDisplay = ({ label, datetime, iconName }: { label: string; datetime: Date; iconName: IconName }) => {
-  const now = new Date();
-  const isOver = datetime < now;
   return (
     <Tooltip>
       <TooltipTrigger asChild className="cursor-default">
@@ -27,17 +26,7 @@ const TimeDisplay = ({ label, datetime, iconName }: { label: string; datetime: D
           </div>
         </div>
       </TooltipTrigger>
-      <TooltipContent>
-        {isOver ? (
-          <span>
-            {differenceInDays(now, datetime)} day(s), {differenceInHours(now, datetime) % 24} hour(s) since
-          </span>
-        ) : (
-          <span>
-            {differenceInDays(datetime, now)} day(s), {differenceInHours(datetime, now) % 24} hour(s) left
-          </span>
-        )}
-      </TooltipContent>
+      <TooltipContent>{relativeTimeDetailed(datetime)}</TooltipContent>
     </Tooltip>
   );
 };
