@@ -15,15 +15,9 @@ type OwnProps = {
 const getTestcaseResultBadge = (status: Status) => {
   switch (status) {
     case "OK":
-      return <Badge className="bg-green-300 hover:bg-green-300">OK</Badge>;
-    case "WA":
-      return <Badge className="bg-red-300 hover:bg-red-300">WA</Badge>;
-    case "TLE":
-      return <Badge className="bg-red-300 hover:bg-red-300">TLE</Badge>;
-    case "MLE":
-      return <Badge className="bg-red-300 hover:bg-red-300">MLE</Badge>;
-    case "RTE":
-      return <Badge className="bg-red-300 hover:bg-red-300">RTE</Badge>;
+      return <Badge className="bg-green-300 font-mono hover:bg-green-300">OK</Badge>;
+    default:
+      return <Badge className="bg-red-300 font-mono hover:bg-red-300">{status}</Badge>;
   }
 };
 
@@ -42,12 +36,12 @@ const TestcaseResult: React.FC<OwnProps> = ({ result, index, testcase, hideDetai
 
   return (
     <div>
-      <div className={cn("flex gap-4")}>
+      <div className={cn("flex gap-3")}>
         <span>Testcase {index + 1}</span>
         {getTestcaseResultBadge(result.status)}
       </div>
       {!hideDetails && (
-        <Accordion type="multiple" className="mt-2" defaultValue={[`result-${index}`]}>
+        <Accordion type="multiple" className="mt-2 font-mono" defaultValue={[`result-${index}`]}>
           <AccordionItem value={`stderr-${index}`}>
             <AccordionTrigger>stderr</AccordionTrigger>
             <AccordionContent>
@@ -70,7 +64,7 @@ const TestcaseResult: React.FC<OwnProps> = ({ result, index, testcase, hideDetai
         </Accordion>
       )}
       {hideDetails && (
-        <div className="mt-2">
+        <div className="mt-2 font-mono">
           <SocketResultTable data={combinedResults || []} />
         </div>
       )}

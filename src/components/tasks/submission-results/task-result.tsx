@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { TimerIcon } from "lucide-react";
 
-import { TaskAttemptPublic, TaskResult } from "@/api";
+import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
@@ -26,6 +26,14 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ color, pulse }) => {
   );
 };
 
+const ATTEMPT_STATUS_MESSAGE: Record<TaskEvalStatus, string> = {
+  PENDING: "Hold tight! Your submission is being evaluated... ⏳",
+  SKIPPED: "Hmm, this needs a human touch! 👀 Your submission requires manual grading by an instructor.",
+  FAILED: "Oh no! Something went wrong 😭 It is not your fault though, please contact an administrator for help.",
+  // NOTE: This is placeholder for type safety, if the attempt runs successfully, we will show the actual result
+  SUCCESS: "",
+} as const;
+
 type TaskResultCardProps = {
   problemId: number;
   taskAttempt: TaskAttemptPublic;
@@ -34,9 +42,9 @@ type TaskResultCardProps = {
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, title }) => {
   const attemptResult: TaskResult = taskAttempt.task_results[0];
-  const startedAtDate = parseISO(attemptResult.started_at);
-
   if (!attemptResult) return <></>;
+
+  const startedAtDate = parseISO(attemptResult.started_at);
 
   const renderTiming = () => {
     return (
@@ -69,6 +77,10 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
   };
 
   const renderResult = () => {
+    if (attemptResult.status !== "SUCCESS") {
+      return <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>;
+    }
+
     switch (taskAttempt.task.type) {
       case "PROGRAMMING_TASK":
         return <ProgrammingResult taskAttempt={taskAttempt} problemId={problemId} />;
@@ -97,13 +109,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
           {renderTiming()}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 font-mono">
-        {attemptResult.status == "SKIPPED" ? (
-          <span className="text-gray-300">Manual grading is required!</span>
-        ) : (
-          renderResult()
-        )}
-      </CardContent>
+      <CardContent className="flex flex-col gap-2">{renderResult()}</CardContent>
     </Card>
   );
 };
