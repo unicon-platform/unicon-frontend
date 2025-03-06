@@ -1,4 +1,4 @@
-import { format, formatDuration, intervalToDuration, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { TimerIcon } from "lucide-react";
 
 import { TaskAttemptPublic, TaskResult } from "@/api";
@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { relativeTime } from "@/utils/date";
+import { formatIntervalDuration, relativeTime } from "@/utils/date";
 
 import MultipleChoiceResult from "./result-types/multiple-choice-result";
 import MultipleResponseResult from "./result-types/multiple-response-result";
@@ -54,13 +54,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
             <TooltipTrigger>
               <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
                 <TimerIcon size={15} />
-                {formatDuration(
-                  intervalToDuration({
-                    start: startedAtDate,
-                    end: parseISO(attemptResult.completed_at),
-                  }),
-                  { format: ["hours", "minutes", "seconds"] },
-                )}
+                {formatIntervalDuration(startedAtDate, parseISO(attemptResult.completed_at))}
               </div>
             </TooltipTrigger>
             <TooltipContent side="top" align="center">
