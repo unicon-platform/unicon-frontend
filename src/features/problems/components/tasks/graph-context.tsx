@@ -209,9 +209,9 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
   // Detect changes
   const functionIdentifierChanged = step.function_identifier !== payload.functionIdentifier;
   const functionSignatureChanged = payload.functionSignature !== undefined;
-  const allowErrorChanged = step.allow_error !== payload.allowError;
-  const propagateStdoutChanged = step.propagate_stdout !== payload.propagateStdout;
-  const propagateStderrChanged = step.propagate_stderr !== payload.propagateStderr;
+  const allowErrorChanged = !!step.allow_error !== !!payload.allowError;
+  const propagateStdoutChanged = !!step.propagate_stdout !== !!payload.propagateStdout;
+  const propagateStderrChanged = !!step.propagate_stderr !== !!payload.propagateStderr;
 
   if (functionIdentifierChanged) {
     // 1. Update the identifier.
@@ -327,7 +327,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
       allow_error: payload.allowError,
     };
     if (payload.allowError) {
-      pushOutputSocket("Error", { handles_error: true });
+      pushOutputSocket("Error", { handles_error: true }, "PythonObject", { name: "Exception" });
     } else {
       removeOutputSocket("handles_error");
     }
@@ -361,7 +361,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     }
   }
 
-  if (payload.functionIdentifier === null) {
+  if (!payload.functionIdentifier) {
     // If there is a result socket, remove it.
     removeOutputSocket("result");
   } else {
