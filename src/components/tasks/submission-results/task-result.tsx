@@ -42,11 +42,9 @@ type TaskResultCardProps = {
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, title }) => {
   const attemptResult: TaskResult = taskAttempt.task_results[0];
-  if (!attemptResult) return <></>;
-
-  const startedAtDate = parseISO(attemptResult.started_at);
 
   const renderTiming = () => {
+    const startedAtDate = parseISO(attemptResult.started_at);
     return (
       <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
         <Tooltip>
@@ -102,14 +100,27 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       <CardHeader>
         <CardTitle className="flex items-center gap-4">
           <StatusIndicator
-            color={TaskEvalStatusColorMap[attemptResult.status]}
-            pulse={attemptResult.status == "PENDING"}
+            color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-purple-400"}
+            pulse={attemptResult && attemptResult.status == "PENDING"}
           />
           <span className="text-lg font-medium">{title}</span>
-          {renderTiming()}
+          {attemptResult && renderTiming()}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">{renderResult()}</CardContent>
+      <CardContent>
+        {attemptResult ? (
+          renderResult()
+        ) : (
+          <div className="flex flex-col gap-2">
+            <span className="font-medium">No results found for this attempt 🥺</span>
+            <p className="text-zinc-300">
+              Fret not, this is not your fault. The adminstrator might have made a change to the task which invalidated
+              your attempt. All you have to do is to submit a new attempt or re-run this attempt by clicking the
+              "Re-run" button right above, and you will be good to go!
+            </p>
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 };
