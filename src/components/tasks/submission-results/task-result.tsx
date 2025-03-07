@@ -1,79 +1,124 @@
-import { TaskAttemptPublic } from "@/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { format, parseISO } from "date-fns";
+import { TimerIcon } from "lucide-react";
+
+import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { formatIntervalDuration, relativeTime } from "@/utils/date";
 
 import MultipleChoiceResult from "./result-types/multiple-choice-result";
 import MultipleResponseResult from "./result-types/multiple-response-result";
 import ProgrammingResult from "./result-types/programming-result";
 
-type OwnProps = {
-  title: string;
-  taskAttempt: TaskAttemptPublic;
+type StatusIndicatorProps = {
+  color: string;
+  pulse?: boolean;
+};
+
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({ color, pulse }) => {
+  return (
+    <span className="relative flex h-4 w-4">
+      <span className={cn("absolute inline-flex h-full w-full rounded-full", color, { "animate-ping": pulse })} />
+      <span className={cn("absolute inline-flex h-full w-full rounded-full", color)} />
+    </span>
+  );
+};
+
+const ATTEMPT_STATUS_MESSAGE: Record<TaskEvalStatus, string> = {
+  PENDING: "Hold tight! Your submission is being evaluated... ⏳",
+  SKIPPED: "Hmm, this needs a human touch! 👀 Your submission requires manual grading by an instructor.",
+  FAILED: "Oh no! Something went wrong 😭 It is not your fault though, please contact an administrator for help.",
+  // NOTE: This is placeholder for type safety, if the attempt runs successfully, we will show the actual result
+  SUCCESS: "",
+} as const;
+
+type TaskResultCardProps = {
   problemId: number;
+  taskAttempt: TaskAttemptPublic;
+  title: string;
 };
 
-const taskStatusToColor = (status: string) => {
-  switch (status) {
-    case "PENDING":
-      return "bg-yellow-400";
-    case "SUCCESS":
-      return "bg-green-400";
-    case "SKIPPED":
-      return "bg-gray-400";
-  }
-};
+const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, title }) => {
+  const attemptResult: TaskResult = taskAttempt.task_results[0];
 
-const parseDateTime = (dateTimeString: string) => new Date(dateTimeString).toLocaleString();
+  const renderTiming = () => {
+    const startedAtDate = parseISO(attemptResult.started_at);
+    return (
+      <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
+        <Tooltip>
+          <TooltipTrigger>
+            <span>{relativeTime(startedAtDate)}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top" align="center">
+            <span className="text-sm">Started at {format(startedAtDate, "dd MMM yyyy, HH:mm:ss")}</span>
+          </TooltipContent>
+        </Tooltip>
+        {attemptResult.completed_at && (
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
+                <TimerIcon size={15} />
+                {formatIntervalDuration(startedAtDate, parseISO(attemptResult.completed_at))}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" align="center">
+              <span className="text-sm">
+                Completed at {format(attemptResult.completed_at, "dd MMM yyyy, HH:mm:ss")}
+              </span>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
 
-const TaskResultCard: React.FC<OwnProps> = ({ title, taskAttempt, problemId }) => {
-  const taskResult = taskAttempt.task_results[0];
+  const renderResult = () => {
+    if (attemptResult.status !== "SUCCESS") {
+      return <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>;
+    }
 
-  if (!taskResult) {
-    // TODO: Consider rendering something
-    return;
-  }
+    switch (taskAttempt.task.type) {
+      case "PROGRAMMING_TASK":
+        return <ProgrammingResult taskAttempt={taskAttempt} problemId={problemId} />;
+      case "MULTIPLE_CHOICE_TASK":
+        return <MultipleChoiceResult taskAttempt={taskAttempt} />;
+      case "SHORT_ANSWER_TASK":
+        return (
+          <pre className="whitespace-pre-wrap rounded-md bg-gray-900 p-4 text-gray-100">
+            {JSON.stringify(attemptResult.result, null, 2)}
+          </pre>
+        );
+      case "MULTIPLE_RESPONSE_TASK":
+        return <MultipleResponseResult taskAttempt={taskAttempt} />;
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-4 font-mono">
-          <span className="relative flex h-4 w-4">
-            <span
-              className={cn(
-                "absolute inline-flex h-full w-full rounded-full",
-                taskStatusToColor(taskResult.status),
-                taskResult.status === "PENDING" ? "animate-ping" : "",
-              )}
-            ></span>
-            <span
-              className={cn("absolute inline-flex h-4 w-4 rounded-full", taskStatusToColor(taskResult.status))}
-            ></span>
-          </span>
+        <CardTitle className="flex items-center gap-4">
+          <StatusIndicator
+            color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-purple-400"}
+            pulse={attemptResult && attemptResult.status == "PENDING"}
+          />
           <span className="text-lg font-medium">{title}</span>
+          {attemptResult && renderTiming()}
         </CardTitle>
-        {taskResult.status != "SKIPPED" && (
-          <CardDescription className="flex flex-col gap-1 py-2 font-mono text-sm">
-            <span>STARTED: {parseDateTime(taskResult.started_at)}</span>
-            {taskResult.completed_at && <span>FINISHED: {parseDateTime(taskResult.completed_at)}</span>}
-          </CardDescription>
-        )}
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 font-mono">
-        {taskResult.status == "SKIPPED" ? (
-          <span className="text-gray-300">Manual grading is required!</span>
+      <CardContent>
+        {attemptResult ? (
+          renderResult()
         ) : (
-          <>
-            {taskAttempt.task.type === "PROGRAMMING_TASK" && (
-              <ProgrammingResult taskAttempt={taskAttempt} problemId={problemId} />
-            )}
-            {taskAttempt.task.type === "MULTIPLE_CHOICE_TASK" && <MultipleChoiceResult taskAttempt={taskAttempt} />}
-            {taskAttempt.task.type === "SHORT_ANSWER_TASK" && (
-              <pre className="whitespace-pre-wrap rounded-md bg-gray-900 p-4 text-gray-100">
-                {JSON.stringify(taskResult.result, null, 2)}
-              </pre>
-            )}
-            {taskAttempt.task.type === "MULTIPLE_RESPONSE_TASK" && <MultipleResponseResult taskAttempt={taskAttempt} />}
-          </>
+          <div className="flex flex-col gap-2">
+            <span className="font-medium">No results found for this attempt 🥺</span>
+            <p className="text-zinc-300">
+              Fret not, this is not your fault. The adminstrator might have made a change to the task which invalidated
+              your attempt. All you have to do is to submit a new attempt or re-run this attempt by clicking the
+              "Re-run" button right above, and you will be good to go!
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

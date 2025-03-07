@@ -58,7 +58,7 @@ const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attemp
 
   return (
     <div className="relative flex flex-col gap-4">
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         <Select
           value={selectedAttemptIdx?.toString() ?? ""}
           onValueChange={(value) => setSelectedAttemptIdx(+value)}
@@ -76,7 +76,7 @@ const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attemp
             ))}
           </SelectContent>
         </Select>
-        {selectedAttempt && attemptResultsDesc && (
+        {selectedAttempt && attemptResultsDesc.length > 0 && (
           <Select
             key={selectedAttempt.id}
             value={selectedResultIdx?.toString() ?? ""}
@@ -102,12 +102,12 @@ const AttemptResults: React.FC<AttemptResultsProps> = ({ problemId, task, attemp
           </Button>
         )}
       </div>
-      {selectedAttemptIdx !== null && selectedAttempt && selectedResult && (
+      {selectedAttemptIdx !== null && selectedAttempt && (
         <TaskResultCard
           title={`Attempt ${selectedAttemptIdx + 1}`}
           taskAttempt={{
             ...selectedAttempt,
-            task_results: [selectedResult],
+            task_results: selectedResult ? [selectedResult] : [],
             task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
           }}
           problemId={problemId}
@@ -294,7 +294,12 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
               {requiredFileInputs.map(({ id, data }) => (
-                <Editor fileName={data.path} defaultContent={data.content} onFileContentChange={handleFileChange(id)} />
+                <Editor
+                  key={id}
+                  fileName={data.path}
+                  defaultContent={data.content}
+                  onFileContentChange={handleFileChange(id)}
+                />
               ))}
             </div>
             <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending}>

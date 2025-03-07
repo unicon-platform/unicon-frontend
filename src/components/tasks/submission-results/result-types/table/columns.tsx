@@ -28,15 +28,16 @@ export type Result = {
 export const columns: ColumnDef<Result>[] = [
   {
     accessorKey: "socketMetadata.label",
-    header: "label",
+    header: "Label",
   },
   {
     accessorFn: ({ value }) => JSON.stringify(value),
-    header: "value",
+    header: "Got",
+    cell: ({ getValue }) => <div className="font-mono">{getValue<string>()}</div>,
   },
   {
     id: "expected",
-    header: "expected",
+    header: "Expected",
     cell: ({ row }) => {
       const socketMetadata = row.original.socketMetadata;
       if (!socketMetadata.comparison) {
@@ -46,7 +47,7 @@ export const columns: ColumnDef<Result>[] = [
       const operator = socketMetadata.comparison.operator;
       const expected = socketMetadata.comparison.value;
       return (
-        <div>
+        <div className="font-mono">
           {operator} {JSON.stringify(expected)}
         </div>
       );
