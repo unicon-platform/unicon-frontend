@@ -13,6 +13,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { parseSocketDataString } from "@/lib/compute-graph";
 import { cn, isUniconFile } from "@/lib/utils";
 
+import SocketTypeBadge from "./step/socket-type-badge";
+
 interface NodeSlotProps {
   type: HandleType;
   socket: StepSocket;
@@ -207,15 +209,7 @@ export function NodeSlot({
       </div>
       {!hideType && (
         <div className={cn("flex px-4", type === "source" && "justify-end")}>
-          {socket.data_type && (
-            // TODO: Move this to another component
-            <Badge
-              className={"w-fit border-dashed border-blue-300 text-[0.5rem] leading-[0.75rem]"}
-              variant={"outline"}
-            >
-              {socket.data_type} {socket.data_type_metadata && `- ${socket.data_type_metadata.name}`}
-            </Badge>
-          )}
+          {socket.data_type && <SocketTypeBadge socket={socket} />}
         </div>
       )}
     </div>
