@@ -114,7 +114,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
         // Shared user input step for all testcases
         const newSharedUserInputStep: InputStep = {
           ...DEFAULT_USER_INPUT_STEP,
-          outputs: fromValue.map((input) => ({ ...input, type: "DATA", public: true })),
+          outputs: fromValue.map((input) => ({ ...input, type: "DATA", public: true, data_type: "UniconFile" })),
         };
         const testcases = toValue.map((testcase) => ({
           ...testcase,
