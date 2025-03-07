@@ -159,10 +159,21 @@ export const isTypeCompatible = (inputType: SocketDataType, outputType: SocketDa
 
   // If both types are PythonTypes, we can compare them directly.
   if (inputType.data_type === "PythonObject" && outputType.data_type === "PythonObject") {
-    if (inputType.data_type_metadata?.name === "Any" || outputType.data_type_metadata?.name === "Any") {
+    // If the types are Any on either side, allow the connection.
+    const inputDataType = inputType.data_type_metadata?.name as string;
+    const outputDataType = outputType.data_type_metadata?.name as string;
+    if (inputDataType === "Any" || outputDataType === "Any") {
       return true;
     }
-    return inputType.data_type_metadata?.name === outputType.data_type_metadata?.name;
+
+    // If the types are something we support, a direct comparison can be made.
+    const supportedTypes = ["str", "int", "float", "bool", "NoneType"];
+    if (!supportedTypes.includes(inputDataType) || !supportedTypes.includes(outputDataType)) {
+      return inputDataType === outputDataType;
+    }
+
+    // Otherwise, at least one of the types are not yet comparable. Just allow the connection.
+    return true;
   }
 
   const processedInputType =
