@@ -30,7 +30,7 @@ export const relativeTimeDetailed = (date: DateArg<Date>, baseDate: DateArg<Date
 
 export const formatIntervalDuration = (start: DateArg<Date>, end: DateArg<Date>) => {
   const duration = intervalToDuration({ start, end });
-  if (duration.seconds === undefined) {
+  if (Object.keys(duration).length === 0) {
     // If the duration is less than a second, the object will be empty (`{}`)
     // Hence, we calculate the milliseconds difference
     const msDiff = differenceInMilliseconds(end, start);
