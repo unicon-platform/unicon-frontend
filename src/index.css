@@ -11,11 +11,10 @@
   transform: translate(0, 0);
 }
 
- 
 .validationflow .react-flow__node-custominput {
   background: #fff;
 }
- 
+
 .react-flow__handle.connectingto {
   background: #ff6060 !important;
 }
