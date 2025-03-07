@@ -32,15 +32,6 @@ export const parseSocketDataString = (data: string): string | number | boolean |
   return parsed;
 };
 
-export const getDataType = (data: string | number | boolean | null | unknown): UniconType => {
-  if (data === null) return "null";
-  else if (isUniconFile(data)) return "UniconFile";
-  else if (typeof data === "string") return "text";
-  else if (typeof data === "number") return "number";
-  else if (typeof data === "boolean") return "boolean";
-  return "unknown";
-};
-
 export const isRequiredInputStep = (step: Step): boolean => {
   return step.type === "INPUT_STEP" && ((step as InputStep).is_user ?? false);
 };
@@ -124,3 +115,76 @@ export const createDefaultStep = (type: StepType) => {
 
 export const isResultSocket = (socket: PyRunFunctionSocket) =>
   socket.type === "DATA" && !socket.handles_error && !socket.handles_stderr && !socket.handles_stdout;
+
+// Compute graph type checks
+
+export const getDataType = (data: string | number | boolean | null | unknown): UniconType => {
+  if (data === null) return "null";
+  else if (isUniconFile(data)) return "UniconFile";
+  else if (typeof data === "string") return "text";
+  else if (typeof data === "number") return "number";
+  else if (typeof data === "boolean") return "boolean";
+  return "unknown";
+};
+
+type SocketDataType = Pick<StepSocket, "data_type" | "data_type_metadata">;
+
+const convertPythonDataTypeToUniconType = (pythonType: string): UniconType => {
+  switch (pythonType) {
+    case "str":
+      return "text";
+    case "int":
+    case "float":
+      return "number";
+    case "bool":
+      return "boolean";
+    case "NoneType":
+      return "null";
+    default:
+      return "unknown";
+  }
+};
+
+export const isTypeCompatible = (inputType: SocketDataType, outputType: SocketDataType): boolean => {
+  // If either type is unknown, we suspect an error in the graph.
+  // We warn the user, but allow the connection.
+  if (!inputType.data_type || !outputType.data_type) {
+    console.warn({
+      inputType: inputType,
+      outputType: outputType,
+      message: "A type passed into isTypeCompatible is undefined.",
+    });
+    return true;
+  }
+
+  // If both types are PythonTypes, we can compare them directly.
+  if (inputType.data_type === "PythonObject" && outputType.data_type === "PythonObject") {
+    if (inputType.data_type_metadata?.name === "Any" || outputType.data_type_metadata?.name === "Any") {
+      return true;
+    }
+    return inputType.data_type_metadata?.name === outputType.data_type_metadata?.name;
+  }
+
+  const processedInputType =
+    inputType.data_type === "PythonObject"
+      ? convertPythonDataTypeToUniconType((inputType.data_type_metadata?.name as string) ?? "")
+      : inputType.data_type;
+
+  // Caveat: Since unicon only has a number type, if the PythonType actually takes in int/float,
+  // we allow the connection for number.
+  const processedOutputType =
+    outputType.data_type === "PythonObject"
+      ? convertPythonDataTypeToUniconType((outputType.data_type_metadata?.name as string) ?? "")
+      : outputType.data_type;
+
+  if (processedInputType === "unknown" || processedOutputType === "unknown") {
+    return true;
+  }
+
+  // File type can be connected to text type (filepath)
+  if (processedInputType === "UniconFile" && processedOutputType === "text") {
+    return true;
+  }
+
+  return processedInputType === processedOutputType;
+};

@@ -25,7 +25,7 @@ import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { isRequiredInputStep } from "@/lib/compute-graph";
+import { isRequiredInputStep, isTypeCompatible } from "@/lib/compute-graph";
 import { convertFilesToFileTree } from "@/lib/files";
 import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
@@ -228,8 +228,12 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
       // This is to prevent multiple "DATA" inputs to a single node socket/handle
       // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
       // execute before a single node
-      if (targetSocket.type === "DATA")
-        return !edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle);
+      if (targetSocket.type === "DATA") {
+        if (edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle)) return false;
+        if (!isTypeCompatible(sourceSocket, targetSocket)) {
+          return false;
+        }
+      }
 
       return true;
     },
