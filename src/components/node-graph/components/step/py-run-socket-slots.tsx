@@ -1,7 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import { useContext } from "react";
 
-import { PyRunFunctionSocket } from "@/api";
+import { PyRunFunctionSocket, UniconType } from "@/api";
 import { Button } from "@/components/ui/button";
 import { GraphActionType, GraphDispatchContext, SocketDir } from "@/features/problems/components/tasks/graph-context";
 
@@ -12,7 +12,7 @@ type OwnProps = {
   inDataSockets: PyRunFunctionSocket[];
   outDataSockets: PyRunFunctionSocket[];
   // These 3 actions do not differ from other steps.
-  addSocket: (socketDir: SocketDir) => () => void;
+  addSocket: (socketDir: SocketDir, dataType?: UniconType | null) => () => void;
   onEditData: (socketId: string) => (newSocketData: string | number | boolean | null) => void;
   onDeleteSocket: (socketId: string) => () => void;
 };
@@ -58,7 +58,7 @@ export const PyRunSocketSlots: React.FC<OwnProps> = ({
             size={"sm"}
             className="ml-2 h-fit w-fit px-1 py-1"
             variant="secondary"
-            onClick={addSocket(SocketDir.Input)}
+            onClick={addSocket(SocketDir.Input, "unknown")}
             type="button"
           >
             <PlusIcon />

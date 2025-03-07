@@ -3,7 +3,7 @@ import { PlusIcon, TrashIcon, UserRoundIcon } from "lucide-react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
-import { InputStep, PyRunFunctionSocket, PyRunFunctionStep, StepSocket } from "@/api";
+import { InputStep, PyRunFunctionSocket, PyRunFunctionStep, StepSocket, UniconType } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import StepMetadata from "@/components/node-graph/components/step/metadata/step-metadata";
 import { Button } from "@/components/ui/button";
@@ -151,14 +151,14 @@ export function StepNode({ data }: { data: Step }) {
   const onDeleteSocket = canDeleteSockets ? _onDeleteSocket : undefined;
 
   const addSocket = useCallback(
-    (socketDir: SocketDir) => () => {
+    (socketDir: SocketDir, dataType?: UniconType | null) => () => {
       dispatch({
         type: GraphActionType.AddSocket,
         payload: {
           stepId: data.id,
           socketDir,
           socket: {
-            ...createSocket("DATA", ""),
+            ...createSocket("DATA", "", null, dataType),
           },
         },
       });

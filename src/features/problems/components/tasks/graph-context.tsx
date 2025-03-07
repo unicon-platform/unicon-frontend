@@ -186,6 +186,8 @@ const sameFunctionSignature = (a: PyRunFunctionSocket[], b: PyRunFunctionSocket[
       socket.label === other.label &&
       socket.arg_metadata?.position === other.arg_metadata?.position &&
       socket.arg_metadata?.arg_name === other.arg_metadata?.arg_name &&
+      socket.data_type === other.data_type &&
+      socket.data_type_metadata === other.data_type_metadata &&
       // In the case where one is null and the other is undefined - consider them the same
       ((!socket.kwarg_name && !other.kwarg_name) || socket.kwarg_name === other.kwarg_name)
     );
@@ -365,9 +367,13 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     // If there is a result socket, remove it.
     removeOutputSocket("result");
   } else {
-    // If there is no result socket, add one.
-    if (!step.outputs.find((socket) => isResultSocket(socket))) {
+    // If there is no result socket, add one. Otherwise, fix the type.
+    if (!step.outputs.find(isResultSocket)) {
       pushOutputSocket("Result", {}, "PythonObject", { name: payload.functionSignature?.return_type ?? "Any" });
+    } else {
+      const resultSocket = step.outputs.find(isResultSocket);
+      resultSocket!.data_type = "PythonObject";
+      resultSocket!.data_type_metadata = { name: payload.functionSignature?.return_type ?? "Any" };
     }
   }
 
