@@ -1,6 +1,6 @@
 import { IconName } from "lucide-react/dynamic";
 
-import { StepType } from "@/api";
+import { StepType, TaskEvalStatus } from "@/api";
 
 type ReadOnlyMap<K extends string | number | symbol, V> = { readonly [key in K]: V };
 
@@ -32,4 +32,11 @@ export const StepTypeIconMap: Record<StepType, IconName> = {
   STRING_MATCH_STEP: "equal",
   LOOP_STEP: "infinity",
   IF_ELSE_STEP: "split",
+};
+
+export const TaskEvalStatusColorMap: ReadOnlyMap<TaskEvalStatus, string> = {
+  SUCCESS: "bg-green-400",
+  PENDING: "bg-yellow-400",
+  FAILED: "bg-red-400",
+  SKIPPED: "bg-gray-400",
 };
