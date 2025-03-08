@@ -1,8 +1,8 @@
 import { FileIcon } from "lucide-react";
+import { AiOutlinePython } from "react-icons/ai";
 
 import { StepSocket } from "@/api";
 import { Badge } from "@/components/ui/badge";
-import { IconDeviconPlainPython } from "@/components/ui/icon-devicon-plain-python";
 import { getDataType } from "@/lib/compute-graph";
 
 type OwnProps = {
@@ -23,7 +23,7 @@ const SocketTypeBadge: React.FC<OwnProps> = ({ socket }) => {
     <Badge className={"w-fit border-dashed border-blue-300 text-[0.5rem] leading-[0.75rem]"} variant={"outline"}>
       {socket.data_type === "PythonObject" ? (
         <>
-          <IconDeviconPlainPython className="mr-1" />
+          <AiOutlinePython className="mr-1" />
           {socket.data_type_metadata && (
             <>
               - <code className="ml-1">{socket.data_type_metadata.name as string}</code>
