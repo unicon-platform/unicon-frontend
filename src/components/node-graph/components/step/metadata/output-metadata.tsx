@@ -46,7 +46,7 @@ const OutputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         stepId: step.id,
         socketDir: SocketDir.Input,
         socket: {
-          ...createSocket("DATA", ""),
+          ...createSocket("DATA", "", null, "unknown"),
           ...(["INPUT_STEP", "OUTPUT_STEP"].includes(step.type) ? { public: true } : {}),
         },
       },
