@@ -166,6 +166,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         <TableRow>
           <TableHead></TableHead>
           <TableHead>Label</TableHead>
+          <TableHead>Type</TableHead>
           <TableHead>Value</TableHead>
           <TableHead>Public</TableHead>
           <TableHead></TableHead>

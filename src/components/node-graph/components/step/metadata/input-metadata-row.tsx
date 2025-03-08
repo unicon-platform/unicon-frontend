@@ -12,6 +12,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
 import { cn, isUniconFile } from "@/lib/utils";
 
+import SocketTypeBadge from "../socket-type-badge";
+
 type OwnProps = {
   socket: InputSocket;
   onDelete: () => void;
@@ -52,6 +54,10 @@ const InputMetadataRow: React.FC<OwnProps> = ({
       <TableCell>
         <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={isEditable} />
       </TableCell>
+      <TableCell>
+        <SocketTypeBadge socket={socket} />
+      </TableCell>
+
       <TableCell>
         {socket.data && isUniconFile(socket.data) ? (
           <div className="flex items-center gap-2">
