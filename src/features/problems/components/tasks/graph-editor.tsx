@@ -20,7 +20,8 @@ import {
 import { CopyPlus, ExpandIcon, ShrinkIcon } from "lucide-react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import { GraphEdgeStr as GraphEdge } from "@/api";
+import { GraphEdgeStr as GraphEdge, StepSocket } from "@/api";
+import { StepEdge } from "@/components/node-graph/components/step/step-edge";
 import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
@@ -50,6 +51,7 @@ type GraphEditorProps = {
 };
 
 const nodeTypes = { step: StepNode };
+const edgeTypes = { step: StepEdge };
 
 const stepNodeToRfNode = (step: Step): Node<Step> => ({
   id: step.id,
@@ -69,7 +71,31 @@ const stepEdgeToRfEdge = (edge: GraphEdge): Edge => ({
     width: 20,
     height: 20,
   },
+  type: "step",
 });
+
+export const areSocketsCompatible = (
+  sourceSocket: StepSocket | undefined,
+  targetSocket: StepSocket | undefined,
+): boolean => {
+  // This should never happen but just in case
+  if (!sourceSocket || !targetSocket) return false;
+
+  // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
+  if (sourceSocket.type !== targetSocket.type) return false;
+
+  // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
+  // This is to prevent multiple "DATA" inputs to a single node socket/handle
+  // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
+  // execute before a single node
+  if (targetSocket.type === "DATA") {
+    if (!isTypeCompatible(sourceSocket, targetSocket)) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 const GraphEditor: React.FC<GraphEditorProps> = ({
   graphId,
@@ -297,6 +323,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
             id={graphId}
             onInit={onInit}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             nodes={flowNodes}
             edges={flowEdges}
             onBeforeDelete={onBeforeDelete}
