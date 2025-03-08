@@ -199,3 +199,26 @@ export const isTypeCompatible = (inputType: SocketDataType, outputType: SocketDa
 
   return processedInputType === processedOutputType;
 };
+
+export const areSocketsCompatible = (
+  sourceSocket: StepSocket | undefined,
+  targetSocket: StepSocket | undefined,
+): boolean => {
+  // This should never happen but just in case
+  if (!sourceSocket || !targetSocket) return false;
+
+  // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
+  if (sourceSocket.type !== targetSocket.type) return false;
+
+  // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
+  // This is to prevent multiple "DATA" inputs to a single node socket/handle
+  // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
+  // execute before a single node
+  if (targetSocket.type === "DATA") {
+    if (!isTypeCompatible(sourceSocket, targetSocket)) {
+      return false;
+    }
+  }
+
+  return true;
+};

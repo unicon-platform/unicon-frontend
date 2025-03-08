@@ -20,7 +20,7 @@ import {
 import { CopyPlus, ExpandIcon, ShrinkIcon } from "lucide-react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import { GraphEdgeStr as GraphEdge, StepSocket } from "@/api";
+import { GraphEdgeStr as GraphEdge } from "@/api";
 import { StepEdge } from "@/components/node-graph/components/step/step-edge";
 import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ import {
 import GraphFileEditor from "@/features/problems/components/tasks/graph-file-editor";
 import TestcaseSettings, { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
 import { Step } from "@/features/problems/components/tasks/types";
-import { isRequiredInputStep, isTypeCompatible } from "@/lib/compute-graph";
+import { areSocketsCompatible, isRequiredInputStep } from "@/lib/compute-graph";
 import { convertFilesToFileTree } from "@/lib/files";
 import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
@@ -76,29 +76,6 @@ const stepEdgeToRfEdge = (edge: GraphEdge): Edge => ({
   },
   type: "step",
 });
-
-export const areSocketsCompatible = (
-  sourceSocket: StepSocket | undefined,
-  targetSocket: StepSocket | undefined,
-): boolean => {
-  // This should never happen but just in case
-  if (!sourceSocket || !targetSocket) return false;
-
-  // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
-  if (sourceSocket.type !== targetSocket.type) return false;
-
-  // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
-  // This is to prevent multiple "DATA" inputs to a single node socket/handle
-  // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
-  // execute before a single node
-  if (targetSocket.type === "DATA") {
-    if (!isTypeCompatible(sourceSocket, targetSocket)) {
-      return false;
-    }
-  }
-
-  return true;
-};
 
 const GraphEditor: React.FC<GraphEditorProps> = ({
   graphId,
@@ -240,31 +217,21 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   );
 
   // Edge connection validation
-
   const isValidConnection: IsValidConnection<Edge> = useCallback(
     ({ source, sourceHandle, target, targetHandle }) => {
       const sourceStep = steps.find((step) => step.id === source);
       const targetStep = steps.find((step) => step.id === target);
       const sourceSocket = sourceStep?.outputs?.find((socket) => socket.id === sourceHandle);
       const targetSocket = targetStep?.inputs?.find((socket) => socket.id === targetHandle);
-      // This should never happen but just in case
-      if (!sourceStep || !targetStep || !sourceSocket || !targetSocket) return false;
 
-      // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
-      if (sourceSocket.type !== targetSocket.type) return false;
-
-      // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
-      // This is to prevent multiple "DATA" inputs to a single node socket/handle
-      // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
-      // execute before a single node
-      if (targetSocket.type === "DATA") {
-        if (edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle)) return false;
-        if (!isTypeCompatible(sourceSocket, targetSocket)) {
-          return false;
-        }
+      if (
+        targetSocket?.type === "DATA" &&
+        edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle)
+      ) {
+        return false;
       }
 
-      return true;
+      return areSocketsCompatible(sourceSocket, targetSocket);
     },
     [steps, edges],
   );

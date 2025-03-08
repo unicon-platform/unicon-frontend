@@ -17,8 +17,8 @@ import {
   GraphContext,
   GraphDispatchContext,
 } from "@/features/problems/components/tasks/graph-context";
-import { areSocketsCompatible } from "@/features/problems/components/tasks/graph-editor";
 import { Step } from "@/features/problems/components/tasks/types";
+import { areSocketsCompatible } from "@/lib/compute-graph";
 
 export const StepEdge: React.FC<EdgeProps> = ({
   id,
