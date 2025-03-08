@@ -185,6 +185,7 @@ const _filterInvalidEdges = (state: GraphState) => {
     const toSocket = toNode?.inputs?.find((socket) => socket.id === edge.to_socket_id);
     return areSocketsCompatible(fromSocket, toSocket);
   });
+
   return state;
 };
 
@@ -576,7 +577,17 @@ export const graphReducer: ImmerReducer<GraphState, GraphAction> = (
   state: GraphState,
   action: GraphAction,
 ): GraphState => {
-  return _filterInvalidEdges(actionHandlers[action.type](state, action as any)); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const newState = actionHandlers[action.type](state, action as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (
+    [
+      GraphActionType.UpdateSocketData,
+      GraphActionType.UpdateSocketMetadata,
+      GraphActionType.UpdatePyRunFunctionStep,
+    ].includes(action.type)
+  ) {
+    return _filterInvalidEdges(newState);
+  }
+  return newState;
 };
 
 export const GraphContext = createContext<GraphState | null>(null);
