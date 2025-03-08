@@ -1,10 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { RolePublicWithInvitationKeys } from "@/api";
-
-import CreateInvitationKeyButton from "./create-invitation-key-button";
-import DeleteInvitationKeyButton from "./delete-invitation-key-button";
-import InvitationKeyDisplay from "./invitation-key-display";
+import CreateInvitationKeyButton from "@/features/projects/table/roles/create-invitation-key-button";
+import DeleteInvitationKeyButton from "@/features/projects/table/roles/delete-invitation-key-button";
+import InvitationKeyDisplay from "@/features/projects/table/roles/invitation-key-display";
 
 export const columns: ColumnDef<RolePublicWithInvitationKeys>[] = [
   {

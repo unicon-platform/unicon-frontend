@@ -1,9 +1,8 @@
 import { OutputStep, Status, Testcase, TestcaseResult as TestcaseResultType } from "@/api";
+import SocketResultTable from "@/components/tasks/submission-results/result-types/table/socket-result-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-
-import SocketResultTable from "./table/socket-result-table";
 
 type OwnProps = {
   index: number;

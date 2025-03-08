@@ -29,8 +29,7 @@ import CreateMultipleResponse from "@/pages/tasks/create-multiple-response";
 import CreateProgramming from "@/pages/tasks/create-programming";
 import CreateShortAnswer from "@/pages/tasks/create-short-answer";
 import EditTask from "@/pages/tasks/edit-task";
-
-import { groupLoader, organisationLoader, problemLoader, projectLoader } from "./loaders";
+import { groupLoader, organisationLoader, problemLoader, projectLoader } from "@/routes/loaders";
 
 export const routes = [
   {

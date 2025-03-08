@@ -2,10 +2,9 @@ import { PlusIcon } from "lucide-react";
 import { useContext } from "react";
 
 import { PyRunFunctionSocket, UniconType } from "@/api";
+import { NodeSlotGroup } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { GraphActionType, GraphDispatchContext, SocketDir } from "@/features/problems/components/tasks/graph-context";
-
-import { NodeSlotGroup } from "./step-node";
 
 type OwnProps = {
   stepId: string;

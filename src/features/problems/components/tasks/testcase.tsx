@@ -1,10 +1,9 @@
 import * as React from "react";
 
 import { File as UniconFile, InputStep, Testcase as TestcaseApi } from "@/api";
+import { GraphAction } from "@/features/problems/components/tasks/graph-context";
 import NodeGraph from "@/features/problems/components/tasks/node-graph";
-
-import { GraphAction } from "./graph-context";
-import { TestcaseSettingsType } from "./testcase-settings";
+import { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
 
 type TestcaseProps = {
   index: number;

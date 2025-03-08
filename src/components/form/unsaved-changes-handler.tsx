@@ -1,8 +1,7 @@
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
+import UnsavedChangesDialog from "@/components/form/unsaved-changes-dialog";
 import { useBlockUnsavedChanges } from "@/lib/utils";
-
-import UnsavedChangesDialog from "./unsaved-changes-dialog";
 
 type OwnProps<T extends FieldValues> = {
   form?: UseFormReturn<T>;

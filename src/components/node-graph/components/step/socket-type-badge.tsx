@@ -3,12 +3,22 @@ import { FileIcon } from "lucide-react";
 import { StepSocket } from "@/api";
 import { Badge } from "@/components/ui/badge";
 import { IconDeviconPlainPython } from "@/components/ui/icon-devicon-plain-python";
+import { getDataType } from "@/lib/compute-graph";
 
 type OwnProps = {
   socket: StepSocket;
 };
 
 const SocketTypeBadge: React.FC<OwnProps> = ({ socket }) => {
+  if (!socket.data_type) {
+    return null;
+  }
+
+  // This should not happen. If it does, we make a guess.
+  if (socket.data && !socket.data_type) {
+    socket.data_type = getDataType(socket.data);
+  }
+
   return (
     <Badge className={"w-fit border-dashed border-blue-300 text-[0.5rem] leading-[0.75rem]"} variant={"outline"}>
       {socket.data_type === "PythonObject" ? (

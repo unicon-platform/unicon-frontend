@@ -1,7 +1,6 @@
 import { ProblemBaseWithPermissions } from "@/api";
 import { DataTable } from "@/components/ui/data-table";
-
-import { columns } from "./columns";
+import { columns } from "@/features/problems/table/columns";
 
 type OwnProps = {
   data: ProblemBaseWithPermissions[];

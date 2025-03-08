@@ -1,12 +1,11 @@
 import { ProgrammingTask, TaskAttemptPublic } from "@/api";
+import { ProgrammingEnvironment } from "@/components/tasks/programming-environment";
+import ProgrammingSubmitForm from "@/components/tasks/programming-submit";
 import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import TaskContainer from "@/features/tasks/components/task-container";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
-
-import { ProgrammingEnvironment } from "./programming-environment";
-import ProgrammingSubmitForm from "./programming-submit";
 
 export function Programming({
   problemId,

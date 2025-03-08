@@ -5,11 +5,16 @@ import { useCallback, useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 
 import { File as UniconFile, GraphEdgeStr as GraphEdge, InputStep } from "@/api";
-
-import { GraphAction, GraphActionType, GraphContext, GraphDispatchContext, graphReducer } from "./graph-context";
-import GraphEditor from "./graph-editor";
-import { TestcaseSettingsType } from "./testcase-settings";
-import { Step } from "./types";
+import {
+  GraphAction,
+  GraphActionType,
+  GraphContext,
+  GraphDispatchContext,
+  graphReducer,
+} from "@/features/problems/components/tasks/graph-context";
+import GraphEditor from "@/features/problems/components/tasks/graph-editor";
+import { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
+import { Step } from "@/features/problems/components/tasks/types";
 
 type NodeGraphProps = {
   id: string;

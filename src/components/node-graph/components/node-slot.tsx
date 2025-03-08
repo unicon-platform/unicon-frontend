@@ -5,6 +5,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile, StepSocket } from "@/api";
 import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
+import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { parseSocketDataString } from "@/lib/compute-graph";
 import { cn, isUniconFile } from "@/lib/utils";
-
-import SocketTypeBadge from "./step/socket-type-badge";
 
 interface NodeSlotProps {
   type: HandleType;

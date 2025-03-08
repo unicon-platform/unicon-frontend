@@ -6,13 +6,12 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import ViewFileButton from "@/components/node-graph/components/step/input-table/view-file-button";
 import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/components/step/node-input";
+import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
 import { cn, isUniconFile } from "@/lib/utils";
-
-import SocketTypeBadge from "../socket-type-badge";
 
 type OwnProps = {
   socket: InputSocket;

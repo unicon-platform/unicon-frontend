@@ -1,6 +1,5 @@
 import { Choice, MultipleResponseTaskResult, TaskAttemptPublic } from "@/api";
-
-import SubmittedChoices from "./submitted-choices";
+import SubmittedChoices from "@/components/tasks/submission-results/result-types/submitted-choices";
 
 type OwnProps = {
   taskAttempt: TaskAttemptPublic;

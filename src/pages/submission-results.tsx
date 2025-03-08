@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { getSubmissionById } from "@/features/problems/queries";
-
-import Problem from "./problems/problem";
+import Problem from "@/pages/problems/problem";
 
 const SubmissionResults = () => {
   const { submissionId: id } = useParams<{ submissionId: string }>();

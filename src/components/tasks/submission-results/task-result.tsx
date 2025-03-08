@@ -1,10 +1,9 @@
 import { TaskAttemptPublic } from "@/api";
+import MultipleChoiceResult from "@/components/tasks/submission-results/result-types/multiple-choice-result";
+import MultipleResponseResult from "@/components/tasks/submission-results/result-types/multiple-response-result";
+import ProgrammingResult from "@/components/tasks/submission-results/result-types/programming-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-import MultipleChoiceResult from "./result-types/multiple-choice-result";
-import MultipleResponseResult from "./result-types/multiple-response-result";
-import ProgrammingResult from "./result-types/programming-result";
 
 type OwnProps = {
   title: string;

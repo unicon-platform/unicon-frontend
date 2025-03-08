@@ -6,10 +6,9 @@ import { ProgrammingTask } from "@/api";
 import { useUpdateTask } from "@/features/problems/queries";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 import ProgrammingForm from "@/features/tasks/forms/programming-form";
+import RerunDialog from "@/features/tasks/forms/rerun-dialog";
 import { fromProgrammingTask, ProgTaskFormT, toProgrammingTask } from "@/lib/schema/prog-task-form";
 import { isSafeChangeForProgrammingTask } from "@/utils/task";
-
-import RerunDialog from "./rerun-dialog";
 
 type OwnProps = {
   task: ProgrammingTask;

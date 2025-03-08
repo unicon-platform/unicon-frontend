@@ -37,10 +37,7 @@ export default tseslint.config(
           argsIgnorePattern: "^_",
         },
       ],
-      "no-relative-import-paths/no-relative-import-paths": [
-        "warn",
-        { allowSameFolder: true, rootDir: "src", prefix: "@" },
-      ],
+      "no-relative-import-paths/no-relative-import-paths": ["error", { rootDir: "src", prefix: "@" }],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",

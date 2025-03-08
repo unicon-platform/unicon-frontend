@@ -1,7 +1,6 @@
 import { SubmissionPublic } from "@/api";
 import { DataTable } from "@/components/ui/data-table";
-
-import { columns, columnsWithUser } from "./columns";
+import { columns, columnsWithUser } from "@/features/projects/table/submissions/columns";
 
 type OwnProps = {
   data: SubmissionPublic[];

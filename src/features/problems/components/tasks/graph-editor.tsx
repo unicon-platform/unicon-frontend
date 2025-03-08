@@ -26,16 +26,19 @@ import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import AddNodeButton from "@/features/problems/components/tasks/add-node-button";
+import {
+  GraphActionType,
+  GraphContext,
+  GraphDispatchContext,
+} from "@/features/problems/components/tasks/graph-context";
+import GraphFileEditor from "@/features/problems/components/tasks/graph-file-editor";
+import TestcaseSettings, { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
+import { Step } from "@/features/problems/components/tasks/types";
 import { isRequiredInputStep, isTypeCompatible } from "@/lib/compute-graph";
 import { convertFilesToFileTree } from "@/lib/files";
 import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
-
-import AddNodeButton from "./add-node-button";
-import { GraphActionType, GraphContext, GraphDispatchContext } from "./graph-context";
-import GraphFileEditor from "./graph-file-editor";
-import TestcaseSettings, { TestcaseSettingsType } from "./testcase-settings";
-import { Step } from "./types";
 
 type RfInstance = ReactFlowInstance<Node<Step>, Edge>;
 
