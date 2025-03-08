@@ -2,8 +2,8 @@ import {
   BaseEdge,
   Edge,
   EdgeLabelRenderer,
+  EdgeProps,
   getStraightPath,
-  MarkerType,
   Node,
   OnSelectionChangeFunc,
   useOnSelectionChange,
@@ -19,21 +19,7 @@ import {
 import { areSocketsCompatible } from "@/features/problems/components/tasks/graph-editor";
 import { Step } from "@/features/problems/components/tasks/types";
 
-type OwnProps = {
-  // our edge props
-  id: string;
-  source: string;
-  sourceHandleId: string;
-  target: string;
-  targetHandleId: string;
-  // react flow props
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-  markerEnd: MarkerType;
-};
-export const StepEdge: React.FC<OwnProps> = ({
+export const StepEdge: React.FC<EdgeProps> = ({
   id,
   source,
   sourceHandleId,
