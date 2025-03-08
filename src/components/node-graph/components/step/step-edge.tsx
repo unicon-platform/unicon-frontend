@@ -3,9 +3,10 @@ import {
   Edge,
   EdgeLabelRenderer,
   EdgeProps,
-  getStraightPath,
+  getBezierPath,
   Node,
   OnSelectionChangeFunc,
+  Position,
   useOnSelectionChange,
 } from "@xyflow/react";
 import { X } from "lucide-react";
@@ -31,10 +32,12 @@ export const StepEdge: React.FC<EdgeProps> = ({
   targetY,
   markerEnd,
 }) => {
-  const [edgePath, labelX, labelY] = getStraightPath({
+  const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
+    sourcePosition: Position.Right,
     targetX,
+    targetPosition: Position.Left,
     targetY,
   });
 
