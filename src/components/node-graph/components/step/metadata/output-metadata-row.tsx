@@ -28,6 +28,7 @@ const OutputMetadataRow: React.FC<OwnProps> = ({
           socket={socket}
           type="target"
           hideLabel
+          hideType
           handleStyle={{ width: "20px", borderRadius: "10px", left: "-12px" }}
         />
       </TableCell>

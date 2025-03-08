@@ -2,15 +2,14 @@ import { format, parseISO } from "date-fns";
 import { TimerIcon } from "lucide-react";
 
 import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
+import MultipleChoiceResult from "@/components/tasks/submission-results/result-types/multiple-choice-result";
+import MultipleResponseResult from "@/components/tasks/submission-results/result-types/multiple-response-result";
+import ProgrammingResult from "@/components/tasks/submission-results/result-types/programming-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { formatIntervalDuration, relativeTime } from "@/utils/date";
-
-import MultipleChoiceResult from "./result-types/multiple-choice-result";
-import MultipleResponseResult from "./result-types/multiple-response-result";
-import ProgrammingResult from "./result-types/programming-result";
 
 type StatusIndicatorProps = {
   color: string;

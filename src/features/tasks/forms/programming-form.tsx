@@ -20,10 +20,9 @@ import { GraphAction, graphReducer } from "@/features/problems/components/tasks/
 import { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import { getSupportedPythonVersions } from "@/features/problems/queries";
+import FileInputSection from "@/features/tasks/forms/programming/file-inputs-section";
 import { DEFAULT_PY_VERSION, ProgTaskFormT, ProgTaskFormZ } from "@/lib/schema/prog-task-form";
 import { isUniconFile, useSyncFormFieldsMultiple, uuid } from "@/lib/utils";
-
-import FileInputSection from "./programming/file-inputs-section";
 
 const createDefaultUserInput = () => ({
   id: uuid(),
@@ -114,7 +113,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
         // Shared user input step for all testcases
         const newSharedUserInputStep: InputStep = {
           ...DEFAULT_USER_INPUT_STEP,
-          outputs: fromValue.map((input) => ({ ...input, type: "DATA", public: true })),
+          outputs: fromValue.map((input) => ({ ...input, type: "DATA", public: true, data_type: "UniconFile" })),
         };
         const testcases = toValue.map((testcase) => ({
           ...testcase,
@@ -353,9 +352,8 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
           <FormSection
             title="Files"
             description={
-              <p>
-                Files that are used in testcases
-                <br />
+              <>
+                <p>Files that are used in testcases</p>
                 <br />
                 <ul className="list-disc">
                   <li>
@@ -363,7 +361,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
                   </li>
                   <li className="mt-2">To use it in a testcase, simply drag and drop it into the graph editor</li>
                 </ul>
-              </p>
+              </>
             }
           >
             <FileInputSection />

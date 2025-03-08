@@ -1,6 +1,5 @@
+import { columns, Result } from "@/components/tasks/submission-results/result-types/table/columns";
 import { DataTable } from "@/components/ui/data-table";
-
-import { columns, Result } from "./columns";
 
 type OwnProps = {
   data: Result[];

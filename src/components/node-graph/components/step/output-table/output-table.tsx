@@ -1,7 +1,6 @@
 import { OutputSocket } from "@/api";
+import { columns } from "@/components/node-graph/components/step/output-table/columns";
 import { DataTable } from "@/components/ui/data-table";
-
-import { columns } from "./columns";
 
 type OwnProps = {
   data: OutputSocket[];

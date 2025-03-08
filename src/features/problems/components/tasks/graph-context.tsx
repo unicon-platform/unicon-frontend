@@ -2,6 +2,7 @@ import { createContext, Dispatch } from "react";
 import { ImmerReducer } from "use-immer";
 
 import {
+  Comparison,
   GraphEdgeStr as GraphEdge,
   InputSocket,
   InputStep,
@@ -9,10 +10,17 @@ import {
   PyRunFunctionSocket,
   PyRunFunctionStep,
   StepSocket,
+  UniconType,
 } from "@/api";
 import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket, isRequiredInputStep, isResultSocket } from "@/lib/compute-graph";
+import {
+  areSocketsCompatible,
+  createSocket,
+  getDataType,
+  isRequiredInputStep,
+  isResultSocket,
+} from "@/lib/compute-graph";
 
 export type GraphState = {
   id: string;
@@ -169,6 +177,17 @@ export type GraphAction =
   | UpdateUserInputStepAction
   | UpdatePyRunFunctionStepAction;
 
+const _filterInvalidEdges = (state: GraphState) => {
+  state.edges = state.edges.filter((edge) => {
+    const fromNode = state.steps.find((node) => node.id === edge.from_node_id);
+    const toNode = state.steps.find((node) => node.id === edge.to_node_id);
+    const fromSocket = fromNode?.outputs?.find((socket) => socket.id === edge.from_socket_id);
+    const toSocket = toNode?.inputs?.find((socket) => socket.id === edge.to_socket_id);
+    return areSocketsCompatible(fromSocket, toSocket);
+  });
+  return state;
+};
+
 const updateUserInputStep = (state: GraphState, { payload }: UpdateUserInputStepAction) => {
   const userInputStepIdx = state.steps.findIndex(isRequiredInputStep);
   if (userInputStepIdx !== -1) Object.assign(state.steps[userInputStepIdx], { outputs: payload.step.outputs });
@@ -184,6 +203,8 @@ const sameFunctionSignature = (a: PyRunFunctionSocket[], b: PyRunFunctionSocket[
       socket.label === other.label &&
       socket.arg_metadata?.position === other.arg_metadata?.position &&
       socket.arg_metadata?.arg_name === other.arg_metadata?.arg_name &&
+      socket.data_type === other.data_type &&
+      socket.data_type_metadata === other.data_type_metadata &&
       // In the case where one is null and the other is undefined - consider them the same
       ((!socket.kwarg_name && !other.kwarg_name) || socket.kwarg_name === other.kwarg_name)
     );
@@ -207,9 +228,9 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
   // Detect changes
   const functionIdentifierChanged = step.function_identifier !== payload.functionIdentifier;
   const functionSignatureChanged = payload.functionSignature !== undefined;
-  const allowErrorChanged = step.allow_error !== payload.allowError;
-  const propagateStdoutChanged = step.propagate_stdout !== payload.propagateStdout;
-  const propagateStderrChanged = step.propagate_stderr !== payload.propagateStderr;
+  const allowErrorChanged = !!step.allow_error !== !!payload.allowError;
+  const propagateStdoutChanged = !!step.propagate_stdout !== !!payload.propagateStdout;
+  const propagateStderrChanged = !!step.propagate_stderr !== !!payload.propagateStderr;
 
   if (functionIdentifierChanged) {
     // 1. Update the identifier.
@@ -228,12 +249,15 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
 
     const functionArgs: PyRunFunctionSocket[] = payload.functionSignature.args.map((arg, index) => {
       // Check if the socket is pre-filled with data
+      const pythonType = arg.type;
       const existingSocket = step.inputs.find((socket) => socket.arg_metadata?.position === index);
       return {
         ...createSocket(
           "DATA",
           arg.name + (arg.default ? ` (default:${arg.default})` : ""),
           existingSocket?.data ?? null,
+          "PythonObject",
+          { name: pythonType },
         ),
         id: getUuid(),
         arg_metadata: {
@@ -243,11 +267,22 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
       };
     });
 
-    const functionKwargs: PyRunFunctionSocket[] = payload.functionSignature.kwargs.map((kwarg) => ({
-      ...createSocket("DATA", kwarg.name + (kwarg.default ? ` = ${kwarg.default}` : "")),
-      id: getUuid(),
-      kwarg_name: kwarg.name,
-    }));
+    const functionKwargs: PyRunFunctionSocket[] = payload.functionSignature.kwargs.map((kwarg) => {
+      const pythonType = kwarg.type;
+      const existingSocket = step.inputs.find((socket) => socket.kwarg_name === kwarg.name);
+
+      return {
+        ...createSocket(
+          "DATA",
+          kwarg.name + (kwarg.default ? ` = ${kwarg.default}` : ""),
+          existingSocket?.data ?? null,
+          "PythonObject",
+          { name: pythonType },
+        ),
+        id: getUuid(),
+        kwarg_name: kwarg.name,
+      };
+    });
 
     if (
       !sameFunctionSignature(
@@ -264,17 +299,26 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
         ...state.steps[stepIndex],
         inputs: [
           { ...createSocket("CONTROL"), id: getUuid() },
-          { ...createSocket("DATA", "Module"), id: fileSocket?.id ?? getUuid(), import_as_module: true },
+          {
+            ...createSocket("DATA", "Module", null, "UniconFile"),
+            id: fileSocket?.id ?? getUuid(),
+            import_as_module: true,
+          },
           ...functionArgs,
           ...functionKwargs,
         ],
-      };
+      } as PyRunFunctionStep;
     }
   }
 
-  const pushOutputSocket = (label: string, properties: Partial<PyRunFunctionSocket>) => {
+  const pushOutputSocket = (
+    label: string,
+    properties: Partial<PyRunFunctionSocket>,
+    dataType: UniconType = "text",
+    dataTypeMetadata?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => {
     (state.steps[stepIndex] as PyRunFunctionStep).outputs.push({
-      ...createSocket("DATA", label),
+      ...createSocket("DATA", label, null, dataType, dataTypeMetadata),
       id: getUuid(),
       ...properties,
     });
@@ -302,7 +346,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
       allow_error: payload.allowError,
     };
     if (payload.allowError) {
-      pushOutputSocket("Error", { handles_error: true });
+      pushOutputSocket("Error", { handles_error: true }, "PythonObject", { name: "Exception" });
     } else {
       removeOutputSocket("handles_error");
     }
@@ -336,13 +380,17 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     }
   }
 
-  if (payload.functionIdentifier === null) {
+  if (!payload.functionIdentifier) {
     // If there is a result socket, remove it.
     removeOutputSocket("result");
   } else {
-    // If there is no result socket, add one.
-    if (!step.outputs.find((socket) => isResultSocket(socket))) {
-      pushOutputSocket("Result", {});
+    // If there is no result socket, add one. Otherwise, fix the type.
+    if (!step.outputs.find(isResultSocket)) {
+      pushOutputSocket("Result", {}, "PythonObject", { name: payload.functionSignature?.return_type ?? "Any" });
+    } else {
+      const resultSocket = step.outputs.find(isResultSocket);
+      resultSocket!.data_type = "PythonObject";
+      resultSocket!.data_type_metadata = { name: payload.functionSignature?.return_type ?? "Any" };
     }
   }
 
@@ -436,6 +484,9 @@ const updateSocketData = (state: GraphState, { payload }: UpdateSocketDataAction
   if (socket === undefined) return state;
 
   socket.data = payload.data;
+  if (step.type === "INPUT_STEP") {
+    socket.data_type = getDataType(payload.data);
+  }
   return state;
 };
 
@@ -463,6 +514,12 @@ const updateSocketMetadata = (state: GraphState, { payload }: UpdateSocketMetada
   if (!socket) return state;
 
   Object.assign(socket, payload.socketMetadata);
+  if (payload.socketMetadata.data !== undefined && step.type === "INPUT_STEP") {
+    socket.data_type = getDataType(payload.socketMetadata.data);
+  } else if (payload.socketMetadata.comparison !== undefined) {
+    const comparison = payload.socketMetadata.comparison as Comparison;
+    socket.data_type = getDataType(comparison.value);
+  }
 
   return state;
 };
@@ -519,7 +576,7 @@ export const graphReducer: ImmerReducer<GraphState, GraphAction> = (
   state: GraphState,
   action: GraphAction,
 ): GraphState => {
-  return actionHandlers[action.type](state, action as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  return _filterInvalidEdges(actionHandlers[action.type](state, action as any)); // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 export const GraphContext = createContext<GraphState | null>(null);

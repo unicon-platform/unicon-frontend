@@ -6,6 +6,7 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import ViewFileButton from "@/components/node-graph/components/step/input-table/view-file-button";
 import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/components/step/node-input";
+import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -52,6 +53,10 @@ const InputMetadataRow: React.FC<OwnProps> = ({
       <TableCell>
         <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={isEditable} />
       </TableCell>
+      <TableCell>
+        <SocketTypeBadge socket={socket} />
+      </TableCell>
+
       <TableCell>
         {socket.data && isUniconFile(socket.data) ? (
           <div className="flex items-center gap-2">
@@ -100,6 +105,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
           socket={socket}
           type="source"
           hideLabel
+          hideType
         />
       </TableCell>
     </TableRow>

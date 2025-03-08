@@ -4,11 +4,10 @@ import { File as UniconFile, InputStep, OutputStep, Testcase as TestcaseApi } fr
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GraphAction } from "@/features/problems/components/tasks/graph-context";
+import Testcase from "@/features/problems/components/tasks/testcase";
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
-
-import { GraphAction } from "./graph-context";
-import Testcase from "./testcase";
 
 type SettingsChange = {
   name?: string;

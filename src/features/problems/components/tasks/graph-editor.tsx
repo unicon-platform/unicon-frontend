@@ -21,20 +21,24 @@ import { CopyPlus, ExpandIcon, ShrinkIcon } from "lucide-react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { GraphEdgeStr as GraphEdge } from "@/api";
+import { StepEdge } from "@/components/node-graph/components/step/step-edge";
 import { StepNode } from "@/components/node-graph/components/step/step-node";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { isRequiredInputStep } from "@/lib/compute-graph";
+import AddNodeButton from "@/features/problems/components/tasks/add-node-button";
+import {
+  GraphActionType,
+  GraphContext,
+  GraphDispatchContext,
+} from "@/features/problems/components/tasks/graph-context";
+import GraphFileEditor from "@/features/problems/components/tasks/graph-file-editor";
+import TestcaseSettings, { TestcaseSettingsType } from "@/features/problems/components/tasks/testcase-settings";
+import { Step } from "@/features/problems/components/tasks/types";
+import { areSocketsCompatible, isRequiredInputStep } from "@/lib/compute-graph";
 import { convertFilesToFileTree } from "@/lib/files";
 import { cn, isUniconFile, uuid } from "@/lib/utils";
 import getLayoutedElements from "@/utils/graph";
-
-import AddNodeButton from "./add-node-button";
-import { GraphActionType, GraphContext, GraphDispatchContext } from "./graph-context";
-import GraphFileEditor from "./graph-file-editor";
-import TestcaseSettings, { TestcaseSettingsType } from "./testcase-settings";
-import { Step } from "./types";
 
 type RfInstance = ReactFlowInstance<Node<Step>, Edge>;
 
@@ -50,6 +54,7 @@ type GraphEditorProps = {
 };
 
 const nodeTypes = { step: StepNode };
+const edgeTypes = { step: StepEdge };
 
 const stepNodeToRfNode = (step: Step): Node<Step> => ({
   id: step.id,
@@ -69,6 +74,7 @@ const stepEdgeToRfEdge = (edge: GraphEdge): Edge => ({
     width: 20,
     height: 20,
   },
+  type: "step",
 });
 
 const GraphEditor: React.FC<GraphEditorProps> = ({
@@ -211,27 +217,21 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   );
 
   // Edge connection validation
-
   const isValidConnection: IsValidConnection<Edge> = useCallback(
     ({ source, sourceHandle, target, targetHandle }) => {
       const sourceStep = steps.find((step) => step.id === source);
       const targetStep = steps.find((step) => step.id === target);
       const sourceSocket = sourceStep?.outputs?.find((socket) => socket.id === sourceHandle);
       const targetSocket = targetStep?.inputs?.find((socket) => socket.id === targetHandle);
-      // This should never happen but just in case
-      if (!sourceStep || !targetStep || !sourceSocket || !targetSocket) return false;
 
-      // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
-      if (sourceSocket.type !== targetSocket.type) return false;
+      if (
+        targetSocket?.type === "DATA" &&
+        edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle)
+      ) {
+        return false;
+      }
 
-      // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
-      // This is to prevent multiple "DATA" inputs to a single node socket/handle
-      // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
-      // execute before a single node
-      if (targetSocket.type === "DATA")
-        return !edges.some((edge) => edge.to_node_id === target && edge.to_socket_id === targetHandle);
-
-      return true;
+      return areSocketsCompatible(sourceSocket, targetSocket);
     },
     [steps, edges],
   );
@@ -293,6 +293,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
             id={graphId}
             onInit={onInit}
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             nodes={flowNodes}
             edges={flowEdges}
             onBeforeDelete={onBeforeDelete}

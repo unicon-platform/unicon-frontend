@@ -1,5 +1,5 @@
 import {
-  File,
+  File as UniconFile,
   IfElseStep,
   InputStep,
   LoopStep,
@@ -11,9 +11,10 @@ import {
   StepSocket,
   StepType,
   StringMatchStep,
+  UniconType,
 } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { uuid } from "@/lib/utils";
+import { isUniconFile, uuid } from "@/lib/utils";
 
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
   let parsed: string | boolean | number | null = data;
@@ -38,8 +39,22 @@ export const isRequiredInputStep = (step: Step): boolean => {
 export const createSocket = (
   type: SocketType,
   label?: string,
-  data: string | number | boolean | File | null = null,
-) => ({ id: uuid(), type, label, data });
+  data: string | number | boolean | UniconFile | null = null,
+  dataType?: UniconType | null,
+  dataTypeMetadata?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+) => {
+  if (dataType === undefined && type === "DATA") {
+    // We make a guess for the type.
+    if (dataTypeMetadata !== undefined) dataType = "PythonObject";
+    else if (typeof data === "string") dataType = "text";
+    else if (typeof data === "number") dataType = "number";
+    else if (typeof data === "boolean") dataType = "boolean";
+    else if (data === null) dataType = "null";
+    else if (isUniconFile(data)) dataType = "UniconFile";
+    else dataType = "unknown";
+  }
+  return { id: uuid(), type, label, data, data_type: dataType, data_type_metadata: dataTypeMetadata };
+};
 
 const createBaseStep = (type: StepType, inputs: StepSocket[], outputs: StepSocket[]) => ({
   id: uuid(),
@@ -56,12 +71,13 @@ export const createDefaultStep = (type: StepType) => {
         is_user: false,
       } as InputStep;
     case "OUTPUT_STEP":
+      // TODO: Change type when expected changes
       return createBaseStep(type, [createSocket("DATA")], []) as OutputStep;
     case "PY_RUN_FUNCTION_STEP":
       return {
         ...createBaseStep(
           type,
-          [{ ...createSocket("DATA", "Module"), import_as_module: true }] as PyRunFunctionSocket[],
+          [{ ...createSocket("DATA", "Module", null, "UniconFile"), import_as_module: true }] as PyRunFunctionSocket[],
           [],
         ),
         function_identifier: "",
@@ -69,14 +85,18 @@ export const createDefaultStep = (type: StepType) => {
       } as PyRunFunctionStep;
     case "OBJECT_ACCESS_STEP":
       return {
-        ...createBaseStep(type, [createSocket("DATA", "Object")], [createSocket("DATA", "Value")]),
+        ...createBaseStep(
+          type,
+          [createSocket("DATA", "Object", null, "PythonObject", { name: "dict" })],
+          [createSocket("DATA", "Value", null, "unknown")],
+        ),
         key: "",
       } as ObjectAccessStep;
     case "STRING_MATCH_STEP":
       return createBaseStep(
         type,
-        [createSocket("DATA", "Operand 1"), createSocket("DATA", "Operand 2")],
-        [createSocket("DATA", "Match?")],
+        [createSocket("DATA", "Operand 1", null, "unknown"), createSocket("DATA", "Operand 2", null, "unknown")],
+        [createSocket("DATA", "Match?", null, "boolean")],
       ) as StringMatchStep;
     case "LOOP_STEP":
       return createBaseStep(
@@ -95,3 +115,110 @@ export const createDefaultStep = (type: StepType) => {
 
 export const isResultSocket = (socket: PyRunFunctionSocket) =>
   socket.type === "DATA" && !socket.handles_error && !socket.handles_stderr && !socket.handles_stdout;
+
+// Compute graph type checks
+
+export const getDataType = (data: string | number | boolean | null | unknown): UniconType => {
+  if (data === null) return "null";
+  else if (isUniconFile(data)) return "UniconFile";
+  else if (typeof data === "string") return "text";
+  else if (typeof data === "number") return "number";
+  else if (typeof data === "boolean") return "boolean";
+  return "unknown";
+};
+
+type SocketDataType = Pick<StepSocket, "data_type" | "data_type_metadata">;
+
+const convertPythonDataTypeToUniconType = (pythonType: string): UniconType => {
+  switch (pythonType) {
+    case "str":
+      return "text";
+    case "int":
+    case "float":
+      return "number";
+    case "bool":
+      return "boolean";
+    case "NoneType":
+      return "null";
+    default:
+      return "unknown";
+  }
+};
+
+export const isTypeCompatible = (inputType: SocketDataType, outputType: SocketDataType): boolean => {
+  // If either type is unknown, we suspect an error in the graph.
+  // We warn the user, but allow the connection.
+  if (!inputType.data_type || !outputType.data_type) {
+    console.warn({
+      inputType: inputType,
+      outputType: outputType,
+      message: "A type passed into isTypeCompatible is undefined.",
+    });
+    return true;
+  }
+
+  // If both types are PythonTypes, we can compare them directly.
+  if (inputType.data_type === "PythonObject" && outputType.data_type === "PythonObject") {
+    // If the types are Any on either side, allow the connection.
+    const inputDataType = inputType.data_type_metadata?.name as string;
+    const outputDataType = outputType.data_type_metadata?.name as string;
+    if (inputDataType === "Any" || outputDataType === "Any") {
+      return true;
+    }
+
+    // If the types are something we support, a direct comparison can be made.
+    const supportedTypes = ["str", "int", "float", "bool", "NoneType"];
+    if (!supportedTypes.includes(inputDataType) || !supportedTypes.includes(outputDataType)) {
+      return inputDataType === outputDataType;
+    }
+
+    // Otherwise, at least one of the types are not yet comparable. Just allow the connection.
+    return true;
+  }
+
+  const processedInputType =
+    inputType.data_type === "PythonObject"
+      ? convertPythonDataTypeToUniconType((inputType.data_type_metadata?.name as string) ?? "")
+      : inputType.data_type;
+
+  // Caveat: Since unicon only has a number type, if the PythonType actually takes in int/float,
+  // we allow the connection for number.
+  const processedOutputType =
+    outputType.data_type === "PythonObject"
+      ? convertPythonDataTypeToUniconType((outputType.data_type_metadata?.name as string) ?? "")
+      : outputType.data_type;
+
+  if (processedInputType === "unknown" || processedOutputType === "unknown") {
+    return true;
+  }
+
+  // File type can be connected to text type (filepath)
+  if (processedInputType === "UniconFile" && processedOutputType === "text") {
+    return true;
+  }
+
+  return processedInputType === processedOutputType;
+};
+
+export const areSocketsCompatible = (
+  sourceSocket: StepSocket | undefined,
+  targetSocket: StepSocket | undefined,
+): boolean => {
+  // This should never happen but just in case
+  if (!sourceSocket || !targetSocket) return false;
+
+  // Do not allow connections between different socket types e.g. "DATA" to "CONTROL" and vice versa
+  if (sourceSocket.type !== targetSocket.type) return false;
+
+  // Do not allow "DATA" connections if there is already an edge connected to target node socket/handle
+  // This is to prevent multiple "DATA" inputs to a single node socket/handle
+  // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
+  // execute before a single node
+  if (targetSocket.type === "DATA") {
+    if (!isTypeCompatible(sourceSocket, targetSocket)) {
+      return false;
+    }
+  }
+
+  return true;
+};

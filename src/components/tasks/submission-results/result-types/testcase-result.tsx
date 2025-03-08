@@ -1,11 +1,10 @@
 import { AlertCircleIcon, CheckCircleIcon, CircleXIcon, InfoIcon, LayoutGridIcon } from "lucide-react";
 
 import { OutputStep, Status, Testcase, TestcaseResult as TestcaseResultType } from "@/api";
+import SocketResultTable from "@/components/tasks/submission-results/result-types/table/socket-result-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-
-import SocketResultTable from "./table/socket-result-table";
 
 type TestcaseResultProps = {
   index: number;

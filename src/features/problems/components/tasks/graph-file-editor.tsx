@@ -2,11 +2,14 @@ import { useContext } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { File as UniconFile } from "@/api";
+import FileEditor from "@/features/problems/components/tasks/file-editor";
+import {
+  GraphActionType,
+  GraphContext,
+  GraphDispatchContext,
+} from "@/features/problems/components/tasks/graph-context";
 import { isRequiredInputStep } from "@/lib/compute-graph";
 import { isUniconFile } from "@/lib/utils";
-
-import FileEditor from "./file-editor";
-import { GraphActionType, GraphContext, GraphDispatchContext } from "./graph-context";
 
 const GraphFileEditor = () => {
   const { selectedStepId, selectedSocketId, edit, steps } = useContext(GraphContext)!;

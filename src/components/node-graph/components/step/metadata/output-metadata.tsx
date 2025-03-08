@@ -2,13 +2,12 @@ import { PlusIcon } from "lucide-react";
 import { useCallback, useContext } from "react";
 
 import { OutputSocket, OutputStep } from "@/api";
+import OutputMetadataRow from "@/components/node-graph/components/step/metadata/output-metadata-row";
 import OutputTable from "@/components/node-graph/components/step/output-table/output-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GraphActionType, GraphDispatchContext, SocketDir } from "@/features/problems/components/tasks/graph-context";
 import { createSocket } from "@/lib/compute-graph";
-
-import OutputMetadataRow from "./output-metadata-row";
 
 type OwnProps = {
   step: OutputStep;
@@ -46,7 +45,7 @@ const OutputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         stepId: step.id,
         socketDir: SocketDir.Input,
         socket: {
-          ...createSocket("DATA", ""),
+          ...createSocket("DATA", "", null, "unknown"),
           ...(["INPUT_STEP", "OUTPUT_STEP"].includes(step.type) ? { public: true } : {}),
         },
       },

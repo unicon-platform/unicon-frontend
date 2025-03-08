@@ -11,6 +11,18 @@
   transform: translate(0, 0);
 }
 
+.validationflow .react-flow__node-custominput {
+  background: #fff;
+}
+
+.react-flow__handle.connectingto {
+  background: #ff6060 !important;
+}
+
+.react-flow__handle.valid {
+  background: #55dd99 !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -59,6 +59,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
       name: "",
       star_args: false,
       star_kwargs: false,
+      return_type: "",
     };
 
     // Length of inputs array (args + kwargs) + 2 (function_identifier and allow_error) + 2 (output and error)

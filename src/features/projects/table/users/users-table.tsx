@@ -1,7 +1,6 @@
 import { UserPublicWithRolesAndGroups } from "@/api";
 import { DataTable } from "@/components/ui/data-table";
-
-import { columns } from "./columns";
+import { columns } from "@/features/projects/table/users/columns";
 
 type OwnProps = {
   data: UserPublicWithRolesAndGroups[];

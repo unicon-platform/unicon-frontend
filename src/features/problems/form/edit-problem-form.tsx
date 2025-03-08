@@ -10,12 +10,11 @@ import ErrorAlert from "@/components/form/fields/error-alert";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import EditProblemFilesSection from "@/features/problems/form/edit-problem-files";
 import EditTasksDisplay from "@/features/problems/form/edit-tasks-display";
 import { useUpdateProblem } from "@/features/problems/queries";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 import { useToast } from "@/hooks/use-toast";
-
-import EditProblemFilesSection from "./edit-problem-files";
 
 type OwnProps = {
   id: number;

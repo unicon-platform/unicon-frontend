@@ -5,7 +5,7 @@ import { useBlocker } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { v4 as randomUUID } from "uuid";
 
-import { File as UniconFile } from "@/api";
+import { File as UniconFile, PyRunFunctionSocket, StepSocket } from "@/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,6 +21,18 @@ export const isUniconFile = (data: unknown): data is UniconFile => {
 
   const requiredProps: (keyof UniconFile)[] = ["path", "content"];
   return typeof data === "object" && requiredProps.every((prop) => prop in data);
+};
+
+export const isPyRunFunctionSocket = (socket: StepSocket): socket is PyRunFunctionSocket => {
+  const optionalProps = [
+    "import_as_module",
+    "arg_metadata",
+    "kwarg_name",
+    "handles_error",
+    "handles_stdout",
+    "handles_stderr",
+  ];
+  return socket.type === "DATA" && optionalProps.some((prop) => prop in socket);
 };
 
 // Referenced from: https://github.com/orgs/react-hook-form/discussions/9841

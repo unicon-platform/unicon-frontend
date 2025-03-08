@@ -2,10 +2,9 @@ import { DragDropContext, Draggable, Droppable, OnDragEndResponder } from "@hell
 import { PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import CreateTaskPopover from "@/features/problems/form/create-task-popover";
 import { TaskType } from "@/features/problems/queries";
 import TaskCard from "@/features/tasks/components/task-card";
-
-import CreateTaskPopover from "./create-task-popover";
 
 export type Order = {
   id: number;

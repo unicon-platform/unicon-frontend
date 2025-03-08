@@ -3,6 +3,7 @@ import { ChevronRight, File, FileDigit, FilePlus, Folder, FolderPlus, X } from "
 import * as React from "react";
 import { useDrag, useDrop } from "react-dnd";
 
+import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import {
@@ -21,8 +22,6 @@ import { useToast } from "@/hooks/use-toast";
 import { DragItemType } from "@/lib/drag";
 import { FileTreeType, isFolder, removeLeadingSlash, TreeFile, TreeFolder } from "@/lib/files";
 import { cn } from "@/lib/utils";
-
-import { Button } from "./button";
 
 type OwnProps = {
   files: FileTreeType;

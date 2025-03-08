@@ -2,6 +2,7 @@
 
 export type Arg = {
     name: string;
+    type: string | null;
     default: string | null;
 };
 
@@ -118,6 +119,10 @@ export type InputSocket = {
     type?: SocketType;
     label?: string;
     data?: string | number | number | boolean | File | null;
+    data_type?: UniconType | null;
+    data_type_metadata?: {
+        [key: string]: unknown;
+    } | null;
     public?: boolean;
 };
 
@@ -303,6 +308,10 @@ export type OutputSocket = {
     type?: SocketType;
     label?: string;
     data?: string | number | number | boolean | File | null;
+    data_type?: UniconType | null;
+    data_type_metadata?: {
+        [key: string]: unknown;
+    } | null;
     comparison?: Comparison | null;
     public?: boolean;
 };
@@ -324,6 +333,7 @@ export type ParsedFunction = {
     kwargs: Array<Arg>;
     star_args: boolean;
     star_kwargs: boolean;
+    return_type: string | null;
 };
 
 export type Problem = {
@@ -497,6 +507,10 @@ export type PyRunFunctionSocket = {
     type?: SocketType;
     label?: string;
     data?: string | number | number | boolean | File | null;
+    data_type?: UniconType | null;
+    data_type_metadata?: {
+        [key: string]: unknown;
+    } | null;
     import_as_module?: boolean;
     arg_metadata?: ArgMetadata | null;
     kwarg_name?: string | null;
@@ -640,6 +654,10 @@ export type StepSocket = {
     type?: SocketType;
     label?: string;
     data?: string | number | number | boolean | File | null;
+    data_type?: UniconType | null;
+    data_type_metadata?: {
+        [key: string]: unknown;
+    } | null;
 };
 
 export type StepType = 'PY_RUN_FUNCTION_STEP' | 'OBJECT_ACCESS_STEP' | 'INPUT_STEP' | 'OUTPUT_STEP' | 'LOOP_STEP' | 'IF_ELSE_STEP' | 'STRING_MATCH_STEP';
@@ -741,6 +759,8 @@ export type Token = {
     token_type: string;
     user: UserPublic;
 };
+
+export type UniconType = 'text' | 'number' | 'boolean' | 'null' | 'UniconFile' | 'PythonObject' | 'unknown';
 
 /**
  * this is OrganisationRole + owner

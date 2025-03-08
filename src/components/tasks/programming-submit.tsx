@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { createFile, File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
+import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,8 +15,6 @@ import TaskSectionHeader from "@/features/tasks/components/task-section-header";
 import { formatFileSize, isTextFile } from "@/lib/files";
 import { isUniconFile } from "@/lib/utils";
 import { formatDateShort } from "@/utils/date";
-
-import TaskResultCard from "./submission-results/task-result";
 
 type AttemptResultsProps = {
   problemId: number; // The problem ID that the task belongs to

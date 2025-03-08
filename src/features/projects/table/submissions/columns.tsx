@@ -1,9 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { SubmissionPublic } from "@/api";
-
-import ViewProblemButton from "./view-problem-button";
-import ViewResultButton from "./view-result-button";
+import ViewProblemButton from "@/features/projects/table/submissions/view-problem-button";
+import ViewResultButton from "@/features/projects/table/submissions/view-result-button";
 
 export const columns: ColumnDef<SubmissionPublic>[] = [
   {

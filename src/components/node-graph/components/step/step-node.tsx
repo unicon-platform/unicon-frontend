@@ -3,9 +3,10 @@ import { PlusIcon, TrashIcon, UserRoundIcon } from "lucide-react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { useCallback, useContext, useEffect } from "react";
 
-import { InputStep, PyRunFunctionSocket, PyRunFunctionStep, StepSocket } from "@/api";
+import { InputStep, PyRunFunctionSocket, PyRunFunctionStep, StepSocket, UniconType } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
 import StepMetadata from "@/components/node-graph/components/step/metadata/step-metadata";
+import { PyRunSocketSlots } from "@/components/node-graph/components/step/py-run-socket-slots";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -18,8 +19,6 @@ import { Step } from "@/features/problems/components/tasks/types";
 import { createSocket, isRequiredInputStep } from "@/lib/compute-graph";
 import { StepNodeColorMap, StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-
-import { PyRunSocketSlots } from "./py-run-socket-slots";
 
 const NodeHeader = ({ step, edit, deleteStep }: { step: Step; edit: boolean; deleteStep: () => void }) => {
   const isUserInputNode = step.type === "INPUT_STEP" && ((step as InputStep).is_user ?? false);
@@ -151,14 +150,14 @@ export function StepNode({ data }: { data: Step }) {
   const onDeleteSocket = canDeleteSockets ? _onDeleteSocket : undefined;
 
   const addSocket = useCallback(
-    (socketDir: SocketDir) => () => {
+    (socketDir: SocketDir, dataType?: UniconType | null) => () => {
       dispatch({
         type: GraphActionType.AddSocket,
         payload: {
           stepId: data.id,
           socketDir,
           socket: {
-            ...createSocket("DATA", ""),
+            ...createSocket("DATA", "", null, dataType),
           },
         },
       });

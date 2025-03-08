@@ -1,10 +1,9 @@
 import { useContext } from "react";
 
 import { InputStep, StepSocket } from "@/api";
+import { columns } from "@/components/node-graph/components/step/input-table/columns";
 import { DataTable } from "@/components/ui/data-table";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
-
-import { columns } from "./columns";
 
 type OwnProps = {
   step: InputStep;

@@ -4,6 +4,7 @@ import { useDrop } from "react-dnd";
 
 import { InputSocket, InputStep, StepSocket } from "@/api";
 import InputTable from "@/components/node-graph/components/step/input-table/input-table";
+import InputMetadataRow from "@/components/node-graph/components/step/metadata/input-metadata-row";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -16,8 +17,6 @@ import { createSocket } from "@/lib/compute-graph";
 import { DragItemType } from "@/lib/drag";
 import { isFolder, TreeFile, TreeFolder } from "@/lib/files";
 import { isUniconFile, uuid } from "@/lib/utils";
-
-import InputMetadataRow from "./input-metadata-row";
 
 type OwnProps = {
   step: InputStep;
@@ -167,6 +166,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         <TableRow>
           <TableHead></TableHead>
           <TableHead>Label</TableHead>
+          <TableHead>Type</TableHead>
           <TableHead>Value</TableHead>
           <TableHead>Public</TableHead>
           <TableHead></TableHead>

@@ -3,11 +3,11 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { InputSocket, InputStep } from "@/api";
 import { NodeSlot } from "@/components/node-graph/components/node-slot";
+import ViewFileButton from "@/components/node-graph/components/step/input-table/view-file-button";
+import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
 import { isUniconFile } from "@/lib/utils";
-
-import ViewFileButton from "./view-file-button";
 
 const ValueDisplay: React.FC<{ row: InputSocket & { step: InputStep } }> = ({ row }) => {
   const data = row.data;
@@ -27,6 +27,12 @@ export const columns: ColumnDef<InputSocket & { step: InputStep }>[] = [
   {
     accessorFn: (row) => row.label,
     header: "Label",
+  },
+  {
+    header: "Type",
+    cell: ({ row }) => {
+      return <SocketTypeBadge socket={row.original} />;
+    },
   },
   {
     header: "Value",
@@ -51,6 +57,7 @@ export const columns: ColumnDef<InputSocket & { step: InputStep }>[] = [
           socket={socket}
           type="source"
           hideLabel
+          hideType
           handleStyle={{ width: "20px", borderRadius: "10px", right: "-12px" }}
         />
       );
