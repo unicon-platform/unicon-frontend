@@ -7,6 +7,7 @@ import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
 import { isUniconFile } from "@/lib/utils";
 
+import SocketTypeBadge from "../socket-type-badge";
 import ViewFileButton from "./view-file-button";
 
 const ValueDisplay: React.FC<{ row: InputSocket & { step: InputStep } }> = ({ row }) => {
@@ -27,6 +28,12 @@ export const columns: ColumnDef<InputSocket & { step: InputStep }>[] = [
   {
     accessorFn: (row) => row.label,
     header: "Label",
+  },
+  {
+    header: "Type",
+    cell: ({ row }) => {
+      return <SocketTypeBadge socket={row.original} />;
+    },
   },
   {
     header: "Value",
