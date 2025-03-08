@@ -207,7 +207,7 @@ export function NodeSlot({
             </div>
           ))}
       </div>
-      {!hideType && (
+      {!hideType && socket.type !== "CONTROL" && (
         <div className={cn("flex px-4", type === "source" && "justify-end")}>
           {socket.data_type && <SocketTypeBadge socket={socket} />}
         </div>
