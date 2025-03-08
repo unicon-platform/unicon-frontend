@@ -196,15 +196,13 @@ export function NodeSlot({
           (socket.type === "CONTROL" ? (
             <ControlSocket socket={socket} type={type} />
           ) : (
-            <div className="flex flex-col gap-2">
-              <DataSocket
-                type={type}
-                socket={socket}
-                onEditData={onEditData}
-                onEditLabel={onEditLabel}
-                onDelete={onDelete}
-              />
-            </div>
+            <DataSocket
+              type={type}
+              socket={socket}
+              onEditData={onEditData}
+              onEditLabel={onEditLabel}
+              onDelete={onDelete}
+            />
           ))}
       </div>
       {!hideType && socket.type !== "CONTROL" && (
