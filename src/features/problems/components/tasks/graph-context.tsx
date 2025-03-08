@@ -14,7 +14,13 @@ import {
 } from "@/api";
 import { File as UniconFile } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
-import { createSocket, getDataType, isRequiredInputStep, isResultSocket } from "@/lib/compute-graph";
+import {
+  areSocketsCompatible,
+  createSocket,
+  getDataType,
+  isRequiredInputStep,
+  isResultSocket,
+} from "@/lib/compute-graph";
 
 export type GraphState = {
   id: string;
@@ -170,6 +176,17 @@ export type GraphAction =
   | DeselectSocketAction
   | UpdateUserInputStepAction
   | UpdatePyRunFunctionStepAction;
+
+const _filterInvalidEdges = (state: GraphState) => {
+  state.edges = state.edges.filter((edge) => {
+    const fromNode = state.steps.find((node) => node.id === edge.from_node_id);
+    const toNode = state.steps.find((node) => node.id === edge.to_node_id);
+    const fromSocket = fromNode?.outputs?.find((socket) => socket.id === edge.from_socket_id);
+    const toSocket = toNode?.inputs?.find((socket) => socket.id === edge.to_socket_id);
+    return areSocketsCompatible(fromSocket, toSocket);
+  });
+  return state;
+};
 
 const updateUserInputStep = (state: GraphState, { payload }: UpdateUserInputStepAction) => {
   const userInputStepIdx = state.steps.findIndex(isRequiredInputStep);
@@ -559,7 +576,7 @@ export const graphReducer: ImmerReducer<GraphState, GraphAction> = (
   state: GraphState,
   action: GraphAction,
 ): GraphState => {
-  return actionHandlers[action.type](state, action as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+  return _filterInvalidEdges(actionHandlers[action.type](state, action as any)); // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 export const GraphContext = createContext<GraphState | null>(null);
