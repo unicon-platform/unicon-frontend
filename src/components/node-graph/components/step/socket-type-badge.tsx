@@ -10,13 +10,13 @@ type OwnProps = {
 };
 
 const SocketTypeBadge: React.FC<OwnProps> = ({ socket }) => {
-  if (!socket.data_type) {
-    return null;
-  }
-
-  // This should not happen. If it does, we make a guess.
+  // This should not happen. If it does, we make a guess. If types are still missing, don't render a badge.
   if (socket.data && !socket.data_type) {
     socket.data_type = getDataType(socket.data);
+  }
+
+  if (!socket.data_type) {
+    return null;
   }
 
   return (
