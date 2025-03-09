@@ -35,7 +35,17 @@ export const AutogradedBadge = () => (
 );
 
 export const MaxAttemptsBadge = ({ maxAttempts }: { maxAttempts: number | null }) => (
-  <Badge className="bg-gray-400 py-1">
-    {maxAttempts === null ? "Unlimited" : maxAttempts} Attempt{maxAttempts === 1 ? "" : "s"}
-  </Badge>
+  <Tooltip>
+    <TooltipContent side="top" align="center">
+      <span>
+        You can submit {maxAttempts === null ? "unlimited" : maxAttempts} attempt{maxAttempts === 1 ? "" : "s"} for this
+        task.
+      </span>
+    </TooltipContent>
+    <TooltipTrigger>
+      <Badge className="bg-gray-400 py-1">
+        {maxAttempts === null ? "Unlimited" : maxAttempts} Attempt{maxAttempts === 1 ? "" : "s"}
+      </Badge>
+    </TooltipTrigger>
+  </Tooltip>
 );

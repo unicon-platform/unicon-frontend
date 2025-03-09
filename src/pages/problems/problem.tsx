@@ -53,6 +53,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
   const {
     edit: canEdit,
     make_submission: canSubmit,
+    make_submission_without_limit: canSubmitWithoutLimit,
     restricted,
     published,
     started_at,
@@ -164,6 +165,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
             projectId={projectId}
             canEdit={false}
             canSubmit={!isSubmissionView && canSubmit}
+            canSubmitWithoutLimit={!isSubmissionView && canSubmit && canSubmitWithoutLimit}
             submissionAttempt={submissionAttempts?.find((attempt) => attempt.task_id === task.id)}
           />
         ))}

@@ -9,11 +9,13 @@ export function Task({
   task,
   canSubmit,
   canEdit,
+  canSubmitWithoutLimit,
   submissionAttempt,
 }: {
   problemId: number;
   task: MultipleChoiceTask | MultipleResponseTask | ProgrammingTask | ShortAnswerTask;
   canSubmit: boolean;
+  canSubmitWithoutLimit: boolean;
   canEdit: boolean;
   submissionAttempt?: TaskAttemptPublic;
 }) {
@@ -31,6 +33,7 @@ export function Task({
           problemId={problemId}
           task={task}
           canSubmit={canSubmit}
+          canSubmitWithoutLimit={canSubmitWithoutLimit}
           canEdit={canEdit}
           submissionAttempt={submissionAttempt}
         />

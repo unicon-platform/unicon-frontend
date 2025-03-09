@@ -17,6 +17,7 @@ type OwnProps = {
   projectId: number;
   canEdit: boolean;
   canSubmit: boolean;
+  canSubmitWithoutLimit: boolean;
   submissionAttempt?: TaskAttemptPublic;
   provided?: DraggableProvided;
 };
@@ -28,6 +29,7 @@ const TaskCard: React.FC<OwnProps> = ({
   projectId,
   canEdit,
   canSubmit,
+  canSubmitWithoutLimit,
   submissionAttempt,
   provided,
 }) => {
@@ -71,6 +73,7 @@ const TaskCard: React.FC<OwnProps> = ({
             task={task}
             canEdit={canEdit}
             canSubmit={canSubmit}
+            canSubmitWithoutLimit={canSubmitWithoutLimit}
             submissionAttempt={submissionAttempt}
           />
         </CardContent>
