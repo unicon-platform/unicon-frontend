@@ -67,7 +67,7 @@ export const toProgrammingTask = (form: ProgTaskFormT): Omit<ProgrammingTask, "o
   title: form.title,
   description: form.description,
   autograde: form.autograde,
-  max_attempts: form.max_attempts,
+  max_attempts: form.max_attempts ?? null,
   environment: {
     ...form.environment,
     language: "PYTHON",
