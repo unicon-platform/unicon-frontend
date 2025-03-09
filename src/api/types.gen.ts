@@ -406,6 +406,7 @@ export type ProblemPublic = {
     closed_at?: string | null;
     edit: boolean;
     make_submission: boolean;
+    make_submission_without_limit: boolean;
     view_hidden_details: boolean;
 };
 
