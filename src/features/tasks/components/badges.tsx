@@ -33,3 +33,9 @@ export const AutogradedBadge = () => (
     </TooltipTrigger>
   </Tooltip>
 );
+
+export const MaxAttemptsBadge = ({ maxAttempts }: { maxAttempts: number | null }) => (
+  <Badge className="bg-gray-400 py-1">
+    {maxAttempts === null ? "Unlimited" : maxAttempts} Attempt{maxAttempts === 1 ? "" : "s"}
+  </Badge>
+);

@@ -8,6 +8,7 @@ import FormSection from "@/components/form/form-section";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { AttemptLimitSection } from "@/features/tasks/forms/sections";
 import { ShortAnswerFormT, ShortAnswerFormZ } from "@/lib/schema/short-answer-form";
 
 const DEFAULT_FORM_VALUES: ShortAnswerFormT = {
@@ -46,7 +47,8 @@ const ShortAnswerForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
             <CheckboxField label="" name="autograde" className="mt-2" />
             {watch("autograde") && <TextField label="Expected answer" name="expected_answer" />}
           </FormSection>
-
+          <hr />
+          <AttemptLimitSection />
           <div className="mt-12">
             <Button className="bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
           </div>
