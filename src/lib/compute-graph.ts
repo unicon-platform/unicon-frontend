@@ -16,8 +16,12 @@ import {
 import { Step } from "@/features/problems/components/tasks/types";
 import { isUniconFile, uuid } from "@/lib/utils";
 
+const _unescapeString = (input: string): string => {
+  return JSON.parse(`"${input.replace(/\\\\/g, "\\")}"`);
+};
+
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
-  let parsed: string | boolean | number | null = data;
+  let parsed: string | boolean | number | null = _unescapeString(data);
 
   // Empty string = no data = null
   if (data === "") parsed = null;

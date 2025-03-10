@@ -519,7 +519,11 @@ const updateSocketMetadata = (state: GraphState, { payload }: UpdateSocketMetada
     socket.data_type = getDataType(payload.socketMetadata.data);
   } else if (payload.socketMetadata.comparison !== undefined) {
     const comparison = payload.socketMetadata.comparison as Comparison;
-    socket.data_type = getDataType(comparison.value);
+    // This is when the user just creates an expected value (click '+') but has not set a value.
+    // Do not toggle to null, otherwise the types won't match and user cannot connect things.
+    if (!(comparison.value === null && socket.data_type === "unknown")) {
+      socket.data_type = comparison.value !== null ? getDataType(comparison.value) : "unknown";
+    }
   }
 
   return state;
