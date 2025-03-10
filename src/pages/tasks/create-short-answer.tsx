@@ -24,6 +24,7 @@ const CreateShortAnswer = () => {
         ...data,
         type: "SHORT_ANSWER_TASK",
         id: -1,
+        max_attempts: data.max_attempts ?? null,
       },
       {
         onSuccess: () => {

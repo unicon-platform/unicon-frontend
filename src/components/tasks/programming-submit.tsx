@@ -221,9 +221,15 @@ type ProgrammingSubmitFormProps = {
   problemId: number;
   task: ProgrammingTask;
   canSubmit: boolean;
+  canSubmitWithoutLimit: boolean;
 };
 
-export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ problemId, task, canSubmit }) => {
+export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
+  problemId,
+  task,
+  canSubmit,
+  canSubmitWithoutLimit,
+}) => {
   const { data: attempts, refetch: refetchAttempts } = useQuery({
     ...getTaskAttemptResults(problemId, task.id),
     refetchInterval: ({ state: { data } }) =>
@@ -285,6 +291,15 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
     [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts, task.id],
   );
 
+  const hasLimit = typeof task.max_attempts === "number";
+  const attemptsLeft = hasLimit
+    ? Math.max((task.max_attempts as number) - (attempts?.length ?? 0), 0)
+    : Number.MAX_SAFE_INTEGER;
+  const isOutOfAttempts = !canSubmitWithoutLimit && attemptsLeft === 0;
+  const submitLabel =
+    "Submit" +
+    (hasLimit && !canSubmitWithoutLimit ? ` (${attemptsLeft} attempt${attemptsLeft === 1 ? "" : "s"} left)` : "");
+
   return (
     <div className="flex flex-col gap-6">
       {canSubmit && (
@@ -301,8 +316,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({ pr
                 />
               ))}
             </div>
-            <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending}>
-              {isSubmitting ? "Submitting..." : "Submit"}
+            <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending || isOutOfAttempts}>
+              {isSubmitting ? "Submitting..." : submitLabel}
             </Button>
           </form>
         </TaskSection>

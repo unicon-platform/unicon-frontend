@@ -21,6 +21,7 @@ import { TestcaseSettingsType } from "@/features/problems/components/tasks/testc
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import { getSupportedPythonVersions } from "@/features/problems/queries";
 import FileInputSection from "@/features/tasks/forms/programming/file-inputs-section";
+import { AttemptLimitSection } from "@/features/tasks/forms/sections";
 import { DEFAULT_PY_VERSION, ProgTaskFormT, ProgTaskFormZ } from "@/lib/schema/prog-task-form";
 import { isUniconFile, useSyncFormFieldsMultiple, uuid } from "@/lib/utils";
 
@@ -50,6 +51,7 @@ const DEFAULT_FORM_VALUES: ProgTaskFormT = {
     slurm: true,
     slurm_options: [],
   },
+  max_attempts: null,
   required_user_inputs: [createDefaultUserInput()],
   files: [],
   testcases: [],
@@ -240,6 +242,7 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
           <FormSection title="Description">
             <TextAreaField name="description" rows={4} />
           </FormSection>
+          <AttemptLimitSection />
           <hr />
           <FormSection title="Environment">
             <div className="flex flex-wrap gap-8">

@@ -8,7 +8,7 @@ import { Task } from "@/components/tasks/task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TaskType, useDeleteTask } from "@/features/problems/queries";
-import { AutogradedBadge, TaskTypeBadge } from "@/features/tasks/components/badges";
+import { AutogradedBadge, MaxAttemptsBadge, TaskTypeBadge } from "@/features/tasks/components/badges";
 
 type OwnProps = {
   index: number;
@@ -17,6 +17,7 @@ type OwnProps = {
   projectId: number;
   canEdit: boolean;
   canSubmit: boolean;
+  canSubmitWithoutLimit: boolean;
   submissionAttempt?: TaskAttemptPublic;
   provided?: DraggableProvided;
 };
@@ -28,6 +29,7 @@ const TaskCard: React.FC<OwnProps> = ({
   projectId,
   canEdit,
   canSubmit,
+  canSubmitWithoutLimit,
   submissionAttempt,
   provided,
 }) => {
@@ -44,6 +46,7 @@ const TaskCard: React.FC<OwnProps> = ({
             <span className="text-lg font-medium">Task #{index + 1}</span>
             <div className="flex items-center gap-2">
               <TaskTypeBadge type={task.type} />
+              <MaxAttemptsBadge maxAttempts={task.max_attempts} />
               {task.autograde && <AutogradedBadge />}
             </div>
           </div>
@@ -70,6 +73,7 @@ const TaskCard: React.FC<OwnProps> = ({
             task={task}
             canEdit={canEdit}
             canSubmit={canSubmit}
+            canSubmitWithoutLimit={canSubmitWithoutLimit}
             submissionAttempt={submissionAttempt}
           />
         </CardContent>

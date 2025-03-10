@@ -175,6 +175,7 @@ export type MultipleChoiceTask = {
     type: 'MULTIPLE_CHOICE_TASK';
     autograde?: boolean;
     order_index: number;
+    max_attempts: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -198,6 +199,7 @@ export type MultipleResponseTask = {
     type: 'MULTIPLE_RESPONSE_TASK';
     autograde?: boolean;
     order_index: number;
+    max_attempts: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -404,6 +406,7 @@ export type ProblemPublic = {
     closed_at?: string | null;
     edit: boolean;
     make_submission: boolean;
+    make_submission_without_limit: boolean;
     view_hidden_details: boolean;
 };
 
@@ -425,6 +428,7 @@ export type ProgrammingTask = {
     type: 'PROGRAMMING_TASK';
     autograde?: boolean;
     order_index: number;
+    max_attempts: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -620,6 +624,7 @@ export type ShortAnswerTask = {
     type: 'SHORT_ANSWER_TASK';
     autograde?: boolean;
     order_index: number;
+    max_attempts: number | null;
     expected_answer?: string | null;
 };
 
@@ -718,6 +723,7 @@ export type TaskOrm = {
     updated_version_id?: number | null;
     order_index: number;
     problem_id: number;
+    max_attempts?: number | null;
 };
 
 export type TaskOrder = {

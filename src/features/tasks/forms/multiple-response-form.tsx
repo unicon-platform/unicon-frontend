@@ -9,6 +9,7 @@ import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import Choices from "@/features/tasks/forms/choices";
+import { AttemptLimitSection } from "@/features/tasks/forms/sections";
 import { ChoicesT, MultipleResponseFormT, MultipleResponseFormZ } from "@/lib/schema/multi-choice-form";
 import { uuid } from "@/lib/utils";
 
@@ -77,6 +78,8 @@ const MultipleResponseForm: React.FC<OwnProps> = ({ initialValue, onSubmit }) =>
           <FormSection title="Autograde?">
             <CheckboxField label="" name="autograde" className="mt-2" />
           </FormSection>
+          <hr />
+          <AttemptLimitSection />
           <hr />
           <FormSection title="Choices">
             <div className="flex flex-col items-start gap-4">

@@ -11,12 +11,14 @@ export function Programming({
   problemId,
   task,
   canSubmit,
+  canSubmitWithoutLimit,
   canEdit,
   submissionAttempt,
 }: {
   problemId: number;
   task: ProgrammingTask;
   canSubmit: boolean;
+  canSubmitWithoutLimit: boolean;
   canEdit: boolean;
   submissionAttempt?: TaskAttemptPublic;
 }) {
@@ -33,7 +35,12 @@ export function Programming({
         </div>
       </TaskSection>
       {!canEdit && !submissionAttempt && (
-        <ProgrammingSubmitForm problemId={problemId} task={task} canSubmit={canSubmit} />
+        <ProgrammingSubmitForm
+          problemId={problemId}
+          task={task}
+          canSubmit={canSubmit}
+          canSubmitWithoutLimit={canSubmitWithoutLimit}
+        />
       )}
       {submissionAttempt && <TaskResultCard title="Submission" taskAttempt={submissionAttempt} problemId={problemId} />}
     </TaskContainer>
