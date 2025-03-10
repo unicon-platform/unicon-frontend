@@ -19,6 +19,7 @@ const STATUS_DESCRIPTIONS: Record<Status, string> = {
   MLE: "Memory Limit Exceeded",
   RTE: "Runtime Error",
   WA: "Wrong Answer",
+  UKN: "Unknown Error",
 };
 
 const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase, hideDetails = false }) => {

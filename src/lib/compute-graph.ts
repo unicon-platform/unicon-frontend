@@ -9,11 +9,11 @@ import {
   PyRunFunctionStep,
   SocketType,
   StepSocket,
-  StepType,
   StringMatchStep,
   UniconType,
 } from "@/api";
 import { Step } from "@/features/problems/components/tasks/types";
+import { StepType } from "@/lib/constants";
 import { isUniconFile, uuid } from "@/lib/utils";
 
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
