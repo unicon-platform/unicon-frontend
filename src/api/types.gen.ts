@@ -111,7 +111,7 @@ export type IfElseStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'IF_ELSE_STEP';
 };
 
 export type InputSocket = {
@@ -130,7 +130,7 @@ export type InputStep = {
     id: string;
     inputs?: Array<InputSocket>;
     outputs: Array<InputSocket>;
-    type: StepType;
+    type: 'INPUT_STEP';
     is_user?: boolean;
 };
 
@@ -145,7 +145,7 @@ export type LoopStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'LOOP_STEP';
 };
 
 export type MiniGroupMemberPublic = {
@@ -226,7 +226,7 @@ export type ObjectAccessStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'OBJECT_ACCESS_STEP';
     key: string;
 };
 
@@ -322,7 +322,7 @@ export type OutputStep = {
     id: string;
     inputs: Array<OutputSocket>;
     outputs?: Array<OutputSocket>;
-    type: StepType;
+    type: 'OUTPUT_STEP';
 };
 
 export type ParseRequest = {
@@ -527,7 +527,7 @@ export type PyRunFunctionStep = {
     id: string;
     inputs: Array<PyRunFunctionSocket>;
     outputs: Array<PyRunFunctionSocket>;
-    type: StepType;
+    type: 'PY_RUN_FUNCTION_STEP';
     function_identifier?: string | null;
     allow_error?: boolean;
     propagate_stdout?: boolean;
@@ -652,7 +652,7 @@ export type SocketResult = {
 
 export type SocketType = 'DATA' | 'CONTROL';
 
-export type Status = 'OK' | 'MLE' | 'TLE' | 'RTE' | 'WA';
+export type Status = 'OK' | 'MLE' | 'TLE' | 'RTE' | 'WA' | 'UKN';
 
 export type StepSocket = {
     id: string;
@@ -665,13 +665,11 @@ export type StepSocket = {
     } | null;
 };
 
-export type StepType = 'PY_RUN_FUNCTION_STEP' | 'OBJECT_ACCESS_STEP' | 'INPUT_STEP' | 'OUTPUT_STEP' | 'LOOP_STEP' | 'IF_ELSE_STEP' | 'STRING_MATCH_STEP';
-
 export type StringMatchStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'STRING_MATCH_STEP';
 };
 
 export type SubmissionPublic = {
@@ -741,7 +739,21 @@ export type TaskUpdate = {
 };
 
 export type Testcase = {
-    nodes: Array<OutputStep | InputStep | PyRunFunctionStep | LoopStep | IfElseStep | StringMatchStep | ObjectAccessStep>;
+    nodes: Array<({
+        type?: 'INPUT_STEP';
+    } & InputStep) | ({
+        type?: 'OUTPUT_STEP';
+    } & OutputStep) | ({
+        type?: 'PY_RUN_FUNCTION_STEP';
+    } & PyRunFunctionStep) | ({
+        type?: 'STRING_MATCH_STEP';
+    } & StringMatchStep) | ({
+        type?: 'OBJECT_ACCESS_STEP';
+    } & ObjectAccessStep) | ({
+        type?: 'LOOP_STEP';
+    } & LoopStep) | ({
+        type?: 'IF_ELSE_STEP';
+    } & IfElseStep)>;
     edges: Array<GraphEdgeStr>;
     id: string;
     order_index: number;
