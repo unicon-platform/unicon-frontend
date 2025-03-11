@@ -1,4 +1,4 @@
-import { AlertCircleIcon, CheckCircleIcon, CircleXIcon, InfoIcon, LayoutGridIcon } from "lucide-react";
+import { AlertCircleIcon, CheckCircleIcon, CircleXIcon, InfoIcon, LayoutGridIcon, TimerIcon } from "lucide-react";
 
 import { OutputStep, Status, Testcase, TestcaseResult as TestcaseResultType } from "@/api";
 import SocketResultTable from "@/components/tasks/submission-results/result-types/table/socket-result-table";
@@ -21,9 +21,14 @@ const STATUS_DESCRIPTIONS: Record<Status, string> = {
   WA: "Wrong Answer",
 };
 
+const formatElapsedTime = (nanoSeconds: number) => {
+  const milliSeconds = nanoSeconds / 1_000_000;
+  if (milliSeconds < 1000) return `${milliSeconds.toFixed(3)} ms`;
+  return `${(milliSeconds / 1000).toFixed(3)} secs`;
+};
+
 const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase, hideDetails = false }) => {
   const outputStep = testcase.nodes.filter((node) => node.type == "OUTPUT_STEP")[0] as OutputStep;
-
   const combinedResults = result.results?.map((socketResult) => {
     const testcaseSocketMetadata = outputStep.inputs.filter((input) => input.id === socketResult.id);
     return {
@@ -35,14 +40,20 @@ const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase
   });
 
   return (
-    <div>
-      <div className={cn("flex gap-3")}>
-        <span>Testcase {index + 1}</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-3">
+        <span className="text-lg">Testcase {index + 1}</span>
+        {result.elapsed_time_ns !== undefined && result.elapsed_time_ns !== null && (
+          <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1 text-zinc-400">
+            <TimerIcon size={15} />
+            <span className="font-mono text-xs">{formatElapsedTime(2349871221224)}</span>
+          </div>
+        )}
         <Tooltip>
           <TooltipTrigger>
             <div
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-xs font-medium transition-colors",
+                "flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors",
                 { "border-emerald-400 bg-emerald-300 text-emerald-800 hover:bg-emerald-400": result.status === "OK" },
                 { "border-red-400 bg-red-300 text-red-800 hover:bg-red-400": result.status !== "OK" },
               )}
