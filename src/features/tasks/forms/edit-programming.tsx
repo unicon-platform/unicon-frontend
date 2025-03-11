@@ -8,6 +8,7 @@ import { useProjectId } from "@/features/projects/hooks/use-id";
 import ProgrammingForm from "@/features/tasks/forms/programming-form";
 import RerunDialog from "@/features/tasks/forms/rerun-dialog";
 import { fromProgrammingTask, ProgTaskFormT, toProgrammingTask } from "@/lib/schema/prog-task-form";
+import { JSONstringifyOrder } from "@/lib/utils";
 import { isSafeChangeForProgrammingTask } from "@/utils/task";
 
 type OwnProps = {
@@ -39,6 +40,10 @@ const EditProgramming: React.FC<OwnProps> = ({ task, problemId }) => {
   };
 
   const onSubmit: SubmitHandler<ProgTaskFormT> = async (form: ProgTaskFormT) => {
+    if (JSONstringifyOrder(form) === JSONstringifyOrder(fromProgrammingTask(task))) {
+      navigate(`/projects/${projectId}/problems/${problemId}/edit`);
+      return;
+    }
     setOpenDialog(true);
     setForm(form);
     setIsSafe(isSafeChangeForProgrammingTask(task, toProgrammingTask(form)));
