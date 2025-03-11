@@ -15,6 +15,14 @@ export function uuid(): string {
   return randomUUID();
 }
 
+// https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify
+// useful for doing comparison (so the order of key creation doesn't matter)
+export function JSONstringifyOrder(obj: object, space?: string | number) {
+  const allKeys: Set<string> = new Set();
+  JSON.stringify(obj, (key, value) => (allKeys.add(key), value));
+  return JSON.stringify(obj, Array.from(allKeys).sort(), space);
+}
+
 export const isUniconFile = (data: unknown): data is UniconFile => {
   if (data === undefined || data === null) return false;
   if (typeof data !== "object") return false;

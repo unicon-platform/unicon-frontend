@@ -50,6 +50,7 @@ const DEFAULT_FORM_VALUES: ProgTaskFormT = {
     memory_limit_mb: 256,
     slurm: true,
     slurm_options: [],
+    slurm_use_system_py: false,
   },
   max_attempts: null,
   required_user_inputs: [createDefaultUserInput()],
@@ -115,7 +116,14 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
         // Shared user input step for all testcases
         const newSharedUserInputStep: InputStep = {
           ...DEFAULT_USER_INPUT_STEP,
-          outputs: fromValue.map((input) => ({ ...input, type: "DATA", public: true, data_type: "UniconFile" })),
+          inputs: [],
+          outputs: fromValue.map((input) => ({
+            ...input,
+            type: "DATA",
+            public: true,
+            data_type: "UniconFile",
+            data_type_metadata: null,
+          })),
         };
         const testcases = toValue.map((testcase) => ({
           ...testcase,

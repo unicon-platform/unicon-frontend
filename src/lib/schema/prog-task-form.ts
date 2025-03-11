@@ -44,6 +44,7 @@ export const ProgTaskFormZ = TaskFormZ.extend({
     memory_limit_mb: positiveLimitZ("Memory limit"),
     slurm: z.boolean().default(true),
     slurm_options: z.array(SlurmOptionZ),
+    slurm_use_system_py: z.boolean().optional().default(false),
   }),
   required_user_inputs: z.array(RequiredInputZ),
   testcases: z.array(z.custom<Testcase>(() => true)),
@@ -94,6 +95,7 @@ export const fromProgrammingTask = (progTask: ProgrammingTask): ProgTaskFormT =>
     },
     slurm: progTask.environment.slurm ?? false,
     slurm_options: progTask.environment.slurm_options ?? [],
+    slurm_use_system_py: progTask.environment.slurm_use_system_py ?? false,
   },
   required_user_inputs: progTask.required_inputs.map((input) => ({
     id: input.id,
