@@ -46,7 +46,7 @@ const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase
         {result.elapsed_time_ns !== undefined && result.elapsed_time_ns !== null && (
           <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1 text-zinc-400">
             <TimerIcon size={15} />
-            <span className="font-mono text-xs">{formatElapsedTime(2349871221224)}</span>
+            <span className="font-mono text-xs">{formatElapsedTime(result.elapsed_time_ns)}</span>
           </div>
         )}
         <Tooltip>
