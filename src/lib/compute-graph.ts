@@ -17,21 +17,28 @@ import { Step } from "@/features/problems/components/tasks/types";
 import { isUniconFile, uuid } from "@/lib/utils";
 
 const _unescapeString = (input: string): string => {
-  return JSON.parse(`"${input.replace(/\\\\/g, "\\")}"`);
+  try {
+    return JSON.parse(`"${input.replace(/\\\\/g, "\\")}"`);
+  } catch {
+    console.warn("Failed to unescape string", input);
+    return input;
+  }
 };
 
 export const parseSocketDataString = (data: string): string | number | boolean | null => {
-  let parsed: string | boolean | number | null = _unescapeString(data);
+  let parsed: string | boolean | number | null = data;
 
   // Empty string = no data = null
   if (data === "") parsed = null;
   // Surrounded by quotes = string
-  else if (data.startsWith('"') && data.endsWith('"')) parsed = data.slice(1, -1);
+  else if (data.startsWith('"') && data.endsWith('"')) parsed = _unescapeString(data.slice(1, -1));
   // Lowercase true/false = boolean
   else if (data.toLowerCase() === "true") parsed = true;
   else if (data.toLowerCase() === "false") parsed = false;
   // Number = number
   else if (!isNaN(Number(data))) parsed = Number(data);
+  // string
+  else parsed = _unescapeString(data);
 
   return parsed;
 };
