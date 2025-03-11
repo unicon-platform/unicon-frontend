@@ -75,8 +75,7 @@ export const createDefaultStep = (type: StepType) => {
         is_user: false,
       } as InputStep;
     case "OUTPUT_STEP":
-      // TODO: Change type when expected changes
-      return createBaseStep(type, [createSocket("DATA")], []) as OutputStep;
+      return createBaseStep(type, [createSocket("DATA", "", null, "unknown")], []) as OutputStep;
     case "PY_RUN_FUNCTION_STEP":
       return {
         ...createBaseStep(
