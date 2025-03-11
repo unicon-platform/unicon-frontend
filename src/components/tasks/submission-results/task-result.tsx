@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { TimerIcon } from "lucide-react";
+import { ClockIcon } from "lucide-react";
 
 import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
 import MultipleChoiceResult from "@/components/tasks/submission-results/result-types/multiple-choice-result";
@@ -51,21 +51,24 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
             <span>{relativeTime(startedAtDate)}</span>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
-            <span className="text-sm">Started at {format(startedAtDate, "dd MMM yyyy, HH:mm:ss")}</span>
+            <span className="text-sm">Submitted at {format(startedAtDate, "dd MMM yyyy, HH:mm:ss")}</span>
           </TooltipContent>
         </Tooltip>
         {attemptResult.completed_at && (
           <Tooltip>
             <TooltipTrigger>
               <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
-                <TimerIcon size={15} />
+                <ClockIcon size={15} />
                 {formatIntervalDuration(startedAtDate, parseISO(attemptResult.completed_at))}
               </div>
             </TooltipTrigger>
             <TooltipContent side="top" align="center">
-              <span className="text-sm">
+              <p className="text-sm font-medium">
                 Completed at {format(attemptResult.completed_at, "dd MMM yyyy, HH:mm:ss")}
-              </span>
+              </p>
+              <p className="text-wrap text-xs">
+                Round trip time from submission to completion, including testcase execution and queue time.
+              </p>
             </TooltipContent>
           </Tooltip>
         )}
