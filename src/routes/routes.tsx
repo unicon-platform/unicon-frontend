@@ -46,6 +46,9 @@ export const routes = [
           },
           {
             path: "organisations",
+            handle: {
+              crumb: () => ({ label: "Organisations", href: "/organisations" }),
+            },
             children: [
               { index: true, element: <Organisations /> },
               {
@@ -101,6 +104,9 @@ export const routes = [
           },
           {
             path: "projects",
+            handle: {
+              crumb: () => ({ label: "Projects", href: "/projects" }),
+            },
             children: [
               { index: true, element: <Projects /> },
               {
