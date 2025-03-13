@@ -1,7 +1,9 @@
+import { InfoIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Option = {
   label: string;
@@ -25,7 +27,21 @@ function SelectField({ name, label, placeholder, description, options, disabled 
       name={name}
       render={({ field }) => (
         <FormItem>
-          {label && <FormLabel className="!text-current">{label}</FormLabel>}
+          {label && (
+            <FormLabel className="!text-current">
+              <div className="inline-flex items-center gap-2">
+                {label}
+                {description && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoIcon className="h-4 w-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>{description}</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            </FormLabel>
+          )}
           <FormControl>
             <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
               <SelectTrigger className="w-[180px]">
@@ -41,7 +57,6 @@ function SelectField({ name, label, placeholder, description, options, disabled 
             </Select>
           </FormControl>
           <FormMessage />
-          {description && <FormDescription>{description}</FormDescription>}
         </FormItem>
       )}
     />

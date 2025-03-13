@@ -256,14 +256,8 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
           <FormSection title="Environment">
             <div className="flex flex-wrap gap-8">
               <SelectField
-                label="Language"
-                name="environment.language"
-                options={[{ label: "Python", value: "Python" }]}
-                disabled
-              />
-              {/* Python version */}
-              <SelectField
-                label="Version"
+                label="Python Version"
+                description="Python interpreter version used for orchestration and nodes that depend on Python"
                 name="environment.extra_options.version"
                 options={(validPythonVersions ?? []).map((version) => ({
                   label: version,

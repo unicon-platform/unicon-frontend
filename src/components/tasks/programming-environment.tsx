@@ -1,4 +1,5 @@
-import { MemoryStickIcon, PackageIcon, ServerIcon, TagIcon, TimerIcon } from "lucide-react";
+import { MemoryStickIcon, PackageIcon, ServerIcon, TimerIcon } from "lucide-react";
+import { AiOutlinePython } from "react-icons/ai";
 
 import { ComputeContext } from "@/api";
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +10,12 @@ export const ProgrammingEnvironment = ({ environment }: { environment: ComputeCo
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        <span className="font-mono capitalize text-zinc-100">{environment.language.toLowerCase()}</span>
-        {environment.extra_options?.version && (
-          <Badge className="flex gap-2 py-1 font-mono text-zinc-100" variant="outline">
-            <TagIcon className="h-4 w-4" />
-            {environment.extra_options.version}
-          </Badge>
-        )}
-      </div>
+      {environment.extra_options?.version && (
+        <Badge className="flex w-fit gap-2 py-1 font-mono text-sm text-zinc-100" variant="outline">
+          <AiOutlinePython className="h-5 w-5" />
+          {environment.extra_options.version}
+        </Badge>
+      )}
       {environment.slurm && <SlurmBadge options={slurmOptions} />}
 
       <div className="flex flex-wrap gap-3">
