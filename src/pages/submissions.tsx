@@ -70,7 +70,7 @@ const Submissions = () => {
   }
 
   return (
-    <div className="flex w-full flex-col px-8 py-4">
+    <div className="flex w-full flex-col">
       <h1 className="text-2xl font-semibold">Submissions</h1>
       <div className="mt-4 grid grid-cols-3 gap-4">
         {/* Problem Filter */}

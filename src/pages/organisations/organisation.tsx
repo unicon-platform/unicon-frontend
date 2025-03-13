@@ -25,7 +25,7 @@ const Organisation = () => {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-5xl flex-col gap-8 p-4 px-8">
+    <div className="m-auto flex w-full flex-col gap-8">
       <div className="flex justify-between">
         <div className="flex flex-col">
           <h2 className="text-3xl font-semibold">{organisation.name}</h2>

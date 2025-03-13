@@ -32,7 +32,7 @@ const ShortAnswerForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
   const { watch } = form;
 
   return (
-    <div className="flex w-full flex-col gap-8 px-8 py-6">
+    <div className="flex w-full flex-col gap-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{title}</h1>
       </div>

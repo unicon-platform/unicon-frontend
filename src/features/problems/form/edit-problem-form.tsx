@@ -117,8 +117,8 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
   return (
     <Form {...form}>
       <UnsavedChangesHandler form={form} />
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex w-full flex-col gap-8 px-8 py-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+        <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold">Edit problem</h1>
             <Button variant="primary">Save</Button>

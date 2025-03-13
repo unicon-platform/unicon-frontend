@@ -44,7 +44,7 @@ const OrganisationUsers = () => {
   const canEditRoles = data.edit_roles;
 
   return (
-    <div className="flex w-full flex-col gap-8 px-8 py-6">
+    <div className="flex w-full flex-col gap-8">
       <div className="text-2xl">
         Manage members for <span className="font-[450]">{data.name}</span>
       </div>

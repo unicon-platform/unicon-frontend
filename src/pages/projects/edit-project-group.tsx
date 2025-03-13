@@ -73,7 +73,7 @@ const EditProjectGroup = () => {
     : usersNotInGroup;
 
   return (
-    <div className="m-auto flex w-full flex-col gap-8 p-4 px-8">
+    <div className="m-auto flex w-full flex-col gap-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">{group.name}</h2>
         <div className="flex gap-2">

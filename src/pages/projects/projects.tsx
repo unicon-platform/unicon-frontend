@@ -15,7 +15,7 @@ const Projects = () => {
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
 
   return (
-    <div className="m-auto flex w-full max-w-5xl flex-col gap-8 p-4 px-8">
+    <div className="m-auto flex w-full flex-col gap-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <Button

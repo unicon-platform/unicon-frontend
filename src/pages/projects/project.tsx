@@ -23,7 +23,7 @@ const Project = () => {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-5xl flex-col gap-8 p-4 px-8">
+    <div className="m-auto flex w-full flex-col gap-6">
       {newProblemOpen && <CreateProblemModal setOpen={setNewProblemOpen} />}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Problems</h2>

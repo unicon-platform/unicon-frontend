@@ -6,6 +6,7 @@ import { Outlet, useLocation } from "react-router-dom";
 
 import AppSidebar from "@/components/layout/app-sidebar";
 import Breadcrumb from "@/components/layout/breadcrumb";
+import { PageContainer } from "@/components/layout/page-container";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,7 +45,9 @@ const Layout: React.FC<PropsWithChildren> = () => {
                       <SidebarTrigger />
                       <Breadcrumb />
                     </div>
-                    <Outlet />
+                    <PageContainer>
+                      <Outlet />
+                    </PageContainer>
                   </main>
                 </>
               )}
