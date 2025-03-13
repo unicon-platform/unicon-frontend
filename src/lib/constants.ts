@@ -1,8 +1,17 @@
 import { IconName } from "lucide-react/dynamic";
 
-import { StepType, TaskEvalStatus } from "@/api";
+import { TaskEvalStatus } from "@/api";
 
 type ReadOnlyMap<K extends string | number | symbol, V> = { readonly [key in K]: V };
+
+export type StepType =
+  | "INPUT_STEP"
+  | "OUTPUT_STEP"
+  | "PY_RUN_FUNCTION_STEP"
+  | "OBJECT_ACCESS_STEP"
+  | "STRING_MATCH_STEP"
+  | "LOOP_STEP"
+  | "IF_ELSE_STEP";
 
 export const StepNodeColorMap: ReadOnlyMap<StepType, string> = {
   INPUT_STEP: "#F5A623", // Golden Yellow

@@ -111,7 +111,7 @@ export type IfElseStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'IF_ELSE_STEP';
 };
 
 export type InputSocket = {
@@ -130,7 +130,7 @@ export type InputStep = {
     id: string;
     inputs?: Array<InputSocket>;
     outputs: Array<InputSocket>;
-    type: StepType;
+    type: 'INPUT_STEP';
     is_user?: boolean;
 };
 
@@ -145,7 +145,7 @@ export type LoopStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'LOOP_STEP';
 };
 
 export type MiniGroupMemberPublic = {
@@ -175,7 +175,7 @@ export type MultipleChoiceTask = {
     type: 'MULTIPLE_CHOICE_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -199,7 +199,7 @@ export type MultipleResponseTask = {
     type: 'MULTIPLE_RESPONSE_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -226,7 +226,7 @@ export type ObjectAccessStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'OBJECT_ACCESS_STEP';
     key: string;
 };
 
@@ -322,7 +322,7 @@ export type OutputStep = {
     id: string;
     inputs: Array<OutputSocket>;
     outputs?: Array<OutputSocket>;
-    type: StepType;
+    type: 'OUTPUT_STEP';
 };
 
 export type ParseRequest = {
@@ -428,7 +428,7 @@ export type ProgrammingTask = {
     type: 'PROGRAMMING_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -527,7 +527,7 @@ export type PyRunFunctionStep = {
     id: string;
     inputs: Array<PyRunFunctionSocket>;
     outputs: Array<PyRunFunctionSocket>;
-    type: StepType;
+    type: 'PY_RUN_FUNCTION_STEP';
     function_identifier?: string | null;
     allow_error?: boolean;
     propagate_stdout?: boolean;
@@ -624,7 +624,7 @@ export type ShortAnswerTask = {
     type: 'SHORT_ANSWER_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     expected_answer?: string | null;
 };
 
@@ -652,7 +652,7 @@ export type SocketResult = {
 
 export type SocketType = 'DATA' | 'CONTROL';
 
-export type Status = 'OK' | 'MLE' | 'TLE' | 'RTE' | 'WA';
+export type Status = 'OK' | 'MLE' | 'TLE' | 'RTE' | 'WA' | 'UKN';
 
 export type StepSocket = {
     id: string;
@@ -665,13 +665,11 @@ export type StepSocket = {
     } | null;
 };
 
-export type StepType = 'PY_RUN_FUNCTION_STEP' | 'OBJECT_ACCESS_STEP' | 'INPUT_STEP' | 'OUTPUT_STEP' | 'LOOP_STEP' | 'IF_ELSE_STEP' | 'STRING_MATCH_STEP';
-
 export type StringMatchStep = {
     id: string;
     inputs: Array<StepSocket>;
     outputs: Array<StepSocket>;
-    type: StepType;
+    type: 'STRING_MATCH_STEP';
 };
 
 export type SubmissionPublic = {
@@ -736,12 +734,34 @@ export type TaskResult = MultipleChoiceTaskResult | MultipleResponseTaskResult |
 export type TaskType = 'MULTIPLE_CHOICE_TASK' | 'MULTIPLE_RESPONSE_TASK' | 'SHORT_ANSWER_TASK' | 'PROGRAMMING_TASK';
 
 export type TaskUpdate = {
-    task: ProgrammingTask | MultipleChoiceTask | MultipleResponseTask | ShortAnswerTask;
+    task: ({
+        type?: 'PROGRAMMING_TASK';
+    } & ProgrammingTask) | ({
+        type?: 'MULTIPLE_CHOICE_TASK';
+    } & MultipleChoiceTask) | ({
+        type?: 'MULTIPLE_RESPONSE_TASK';
+    } & MultipleResponseTask) | ({
+        type?: 'SHORT_ANSWER_TASK';
+    } & ShortAnswerTask);
     rerun: boolean;
 };
 
 export type Testcase = {
-    nodes: Array<OutputStep | InputStep | PyRunFunctionStep | LoopStep | IfElseStep | StringMatchStep | ObjectAccessStep>;
+    nodes: Array<({
+        type?: 'INPUT_STEP';
+    } & InputStep) | ({
+        type?: 'OUTPUT_STEP';
+    } & OutputStep) | ({
+        type?: 'PY_RUN_FUNCTION_STEP';
+    } & PyRunFunctionStep) | ({
+        type?: 'STRING_MATCH_STEP';
+    } & StringMatchStep) | ({
+        type?: 'OBJECT_ACCESS_STEP';
+    } & ObjectAccessStep) | ({
+        type?: 'LOOP_STEP';
+    } & LoopStep) | ({
+        type?: 'IF_ELSE_STEP';
+    } & IfElseStep)>;
     edges: Array<GraphEdgeStr>;
     id: string;
     order_index: number;
@@ -971,7 +991,15 @@ export type UpdateProblemResponses = {
 export type UpdateProblemResponse = UpdateProblemResponses[keyof UpdateProblemResponses];
 
 export type AddTaskToProblemData = {
-    body: ProgrammingTask | MultipleChoiceTask | MultipleResponseTask | ShortAnswerTask;
+    body: ({
+        type?: 'PROGRAMMING_TASK';
+    } & ProgrammingTask) | ({
+        type?: 'MULTIPLE_CHOICE_TASK';
+    } & MultipleChoiceTask) | ({
+        type?: 'MULTIPLE_RESPONSE_TASK';
+    } & MultipleResponseTask) | ({
+        type?: 'SHORT_ANSWER_TASK';
+    } & ShortAnswerTask);
     path: {
         id: number;
     };

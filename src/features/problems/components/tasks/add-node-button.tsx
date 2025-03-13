@@ -2,12 +2,11 @@ import { PlusIcon } from "lucide-react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import React, { useContext, useState } from "react";
 
-import { StepType } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { GraphActionType, GraphDispatchContext } from "@/features/problems/components/tasks/graph-context";
 import { createDefaultStep } from "@/lib/compute-graph";
-import { StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
+import { StepType, StepTypeAliasMap, StepTypeIconMap } from "@/lib/constants";
 
 const AddNodeButton: React.FC = () => {
   const dispatch = useContext(GraphDispatchContext)!;

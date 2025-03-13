@@ -1,4 +1,5 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 import {
   addTaskToProblem,
@@ -100,26 +101,17 @@ export const useDeleteProblemFiles = (problemId: number) => {
 export type TaskType = ProgrammingTask | MultipleChoiceTask | MultipleResponseTask | ShortAnswerTask;
 
 export const useCreateTask = (problemId: number) => {
-  return useMutation({
-    mutationFn: (data: Omit<TaskType, "order_index">) => {
-      // order_index is recalculated in the backend, this is just a dummy value
-      const payload = { ...data, order_index: 0 } as unknown as TaskType;
-      return addTaskToProblem({
-        body: payload,
-        path: { id: problemId },
-      });
-    },
+  return useMutation<unknown, AxiosError, Omit<TaskType, "order_index">>({
+    // order_index is recalculated in the backend, this is just a dummy value
+    mutationFn: (task) => addTaskToProblem({ body: { ...task, order_index: 0 } as TaskType, path: { id: problemId } }),
   });
 };
 
 export const useUpdateTask = (problemId: number, taskId: number) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: { task: TaskType; rerun: boolean }) =>
-      updateTask({
-        body: payload,
-        path: { id: problemId, task_id: taskId },
-      }),
+  return useMutation<unknown, AxiosError, { task: TaskType; rerun: boolean }>({
+    mutationFn: (variables: { task: TaskType; rerun: boolean }) =>
+      updateTask({ body: variables, path: { id: problemId, task_id: taskId } }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [ProblemQueryKeys.Problem, problemId],

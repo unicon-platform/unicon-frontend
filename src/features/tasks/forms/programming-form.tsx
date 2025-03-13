@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
-import { EyeIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
+import { EyeIcon, InfoIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
@@ -68,13 +68,14 @@ const DEFAULT_USER_INPUT_STEP: Omit<InputStep, "outputs"> = {
 // when using `useFieldArray`, we need to specify a custom keyName to avoid conflicts
 const _REACT_FORM_ID_KEY = "_id";
 
-type OwnProps = {
+type ProgrammingFormProps = {
   title: string;
   initialValue?: ProgTaskFormT;
   onSubmit: SubmitHandler<ProgTaskFormT>;
+  submitErrors?: string[];
 };
 
-const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) => {
+const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, onSubmit, submitErrors }) => {
   const form = useForm<ProgTaskFormT>({
     resolver: zodResolver(ProgTaskFormZ),
     defaultValues: initialValue ?? DEFAULT_FORM_VALUES,
@@ -457,9 +458,22 @@ const ProgrammingForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit }) 
               />
             </div>
           </div>
-          <Button className="mt-5 w-fit bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">
-            Submit
-          </Button>
+          {submitErrors && submitErrors.length > 0 && (
+            <div className="flex w-fit flex-col gap-4 rounded-md border border-red-500 p-4 text-red-500">
+              <div className="flex items-center gap-2">
+                <InfoIcon size={18} />
+                <span className="font-medium">Errors</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                {submitErrors.map((errorMessage, index) => (
+                  <p key={index} className="font-mono text-sm">
+                    {errorMessage}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+          <Button className="w-fit bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
         </form>
       </Form>
     </div>

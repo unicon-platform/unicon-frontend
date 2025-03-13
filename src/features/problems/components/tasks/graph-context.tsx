@@ -238,7 +238,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     state.steps[stepIndex] = {
       ...state.steps[stepIndex],
       function_identifier: payload.functionIdentifier,
-    };
+    } as PyRunFunctionStep;
   }
 
   // This if statement has all logic regarding the INPUTS of the py-run-function-step
@@ -345,7 +345,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     state.steps[stepIndex] = {
       ...state.steps[stepIndex],
       allow_error: payload.allowError,
-    };
+    } as PyRunFunctionStep;
     if (payload.allowError) {
       pushOutputSocket("Error", { handles_error: true }, "PythonObject", { name: "Exception" });
     } else {
@@ -359,7 +359,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     state.steps[stepIndex] = {
       ...state.steps[stepIndex],
       propagate_stdout: payload.propagateStdout,
-    };
+    } as PyRunFunctionStep;
     if (payload.propagateStdout) {
       pushOutputSocket("Stdout", { handles_stdout: true });
     } else {
@@ -373,7 +373,7 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
     state.steps[stepIndex] = {
       ...state.steps[stepIndex],
       propagate_stderr: payload.propagateStderr,
-    };
+    } as PyRunFunctionStep;
     if (payload.propagateStderr) {
       pushOutputSocket("Stderr", { handles_stderr: true });
     } else {
