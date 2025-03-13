@@ -4,7 +4,7 @@ import { useProjectId } from "@/features/projects/hooks/use-id";
 import { getProjectById, getProjectUsersById } from "@/features/projects/queries";
 import UsersTable from "@/features/projects/table/users/users-table";
 
-const ProjectRoles = () => {
+const ProjectUsers = () => {
   const id = useProjectId();
   const { data: project, isLoading } = useQuery(getProjectById(Number(id)));
   const { data: users, isLoading: isLoadingUsers } = useQuery(getProjectUsersById(id));
@@ -18,7 +18,7 @@ const ProjectRoles = () => {
   }
 
   return (
-    <div className="m-auto flex w-full max-w-5xl flex-col gap-8 p-4 px-8">
+    <div className="m-auto flex w-full flex-col gap-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Users</h2>
       </div>
@@ -27,4 +27,4 @@ const ProjectRoles = () => {
   );
 };
 
-export default ProjectRoles;
+export default ProjectUsers;
