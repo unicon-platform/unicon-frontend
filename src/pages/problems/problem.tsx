@@ -72,7 +72,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-full flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="flex items-center gap-4 text-3xl font-medium">
           <span>
