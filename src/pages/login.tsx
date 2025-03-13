@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -32,7 +33,7 @@ const Login = () => {
     defaultValues: loginFormDefault,
   });
 
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState("");
   const { user, setUser, isLoading } = useUserStore((store) => store);
   const navigate = useNavigate();
 
@@ -47,18 +48,24 @@ const Login = () => {
   }
 
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    const response = await login({
-      body: data,
-      headers: undefined,
-      withCredentials: true,
-    });
-
-    if (response.error) {
-      setIsError(true);
-    } else {
-      setIsError(false);
-      setUser(response.data.user);
+    try {
+      const response = await login({
+        body: data,
+        headers: undefined,
+        withCredentials: true,
+      });
+      setError("");
+      setUser(response.data?.user);
       navigate("/");
+    } catch (error) {
+      switch ((error as AxiosError).response?.status) {
+        case 401:
+          setError("Your username or password is incorrect. Please try again.");
+          break;
+        default:
+          setError("An unexpected error occurred. Please try again later.");
+          break;
+      }
     }
   };
 
@@ -73,7 +80,7 @@ const Login = () => {
         <Card className="mt-8 w-full bg-neutral-800 p-6 sm:max-w-lg">
           <CardContent>
             <Box className="space-y-6">
-              {isError && <ErrorAlert message={" Your username or password is incorrect. Please try again."} />}
+              {error && <ErrorAlert message={error} />}
               <Form {...form}>
                 <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
                   <div className="space-y-4">
