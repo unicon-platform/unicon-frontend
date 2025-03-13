@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
+import { AxiosError, HttpStatusCode } from "axios";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,6 +26,9 @@ const loginFormDefault = {
 };
 
 type LoginForm = z.infer<typeof loginFormSchema>;
+
+const UNAUTHORIZED_ERROR = "Invalid username or password.";
+const UNEXPECTED_ERROR = "An unexpected error occurred. Please try again later.";
 
 const Login = () => {
   const form = useForm<LoginForm>({
@@ -59,11 +62,11 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       switch ((error as AxiosError).response?.status) {
-        case 401:
-          setError("Your username or password is incorrect. Please try again.");
+        case HttpStatusCode.Unauthorized:
+          setError(UNAUTHORIZED_ERROR);
           break;
         default:
-          setError("An unexpected error occurred. Please try again later.");
+          setError(UNEXPECTED_ERROR);
           break;
       }
     }
