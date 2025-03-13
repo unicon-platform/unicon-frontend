@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, UIMatch, useLocation, useMatches } from "react-router-dom";
 
 import {
@@ -21,6 +21,8 @@ export type BreadcrumbPart = {
   label: string;
 };
 
+const DEFAULT_TITLE = "Unicon 🌈";
+
 const Breadcrumb = () => {
   const matches = useMatches() as unknown as UIMatch<unknown, Handle>[];
   const matchesWithBreadcrumbs = matches.filter((match) => !!match.handle?.crumb);
@@ -28,6 +30,11 @@ const Breadcrumb = () => {
     .flatMap((match: UIMatch<unknown, Handle>) => match.handle.crumb?.(match))
     .filter((part) => !!part);
   const pathname = useLocation().pathname;
+
+  useEffect(() => {
+    document.title = parts[parts.length - 1]?.label ?? DEFAULT_TITLE;
+  }, [parts]);
+
   return (
     <>
       {matchesWithBreadcrumbs.length > 0 && <Separator orientation="vertical" className="mr-2 h-4" />}
