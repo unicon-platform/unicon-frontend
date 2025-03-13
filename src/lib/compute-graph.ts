@@ -214,11 +214,5 @@ export const areSocketsCompatible = (
   // This is to prevent multiple "DATA" inputs to a single node socket/handle
   // This is not applicable to "CONTROL" connections since it is perfectly valid to have multiple nodes
   // execute before a single node
-  if (targetSocket.type === "DATA") {
-    if (!isTypeCompatible(sourceSocket, targetSocket)) {
-      return false;
-    }
-  }
-
-  return true;
+  return !(targetSocket.type === "DATA") || isTypeCompatible(sourceSocket, targetSocket);
 };

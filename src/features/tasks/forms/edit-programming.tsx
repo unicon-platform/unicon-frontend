@@ -7,6 +7,7 @@ import { useUpdateTask } from "@/features/problems/queries";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 import ProgrammingForm from "@/features/tasks/forms/programming-form";
 import RerunDialog from "@/features/tasks/forms/rerun-dialog";
+import { parseTaskValidationError } from "@/lib/errors";
 import { fromProgrammingTask, ProgTaskFormT, toProgrammingTask } from "@/lib/schema/prog-task-form";
 import { isSafeChangeForProgrammingTask } from "@/utils/task";
 
@@ -23,17 +24,16 @@ const EditProgramming: React.FC<OwnProps> = ({ task, problemId }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [form, setForm] = useState<ProgTaskFormT | null>(null);
   const [isSafe, setIsSafe] = useState<boolean>(false);
+  const [submitErrors, setSubmitErrors] = useState<string[]>([]);
 
   const updateTask = (form: ProgTaskFormT) => (rerun: boolean) => {
     updateTaskMutation.mutate(
-      {
-        task: { ...task, ...toProgrammingTask(form) },
-        rerun,
-      },
+      { task: { ...task, ...toProgrammingTask(form) }, rerun },
       {
         onSuccess: () => {
           navigate(`/projects/${projectId}/problems/${problemId}/edit`);
         },
+        onError: (error) => setSubmitErrors(parseTaskValidationError(error)),
       },
     );
   };
@@ -54,7 +54,12 @@ const EditProgramming: React.FC<OwnProps> = ({ task, problemId }) => {
           onSaveWithRerun={() => updateTask(form)(true)}
         />
       )}
-      <ProgrammingForm title="Edit programming task" onSubmit={onSubmit} initialValue={fromProgrammingTask(task)} />
+      <ProgrammingForm
+        title="Edit programming task"
+        onSubmit={onSubmit}
+        initialValue={fromProgrammingTask(task)}
+        submitErrors={submitErrors}
+      />
     </>
   );
 };
