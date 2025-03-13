@@ -10,7 +10,7 @@ import {
   useOnSelectionChange,
 } from "@xyflow/react";
 import { X } from "lucide-react";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 
 import {
   GraphActionType,
@@ -49,23 +49,21 @@ export const StepEdge: React.FC<EdgeProps> = ({
   }, [dispatch, edit, id]);
 
   // Edge validation
-  const outgoingSocket = steps.find((s) => s.id === source)?.outputs?.find((s) => s.id === sourceHandleId);
-  const incomingSocket = steps.find((s) => s.id === target)?.inputs?.find((s) => s.id === targetHandleId);
-  const isValidEdge = areSocketsCompatible(outgoingSocket, incomingSocket);
+  const isValidEdge = useMemo(() => {
+    const outgoingSocket = steps.find((s) => s.id === source)?.outputs?.find((s) => s.id === sourceHandleId);
+    const incomingSocket = steps.find((s) => s.id === target)?.inputs?.find((s) => s.id === targetHandleId);
+    return areSocketsCompatible(outgoingSocket, incomingSocket);
+  }, [steps, source, sourceHandleId, target, targetHandleId]);
 
   // Conditional rendering of delete button
   const [isEdgeSelected, setIsEdgeSelected] = useState(false);
 
   const onChange: OnSelectionChangeFunc<Node<Step>, Edge> = useCallback(
-    ({ edges }) => {
-      setIsEdgeSelected(edges.some((edge) => edge.id === id));
-    },
+    ({ edges }) => setIsEdgeSelected(edges.some((edge) => edge.id === id)),
     [id],
   );
 
-  useOnSelectionChange({
-    onChange,
-  });
+  useOnSelectionChange({ onChange });
 
   return (
     <>
