@@ -175,7 +175,7 @@ export type MultipleChoiceTask = {
     type: 'MULTIPLE_CHOICE_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -199,7 +199,7 @@ export type MultipleResponseTask = {
     type: 'MULTIPLE_RESPONSE_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -428,7 +428,7 @@ export type ProgrammingTask = {
     type: 'PROGRAMMING_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -624,7 +624,7 @@ export type ShortAnswerTask = {
     type: 'SHORT_ANSWER_TASK';
     autograde?: boolean;
     order_index: number;
-    max_attempts: number | null;
+    max_attempts?: number | null;
     expected_answer?: string | null;
 };
 
@@ -734,7 +734,15 @@ export type TaskResult = MultipleChoiceTaskResult | MultipleResponseTaskResult |
 export type TaskType = 'MULTIPLE_CHOICE_TASK' | 'MULTIPLE_RESPONSE_TASK' | 'SHORT_ANSWER_TASK' | 'PROGRAMMING_TASK';
 
 export type TaskUpdate = {
-    task: ProgrammingTask | MultipleChoiceTask | MultipleResponseTask | ShortAnswerTask;
+    task: ({
+        type?: 'PROGRAMMING_TASK';
+    } & ProgrammingTask) | ({
+        type?: 'MULTIPLE_CHOICE_TASK';
+    } & MultipleChoiceTask) | ({
+        type?: 'MULTIPLE_RESPONSE_TASK';
+    } & MultipleResponseTask) | ({
+        type?: 'SHORT_ANSWER_TASK';
+    } & ShortAnswerTask);
     rerun: boolean;
 };
 
@@ -983,7 +991,15 @@ export type UpdateProblemResponses = {
 export type UpdateProblemResponse = UpdateProblemResponses[keyof UpdateProblemResponses];
 
 export type AddTaskToProblemData = {
-    body: ProgrammingTask | MultipleChoiceTask | MultipleResponseTask | ShortAnswerTask;
+    body: ({
+        type?: 'PROGRAMMING_TASK';
+    } & ProgrammingTask) | ({
+        type?: 'MULTIPLE_CHOICE_TASK';
+    } & MultipleChoiceTask) | ({
+        type?: 'MULTIPLE_RESPONSE_TASK';
+    } & MultipleResponseTask) | ({
+        type?: 'SHORT_ANSWER_TASK';
+    } & ShortAnswerTask);
     path: {
         id: number;
     };

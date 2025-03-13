@@ -46,7 +46,7 @@ const TaskCard: React.FC<OwnProps> = ({
             <span className="text-lg font-medium">Task #{index + 1}</span>
             <div className="flex items-center gap-2">
               <TaskTypeBadge type={task.type} />
-              <MaxAttemptsBadge maxAttempts={task.max_attempts} />
+              <MaxAttemptsBadge maxAttempts={task.max_attempts ?? null} />
               {task.autograde && <AutogradedBadge />}
             </div>
           </div>
