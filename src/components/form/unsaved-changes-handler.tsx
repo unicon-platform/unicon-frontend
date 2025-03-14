@@ -26,7 +26,15 @@ const UnsavedChangesHandler = <T extends FieldValues>({ form, isDirty }: OwnProp
   const { blocked, ignoreBlock, resetBlock } = useBlockUnsavedChanges(shouldBlock);
   if (!blocked || !shouldBlock) return null;
 
-  return <UnsavedChangesDialog onConfirm={() => ignoreBlock()} onCancel={() => resetBlock()} />;
+  return (
+    <UnsavedChangesDialog
+      onConfirm={() => {
+        form?.reset();
+        ignoreBlock();
+      }}
+      onCancel={() => resetBlock()}
+    />
+  );
 };
 
 export default UnsavedChangesHandler;
