@@ -1,20 +1,65 @@
 import { useQuery } from "@tanstack/react-query";
+import { LockIcon } from "lucide-react";
 
-import { File as UniconFile, InputStep, OutputStep, Testcase as TestcaseApi } from "@/api";
+import { File as UniconFile, InputStep, OutputSocket, OutputStep, Testcase as TestcaseApi } from "@/api";
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GraphAction } from "@/features/problems/components/tasks/graph-context";
 import Testcase from "@/features/problems/components/tasks/testcase";
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId } from "@/features/projects/hooks/use-id";
+import { cn } from "@/lib/utils";
+
+const ExpectedOutputTable: React.FC<{ sockets: OutputSocket[] }> = ({ sockets }) => {
+  return (
+    <div className="w-full max-w-3xl py-2">
+      <Table className="overflow-hidden">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/3 font-medium">Label</TableHead>
+            <TableHead className="font-medium">Expected</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sockets.map((socket) => (
+            <TableRow key={socket.id}>
+              <TableCell>{socket.label}</TableCell>
+              <TableCell className="max-w-md truncate font-mono">
+                {socket.comparison ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="bg-zinc-800 font-mono text-zinc-300">
+                          {socket.comparison.operator}
+                        </Badge>
+                        <span className="max-w-md truncate">{JSON.stringify(socket.comparison.value)}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-h-60 max-w-lg overflow-auto text-sm">
+                      <pre>{JSON.stringify(socket.comparison.value, null, 2)}</pre>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <span className="italic text-zinc-500">No expected output, informational log/output only</span>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
 
 type SettingsChange = {
   name?: string;
   isPrivate?: boolean;
 };
 
-type OwnProps = {
+type TestcaseTabsProps = {
   testcases: TestcaseApi[];
   edit: boolean;
   taskFiles: UniconFile[];
@@ -25,7 +70,7 @@ type OwnProps = {
   onDuplicateTestcase?: (index: number) => () => void;
 };
 
-const TestcaseTabs: React.FC<OwnProps> = ({
+const TestcaseTabs: React.FC<TestcaseTabsProps> = ({
   testcases,
   edit,
   taskFiles,
@@ -57,7 +102,11 @@ const TestcaseTabs: React.FC<OwnProps> = ({
         <TabsList>
           {testcases.map((testcase, index) => (
             <TabsTrigger key={testcase.id} value={testcase.id} className="text-sm">
-              #{index + 1} {testcase.name} {testcase.is_private ? "(Private)" : ""}
+              <div className="flex max-w-fit items-center gap-2 rounded-full text-sm shadow-sm">
+                <span className={cn("font-mono", { "text-zinc-300": !testcase.name })}>#{index + 1}</span>
+                {testcase.name && <span className="truncate text-white">{testcase.name}</span>}
+                {testcase.is_private && <LockIcon className="h-3.5 w-3.5 flex-shrink-0 text-zinc-400" />}
+              </div>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -77,28 +126,9 @@ const TestcaseTabs: React.FC<OwnProps> = ({
               onDuplicateTestcase={onDuplicateTestcase && onDuplicateTestcase(index)}
             />
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Label</TableHead>
-                  <TableHead>Expected</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {testcaseOutputSteps[index]?.inputs
-                  .filter((socket) => socket.type === "DATA")
-                  .map((socket) => (
-                    <TableRow key={socket.id}>
-                      <TableCell>{socket.label}</TableCell>
-                      <TableCell>
-                        {socket.comparison
-                          ? `${socket.comparison?.operator} ${JSON.stringify(socket.comparison?.value)}`
-                          : "-"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            <ExpectedOutputTable
+              sockets={testcaseOutputSteps[index]?.inputs.filter((socket) => socket.type === "DATA") || []}
+            />
           )}
         </TabsContent>
       ))}
