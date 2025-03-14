@@ -109,15 +109,11 @@ export const createDefaultStep = (type: StepType) => {
         [createSocket("DATA", "Match?", null, "boolean")],
       ) as StringMatchStep;
     case "LOOP_STEP":
-      return createBaseStep(
-        type,
-        [createSocket("CONTROL", "Predicate")],
-        [createSocket("CONTROL", "Body")],
-      ) as LoopStep;
+      return createBaseStep(type, [createSocket("DATA", "Predicate")], [createSocket("CONTROL", "Body")]) as LoopStep;
     case "IF_ELSE_STEP":
       return createBaseStep(
         type,
-        [createSocket("CONTROL", "Predicate")],
+        [createSocket("DATA", "Predicate")],
         [createSocket("CONTROL", "If"), createSocket("CONTROL", "Else")],
       ) as IfElseStep;
   }
