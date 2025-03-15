@@ -52,7 +52,9 @@ const FileInputSection = () => {
         const fileContent = (e.target?.result as string).trim();
         form.setValue(
           "files",
-          form.getValues("files").concat({ id: uuid(), path: filePath, content: fileContent, trusted: true }),
+          form
+            .getValues("files")
+            .concat({ id: uuid(), path: filePath, content: fileContent, trusted: true, size_limit: 0 }),
         );
       };
       reader.readAsText(file);
@@ -61,9 +63,15 @@ const FileInputSection = () => {
       createFile({ body: { file } }).then((response) => {
         form.setValue(
           "files",
-          form
-            .getValues("files")
-            .concat({ id: uuid(), path: filePath, content: "", trusted: true, on_minio: true, key: response.data }),
+          form.getValues("files").concat({
+            id: uuid(),
+            path: filePath,
+            content: "",
+            trusted: true,
+            on_minio: true,
+            key: response.data,
+            size_limit: 0,
+          }),
         );
       });
     }
@@ -151,7 +159,10 @@ const FileInputSection = () => {
       fileName = `file${i}.py`;
       i++;
     }
-    form.setValue("files", form.getValues("files").concat({ id: uuid(), path: fileName, content: "", trusted: true }));
+    form.setValue(
+      "files",
+      form.getValues("files").concat({ id: uuid(), path: fileName, content: "", trusted: true, size_limit: 0 }),
+    );
   };
 
   const handleFolderAdd = () => {
@@ -164,7 +175,7 @@ const FileInputSection = () => {
     }
     form.setValue(
       "files",
-      form.getValues("files").concat({ id: uuid(), path: folderName, content: "", trusted: true }),
+      form.getValues("files").concat({ id: uuid(), path: folderName, content: "", trusted: true, size_limit: 0 }),
     );
   };
 

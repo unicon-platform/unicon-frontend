@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { ProgrammingTask, PythonVersion, Testcase } from "@/api/types.gen";
 import { TaskFormZ } from "@/lib/schema/task-form";
+import { isUniconFile } from "@/lib/utils";
 
 export const DEFAULT_PY_VERSION: PythonVersion = "3.11.9";
 
@@ -101,8 +102,8 @@ export const fromProgrammingTask = (progTask: ProgrammingTask): ProgTaskFormT =>
   required_user_inputs: progTask.required_inputs.map((input) => ({
     id: input.id,
     label: input.label ?? "",
-    data: input.data,
+    data: isUniconFile(input.data) ? { ...input.data, size_limit: input.data.size_limit ?? 0 } : input.data,
   })),
   testcases: progTask.testcases,
-  files: progTask.files,
+  files: progTask.files.map((file) => ({ ...file, size_limit: file.size_limit ?? 0 })),
 });
