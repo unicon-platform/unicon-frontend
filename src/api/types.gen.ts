@@ -60,6 +60,7 @@ export type File = {
     content: string;
     on_minio?: boolean;
     key?: string | null;
+    size_limit?: number;
     trusted?: boolean;
 };
 
@@ -271,21 +272,16 @@ export type OrganisationPublic = {
     name: string;
     description: string;
     id: number;
-    edit: boolean;
-    edit_roles: boolean;
-    delete: boolean;
 };
 
 export type OrganisationPublicWithMembers = {
     name: string;
     description: string;
     id: number;
-    edit: boolean;
-    edit_roles: boolean;
-    delete: boolean;
     owner: UserPublic;
     members: Array<OrganisationMemberPublic>;
     invitation_keys: Array<OrganisationInvitationKeyPublic> | null;
+    edit_roles: boolean;
 };
 
 export type OrganisationPublicWithProjects = {
