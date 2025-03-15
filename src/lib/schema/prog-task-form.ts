@@ -14,6 +14,7 @@ const FileZ = z.object({
   trusted: z.boolean().optional(),
   key: z.string().optional().nullable(),
   on_minio: z.boolean().optional(),
+  size_limit: z.number(),
 });
 
 export type FileT = z.infer<typeof FileZ>;

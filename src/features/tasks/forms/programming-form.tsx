@@ -14,6 +14,8 @@ import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
+import InfoTooltip from "@/components/ui/info-tooltip";
+import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { GraphAction, graphReducer } from "@/features/problems/components/tasks/graph-context";
@@ -34,6 +36,7 @@ const createDefaultUserInput = () => ({
     path: "user_file.py",
     content: "# INSERT FILE TEMPLATE HERE",
     trusted: false,
+    size_limit: 0,
   },
 });
 
@@ -163,7 +166,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
 
   const updateUserInput = (
     index: number,
-    { newLabel, newFileContent }: { newLabel?: string; newFileContent?: string },
+    { newLabel, newFileContent, newSizeLimit }: { newLabel?: string; newFileContent?: string; newSizeLimit?: number },
   ) => {
     const oldInput = userInputs.fields[index];
     const oldFileData = oldInput.data as UniconFile;
@@ -174,6 +177,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
         ...oldFileData,
         path: newLabel ?? oldInput.label,
         content: newFileContent ?? oldFileData.content,
+        size_limit: newSizeLimit ?? oldFileData.size_limit ?? 0,
       },
     });
   };
@@ -414,13 +418,27 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                     </ConfirmationDialog>
                   </div>
                   <CollapsibleContent>
-                    <FileEditor
-                      className="h-[30vh]"
-                      fileName={input.label}
-                      fileContent={(input.data as UniconFile).content}
-                      onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
-                      canEditFileContent
-                    />
+                    <div className="flex flex-col gap-2">
+                      <FileEditor
+                        className="h-[30vh]"
+                        fileName={input.label}
+                        fileContent={(input.data as UniconFile).content}
+                        onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
+                        canEditFileContent
+                      />
+                      <div className="flex items-center gap-2 bg-zinc-900 p-2">
+                        File size limit (Optional):
+                        <InfoTooltip content="A value of 0 will be intepreted as allowing unlimited file size." />
+                        <Input
+                          type="number"
+                          defaultValue={(input.data as UniconFile).size_limit}
+                          className="w-fit"
+                          min="0"
+                          onChange={(e) => updateUserInput(index, { newSizeLimit: Number(e.target.value) })}
+                        />{" "}
+                        KB
+                      </div>
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
               ))}
