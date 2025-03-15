@@ -226,7 +226,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         <div className="flex flex-col">
           <span className="text-xs text-zinc-400">Function Identifier</span>
           <span className="font-mono font-medium text-white">
-            {(step as PyRunFunctionStep).function_identifier ?? "- (Run file)"}
+            {(step as PyRunFunctionStep).function_identifier || "- (Run file)"}
           </span>
         </div>
       </div>
