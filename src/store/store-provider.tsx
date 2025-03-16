@@ -1,13 +1,22 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DefaultOptions, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import qs from "qs";
 import { ReactNode } from "react";
 
 import { client } from "@/api/client.gen";
 import { UserStoreProvider } from "@/store/user/user-store-provider";
 
-const queryClient = new QueryClient();
+const queryClientConfig: DefaultOptions<Error> = {
+  queries: {
+    // Multiple calls to the same query might actually fire the GET request multiple times
+    // since it thinks it is a stale value. This is a workaround to prevent that.
+    // If this value proves too high (stale values getting shown), we can try to lower it.
+    // TODO: if https://github.com/uniconhq/backend/issues/125 is fixed, consider lowering this to 1000
+    staleTime: 3000,
+  },
+};
+const queryClient = new QueryClient({ defaultOptions: queryClientConfig });
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   client.setConfig({
