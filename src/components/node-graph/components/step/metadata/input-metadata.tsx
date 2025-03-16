@@ -60,6 +60,7 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             path: "file.py",
             content: "print('Hello World')",
             trusted: true,
+            size_limit: 0,
           },
         },
       },

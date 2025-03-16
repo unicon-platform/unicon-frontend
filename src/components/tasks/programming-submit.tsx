@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { createFile, File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptResult } from "@/api";
+import { ErrorAlert } from "@/components/form/fields";
 import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -250,6 +252,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
@@ -279,7 +282,16 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
         createAttemptMut.mutate(
           { task_id: task.id, value: submissionData },
           {
-            onSuccess: () => refetchAttempts(),
+            onSuccess: () => {
+              setError("");
+              refetchAttempts();
+            },
+            onError: (error) => {
+              setIsSubmitting(false);
+              if (error instanceof AxiosError) {
+                setError(error.response?.data?.detail ?? "An error occurred while submitting the task.");
+              }
+            },
             onSettled: () => setIsSubmitting(false),
           },
         );
@@ -316,6 +328,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 />
               ))}
             </div>
+            {error && <ErrorAlert message={error} className="mt-2" />}
             <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending || isOutOfAttempts}>
               {isSubmitting ? "Submitting..." : submitLabel}
             </Button>
