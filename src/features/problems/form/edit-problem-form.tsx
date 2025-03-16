@@ -10,9 +10,9 @@ import ErrorAlert from "@/components/form/fields/error-alert";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import EditProblemFilesSection from "@/features/problems/form/edit-problem-files";
+import EditProblemFilesSection, { BufferedFiles } from "@/features/problems/form/edit-problem-files";
 import EditTasksDisplay from "@/features/problems/form/edit-tasks-display";
-import { useUpdateProblem } from "@/features/problems/queries";
+import { useAddFilesToProblem, useDeleteProblemFiles, useUpdateProblem } from "@/features/problems/queries";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,6 +62,9 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
     defaultValues: problem,
   });
 
+  const [bufferedFiles, setBufferedFiles] = useState<BufferedFiles>({ filesToAdd: [], fileIdsToRemove: [] });
+  const hasBufferedFileState = bufferedFiles.filesToAdd.length > 0 || bufferedFiles.fileIdsToRemove.length > 0;
+
   const toast = useToast();
   const projectId = useProjectId();
 
@@ -83,8 +86,21 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
 
   const sortedTasks = taskOrder.map((order) => problem.tasks.find((task) => task.id === order.id)!);
 
+  const addFilesToProblemMutation = useAddFilesToProblem(id);
+  const deleteFilesFromProblemMutation = useDeleteProblemFiles(id);
+
   const onSubmit: SubmitHandler<ProblemFormType> = async (data) => {
     const now = new Date();
+    // Save the buffered file changes
+    if (bufferedFiles.filesToAdd.length > 0) {
+      addFilesToProblemMutation.mutate(bufferedFiles.filesToAdd);
+    }
+    if (bufferedFiles.fileIdsToRemove.length > 0) {
+      deleteFilesFromProblemMutation.mutate(bufferedFiles.fileIdsToRemove);
+    }
+
+    setBufferedFiles({ filesToAdd: [], fileIdsToRemove: [] });
+
     updateProblemMutation.mutate(
       {
         ...data,
@@ -116,7 +132,8 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
 
   return (
     <Form {...form}>
-      <UnsavedChangesHandler form={form} />
+      {/* We set isDirty to undefined to reuse the form dirty logic. (see UnsavedChangedHandler) */}
+      <UnsavedChangesHandler form={form} isDirty={hasBufferedFileState ? true : undefined} />
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
@@ -148,7 +165,11 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
               </div>
             </div>
           </div>
-          <EditProblemFilesSection problemId={id} supportingFiles={problem.supporting_files!} />
+          <EditProblemFilesSection
+            supportingFiles={problem.supporting_files!}
+            bufferedFiles={bufferedFiles}
+            setBufferedFiles={setBufferedFiles}
+          />
           <EditTasksDisplay tasks={sortedTasks} problemId={id} projectId={projectId} handleUpdateOrder={setTaskOrder} />
         </div>
       </form>

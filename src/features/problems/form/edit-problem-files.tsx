@@ -7,19 +7,26 @@ import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useAddFilesToProblem, useDeleteProblemFiles } from "@/features/problems/queries";
 import { formatDateShort } from "@/utils/date";
 
-type OwnProps = {
-  problemId: number;
-  supportingFiles: FileOrm[];
+export type BufferedFiles = {
+  filesToAdd: File[];
+  fileIdsToRemove: number[];
 };
 
-const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFiles }) => {
+type OwnProps = {
+  supportingFiles: FileOrm[];
+  bufferedFiles: BufferedFiles;
+  setBufferedFiles: React.Dispatch<React.SetStateAction<BufferedFiles>>;
+};
+
+const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, bufferedFiles, setBufferedFiles }) => {
   const [selectedFileIds, setSelectedFileIds] = useState<number[]>([]);
-  const hasSelectedFiles = selectedFileIds.length > 0;
-  const addFilesToProblemMutation = useAddFilesToProblem(problemId);
-  const deleteFilesFromProblemMutation = useDeleteProblemFiles(problemId);
+  const [selectedBufferedFileIndexes, setSelectedBufferedFileIndexes] = useState<number[]>([]);
+
+  const retainedFiles = supportingFiles.filter((file) => !bufferedFiles.fileIdsToRemove.includes(file.id!));
+  const hasFiles = retainedFiles.length > 0 || bufferedFiles.filesToAdd.length > 0;
+  const hasSelectedFiles = selectedFileIds.length > 0 || selectedBufferedFileIndexes.length > 0;
 
   return (
     <div className="flex w-full flex-col items-start gap-6 lg:flex-row lg:gap-0">
@@ -29,7 +36,10 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
       <div className="flex w-full flex-col gap-4">
         <div className="flex gap-2">
           <FileInputButton
-            onFileChange={(filelist) => filelist && addFilesToProblemMutation.mutate(Array.from(filelist))}
+            onFileChange={(filelist) =>
+              filelist &&
+              setBufferedFiles({ ...bufferedFiles, filesToAdd: [...bufferedFiles.filesToAdd, ...Array.from(filelist)] })
+            }
             buttonText="Add file"
             buttonSize="default"
             className=""
@@ -40,9 +50,16 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
             <Button
               type="button"
               variant="destructive"
-              onClick={() =>
-                deleteFilesFromProblemMutation.mutate(selectedFileIds, { onSuccess: () => setSelectedFileIds([]) })
-              }
+              onClick={() => {
+                setBufferedFiles({
+                  filesToAdd: bufferedFiles.filesToAdd.filter(
+                    (_, index) => !selectedBufferedFileIndexes.includes(index),
+                  ),
+                  fileIdsToRemove: [...bufferedFiles.fileIdsToRemove, ...selectedFileIds],
+                });
+                setSelectedFileIds([]);
+                setSelectedBufferedFileIndexes([]);
+              }}
             >
               <Trash />
               Delete selected
@@ -50,7 +67,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
           )}
         </div>
         {/* File table */}
-        {supportingFiles.length > 0 && (
+        {hasFiles && (
           <Table hideOverflow>
             <TableHeader>
               <TableRow>
@@ -59,6 +76,9 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
                     checked={hasSelectedFiles}
                     onClick={() => {
                       setSelectedFileIds(hasSelectedFiles ? [] : supportingFiles.map((file) => file.id!));
+                      setSelectedBufferedFileIndexes(
+                        hasSelectedFiles ? [] : Array.from({ length: bufferedFiles.filesToAdd.length }, (_, i) => i),
+                      );
                     }}
                   />
                 </TableHead>
@@ -67,7 +87,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
               </TableRow>
             </TableHeader>
             <TableBody>
-              {supportingFiles
+              {retainedFiles
                 // This should never happen.
                 .filter((file) => file.id !== null && file.id !== undefined)
                 .map((file) => (
@@ -94,10 +114,34 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ problemId, supportingFile
                     <TableCell>{formatDateShort(file.created_at)}</TableCell>
                   </TableRow>
                 ))}
+              {bufferedFiles.filesToAdd.map((file, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedBufferedFileIndexes.includes(index)}
+                      onClick={() => {
+                        setSelectedFileIds((prev) =>
+                          prev.includes(index) ? prev.filter((id) => id !== index) : [...prev, index],
+                        );
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <a
+                      className="underline decoration-gray-500 hover:decoration-white"
+                      href={URL.createObjectURL(file)}
+                      download={file.name}
+                    >
+                      {file.name}
+                    </a>
+                  </TableCell>
+                  <TableCell className="italic text-zinc-500">[ Not yet saved ] </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         )}
-        {supportingFiles.length === 0 && <EmptyPlaceholder description="No files uploaded." />}
+        {!hasFiles && <EmptyPlaceholder description="No files uploaded." />}
       </div>
     </div>
   );
