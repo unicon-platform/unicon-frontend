@@ -341,7 +341,12 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           problemId={problemId}
           task={task}
           attempts={attempts ?? []}
-          rerunAttempt={rerunAttemptMut.mutate}
+          rerunAttempt={(id) =>
+            rerunAttemptMut.mutate(id, {
+              onError: () => setError("Failed to rerun attempt."),
+              onSuccess: () => setError(""),
+            })
+          }
         />
       </TaskSection>
     </div>
