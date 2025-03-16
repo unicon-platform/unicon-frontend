@@ -1,20 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Edit, Plus, Trash } from "lucide-react";
+import { ArrowRight, Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { ProjectPublic } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import EditOrganisationDialog from "@/features/organisations/components/edit-organisation-dialog";
-import { getOrganisationById, useDeleteOrganisation } from "@/features/organisations/queries";
+import EditProjectDialog from "@/features/organisations/components/edit-project-dialog";
+import { getOrganisationById, useDeleteOrganisation, useDeleteProject } from "@/features/organisations/queries";
 import { useOrganisationId } from "@/features/projects/hooks/use-id";
 
 const Organisation = () => {
   const id = useOrganisationId();
   const { data: organisation, isLoading } = useQuery(getOrganisationById(id));
   const deleteOrganisationMutation = useDeleteOrganisation(id);
+  const deleteProjectMutation = useDeleteProject(id);
   const navigate = useNavigate();
+
+  // for edit project dialog/confirmation dialog for delete since the dropdown menu
+  // is preventing is making the dialogs disappear on clicking the menu button
+  const [editProject, setEditProject] = useState<ProjectPublic | null>(null);
+  const [deleteProject, setDeleteProject] = useState<ProjectPublic | null>(null);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -70,13 +85,36 @@ const Organisation = () => {
       <div className="flex flex-col gap-4">
         {organisation.projects.length === 0 && <EmptyPlaceholder description="No projects found." />}
         {organisation.projects.map((project) => (
-          <Link to={`/projects/${project.id}`} key={project.id}>
-            <Card className="group flex justify-between p-4 hover:opacity-80">
-              <CardTitle>{project.name}</CardTitle>
-              <ArrowRight className="hidden h-4 w-4 group-hover:block" />
-            </Card>
-          </Link>
+          <Card className="group flex justify-between p-4 hover:opacity-80" key={project.id}>
+            <CardTitle>{project.name}</CardTitle>
+            <div className="relative flex gap-4">
+              {organisation.edit && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <EllipsisVertical className="h-4 w-4 cursor-pointer" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setEditProject(project)}>
+                      <div>Edit</div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDeleteProject(project)}>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <Link to={`/projects/${project.id}`} key={project.id}>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </Card>
         ))}
+        {deleteProject && (
+          <ConfirmationDialog
+            description="This will permanently delete the project, including all problems and submissions."
+            setOpen={() => setDeleteProject(null)}
+            onConfirm={() => deleteProjectMutation.mutate(deleteProject.id)}
+          />
+        )}
+        {editProject && <EditProjectDialog project={editProject} handleOpenChange={() => setEditProject(null)} />}
       </div>
     </div>
   );

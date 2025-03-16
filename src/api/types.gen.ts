@@ -1620,6 +1620,31 @@ export type GetAllProjectsResponses = {
 
 export type GetAllProjectsResponse = GetAllProjectsResponses[keyof GetAllProjectsResponses];
 
+export type DeleteProjectData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/projects/{id}';
+};
+
+export type DeleteProjectErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteProjectError = DeleteProjectErrors[keyof DeleteProjectErrors];
+
+export type DeleteProjectResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
 export type GetProjectData = {
     body?: never;
     path: {
@@ -1669,10 +1694,8 @@ export type UpdateProjectResponses = {
     /**
      * Successful Response
      */
-    200: ProjectPublic;
+    200: unknown;
 };
-
-export type UpdateProjectResponse = UpdateProjectResponses[keyof UpdateProjectResponses];
 
 export type GetProjectRolesData = {
     body?: never;
