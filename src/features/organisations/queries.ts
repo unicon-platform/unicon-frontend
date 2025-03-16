@@ -6,6 +6,7 @@ import {
   deleteMember,
   deleteOrganisation,
   deleteOrganisationInvitationKey,
+  deleteProject,
   getAllOrganisations,
   getOrganisation,
   getOrganisationMembers,
@@ -15,8 +16,10 @@ import {
   OrganisationJoinRequest,
   OrganisationMemberUpdate,
   OrganisationUpdate,
+  ProjectUpdate,
   updateMember,
   updateOrganisation,
+  updateProject,
 } from "@/api";
 
 export enum OrganisationQueryKeys {
@@ -56,6 +59,33 @@ export const useUpdateOrganisation = (id: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [OrganisationQueryKeys.Organisation, id],
+      });
+    },
+  });
+};
+
+export const useUpdateProject = (id: number, organisationId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ProjectUpdate) => updateProject({ path: { id }, body: data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [OrganisationQueryKeys.Organisation, organisationId],
+      });
+    },
+  });
+};
+
+export const useDeleteProject = (organisationId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) =>
+      deleteProject({
+        path: { id },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [OrganisationQueryKeys.Organisation, organisationId],
       });
     },
   });

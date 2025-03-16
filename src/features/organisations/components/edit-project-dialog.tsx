@@ -1,17 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DialogTrigger } from "@radix-ui/react-dialog";
 import { PropsWithChildren, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { OrganisationPublic } from "@/api";
+import { ProjectPublic } from "@/api";
 import ErrorAlert from "@/components/form/fields/error-alert";
 import TextField from "@/components/form/fields/text-field";
-import TextareaField from "@/components/form/fields/textarea-field";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -19,59 +16,58 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { useUpdateOrganisation } from "@/features/organisations/queries";
+import { useUpdateProject } from "@/features/organisations/queries";
 
-const organisationFormSchema = z.object({
+const projectFormSchema = z.object({
   name: z.string().min(1, "Name cannot be empty"),
-  description: z.string().min(1, "Description cannot be empty"),
 });
 
-type OrganisationFormType = z.infer<typeof organisationFormSchema>;
+type ProjectFormType = z.infer<typeof projectFormSchema>;
 
 type OwnProps = {
-  organisation: OrganisationPublic;
+  project: ProjectPublic;
+  handleOpenChange: (open: boolean) => void;
 } & PropsWithChildren;
 
-const EditOrganisationDialog: React.FC<OwnProps> = ({ organisation, children }) => {
-  const form = useForm<OrganisationFormType>({
-    resolver: zodResolver(organisationFormSchema),
-    defaultValues: organisation,
+const EditProjectDialog: React.FC<OwnProps> = ({ project, handleOpenChange }) => {
+  const form = useForm<ProjectFormType>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: project,
   });
 
   const [error, setError] = useState("");
 
-  const updateOrganisationMutation = useUpdateOrganisation(organisation.id);
+  const updateProjectMutation = useUpdateProject(project.id, project.organisation.id);
 
-  const onSubmit: SubmitHandler<OrganisationFormType> = (data) => {
-    updateOrganisationMutation.mutate(data, {
+  const onSubmit: SubmitHandler<ProjectFormType> = (data) => {
+    updateProjectMutation.mutate(data, {
       onError: () => {
         setError("Something went wrong.");
       },
       onSuccess: () => {
         form.reset();
       },
+      onSettled: () => {
+        handleOpenChange(false);
+      },
     });
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Edit organisation</DialogTitle>
+              <DialogTitle>Edit project</DialogTitle>
               <DialogDescription />
               {error && <ErrorAlert message={error} />}
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <TextField name="name" label="Name" />
-              <TextareaField name="description" label="Description" />
             </div>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button type="submit">Save changes</Button>
-              </DialogClose>
+              <Button type="submit">Save changes</Button>
             </DialogFooter>
           </form>
         </Form>
@@ -80,4 +76,4 @@ const EditOrganisationDialog: React.FC<OwnProps> = ({ organisation, children }) 
   );
 };
 
-export default EditOrganisationDialog;
+export default EditProjectDialog;
