@@ -59,14 +59,19 @@ const FileCard: React.FC<FileCardProps> = ({ file, onRemove }) => {
 
 type EditorProps = {
   fileName: string;
+  currentContent: string | File | UniconFile | null;
   defaultContent: File | UniconFile;
   onFileContentChange: (newContent: string | File | UniconFile) => void;
 };
 
-const Editor: React.FC<EditorProps> = ({ fileName, defaultContent, onFileContentChange }) => {
-  const [content, setContent] = useState<string | File | UniconFile>(defaultContent);
+const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultContent, onFileContentChange }) => {
+  const [content, setContent] = useState<string | File | UniconFile>(currentContent ?? defaultContent);
 
-  useEffect(() => setContent(defaultContent), [defaultContent]);
+  useEffect(() => {
+    if (currentContent === null) return;
+    setContent(currentContent);
+    onFileContentChange(currentContent);
+  }, [currentContent]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -301,11 +306,12 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           <TaskSectionHeader content="Submission" />
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4">
-              {requiredFileInputs.map(({ id, data }) => (
+              {requiredFileInputs.map(({ id, data: templateContent }) => (
                 <Editor
                   key={id}
-                  fileName={data.path}
-                  defaultContent={(userInputs[id] as UniconFile) ?? data}
+                  fileName={templateContent.path}
+                  currentContent={(userInputs[id] as UniconFile) ?? null}
+                  defaultContent={templateContent}
                   onFileContentChange={handleFileChange(id)}
                 />
               ))}
