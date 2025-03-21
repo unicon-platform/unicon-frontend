@@ -145,7 +145,7 @@ const ControlSocket = ({ type, socket }: { type: HandleType; socket: StepSocket 
       {socket.label && (
         <>
           <Badge variant="outline" className="border-[#73F777]">
-            <span className="py-1 font-mono font-light uppercase text-zinc-400">{socket.label}</span>
+            <span className="py-1 font-mono font-light uppercase text-zinc-200">{socket.label}</span>
           </Badge>
         </>
       )}

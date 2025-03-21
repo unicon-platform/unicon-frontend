@@ -33,9 +33,7 @@ const Project = () => {
           </Button>
         )}
       </div>
-      <div className="flex flex-col gap-4">
-        <ProblemsTable data={project.problems} />
-      </div>
+      <ProblemsTable data={project.problems} />
     </div>
   );
 };

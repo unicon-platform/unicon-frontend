@@ -71,3 +71,20 @@ export const convertFilesToFileTree = (files: FileType[]): FileTreeType => {
   sortFileTree(tree);
   return tree;
 };
+
+export async function downloadFile(key: string) {
+  const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/files/" + key, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Failed to download file");
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.style.display = "none";
+  a.href = url;
+  a.download = key;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+}

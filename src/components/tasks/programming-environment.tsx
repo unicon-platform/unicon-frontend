@@ -10,13 +10,15 @@ export const ProgrammingEnvironment = ({ environment }: { environment: ComputeCo
 
   return (
     <div className="flex flex-col gap-4">
-      {environment.extra_options?.version && (
-        <Badge className="flex w-fit gap-2 py-1 font-mono text-sm text-zinc-100" variant="outline">
-          <AiOutlinePython className="h-5 w-5" />
-          {environment.extra_options.version}
-        </Badge>
-      )}
-      {environment.slurm && <SlurmBadge options={slurmOptions} />}
+      <div className="flex items-center gap-2">
+        {environment.extra_options?.version && (
+          <Badge className="flex w-fit gap-2 py-1 font-mono text-sm text-zinc-100" variant="outline">
+            <AiOutlinePython className="h-5 w-5" />
+            {environment.extra_options.version}
+          </Badge>
+        )}
+        {environment.slurm && <SlurmBadge options={slurmOptions} />}
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <div className="flex items-center gap-3 rounded-md bg-zinc-800 p-4 transition-colors duration-100 hover:bg-zinc-700">

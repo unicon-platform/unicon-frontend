@@ -136,7 +136,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     functionIdentifier && !functionSignatures?.filter((signature) => signature.name === functionIdentifier).length;
 
   return editable ? (
-    <div className="flex flex-col gap-2 border-b-2 border-zinc-800 px-3 pb-4 font-mono">
+    <div className="flex flex-col gap-2 border-b-2 border-zinc-800 px-3 pb-4">
       <div className="flex items-center gap-2">
         <label className="text-nowrap font-mono text-sm text-zinc-400">Function Identifier:</label>
         <Select

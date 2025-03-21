@@ -18,8 +18,10 @@ const ValueDisplay: React.FC<{ row: InputSocket & { step: InputStep } }> = ({ ro
   if (censored) {
     return <span className="italic text-zinc-500">-Redacted-</span>;
   }
-  return (
-    <div>{data && isUniconFile(data) ? <ViewFileButton socket={row} step={row.step} /> : JSON.stringify(data)}</div>
+  return data && isUniconFile(data) ? (
+    <ViewFileButton socket={row} step={row.step} />
+  ) : (
+    <span className="font-mono">{JSON.stringify(data)}</span>
   );
 };
 

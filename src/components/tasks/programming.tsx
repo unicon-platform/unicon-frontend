@@ -30,7 +30,7 @@ export function Programming({
       </TaskSection>
       <TaskSection>
         <TaskSectionHeader content="Testcases" />
-        <div className="flex flex-col gap-2 font-mono text-gray-300">
+        <div className="flex flex-col gap-2 text-gray-300">
           <TestcaseTabs testcases={task.testcases} edit={false} taskFiles={task.files} />
         </div>
       </TaskSection>
