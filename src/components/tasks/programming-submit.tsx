@@ -263,6 +263,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           {
             onSuccess: () => {
               setError("");
+              setSelectedAttemptIdx(null);
               refetchAttempts();
             },
             onError: (error) => {
@@ -307,7 +308,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 />
               ))}
             </div>
-            {error && <ErrorAlert message={error} className="mt-2" />}
+            {error && <ErrorAlert message={error} className="mt-2 whitespace-pre font-mono" />}
             <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending || isOutOfAttempts}>
               {isSubmitting ? "Submitting..." : submitLabel}
             </Button>
