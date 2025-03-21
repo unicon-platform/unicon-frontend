@@ -196,7 +196,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   // Always default to the latest attempt and the latest result
   useEffect(() => {
     if (attempts.length === 0) return;
-    const latestAttemptIdx = attempts.length - 1;
+    // NOTE: If there is a selected attempt, we don't want to change it
+    const latestAttemptIdx = selectedAttemptIdx ?? attempts.length - 1;
     // NOTE: It is guaranteed that every attempt has at least one result
     const latestResultIdx = attempts[latestAttemptIdx].task_results.length - 1;
     setSelectedAttemptIdx(latestAttemptIdx);
@@ -354,7 +355,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               </Select>
             )}
             {selectedAttempt && (
-              <Button onClick={() => rerunAttempt(selectedAttempt.id)}>
+              <Button type="button" onClick={() => rerunAttempt(selectedAttempt.id)}>
                 <RefreshCcw />
                 Rerun
               </Button>
