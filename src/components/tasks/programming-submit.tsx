@@ -253,6 +253,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           if (content instanceof File) {
             const response = await createFile({ body: { file: content } });
             return { ...reqInput, data: { ...reqInput.data, key: response.data, content: "", on_minio: true } };
+          } else if (isUniconFile(content)) {
+            return { ...reqInput, data: { ...content } };
           } else {
             return { ...reqInput, data: { ...reqInput.data, content } };
           }
