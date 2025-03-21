@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
+import { DownloadIcon, FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -14,7 +14,7 @@ import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { getTaskAttemptResults, useCreateTaskAttempt, useRerunTaskAttempt } from "@/features/problems/queries";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
-import { formatFileSize, isTextFile } from "@/lib/files";
+import { downloadFile, formatFileSize, isTextFile } from "@/lib/files";
 import { isUniconFile } from "@/lib/utils";
 import { formatDateShort } from "@/utils/date";
 
@@ -102,13 +102,16 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
       return <FileCard file={data} onRemove={resetFile} />;
     } else if (isUniconFile(data) && data.on_minio) {
       return (
-        <div className="w-fit rounded-md border p-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-md bg-primary/10 p-4">
-              <FileIcon className="h-7 w-7" />
-            </div>
-            <div className="mb-2 flex items-center justify-between gap-4">
-              <h3 className="text-lg font-medium">{data.path}</h3>
+        <div className="flex w-fit items-center gap-4 rounded-md border p-4">
+          <div className="rounded-md bg-primary/10 p-4">
+            <FileIcon className="h-4 w-4" />
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-lg font-medium">{data.path}</h3>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" type="button" onClick={() => downloadFile(data.key!)}>
+                <DownloadIcon />
+              </Button>
               <Button variant="ghost" size="icon" type="button" onClick={resetFile}>
                 <XIcon />
               </Button>
