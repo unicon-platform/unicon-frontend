@@ -16,6 +16,7 @@ import {
   useEdgesState,
   useNodesInitialized,
   useNodesState,
+  useStoreApi,
 } from "@xyflow/react";
 import { CopyPlus, ExpandIcon, ShrinkIcon } from "lucide-react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -91,6 +92,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
   const nodeData = useMemo(() => steps.map(stepNodeToRfNode), [steps]);
   const edgeData = useMemo(() => edges.map(stepEdgeToRfEdge), [edges]);
 
+  const flowStore = useStoreApi();
   const flowNodesInitialized = useNodesInitialized();
   const [layoutApplied, setLayoutApplied] = useState(false);
   const [rfInstance, setRfInstance] = useState<RfInstance | null>(null);
@@ -119,15 +121,25 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
 
   // Update ReactFlow internal states when graph state changes
   useEffect(() => {
+    if (!rfInstance) return;
+    const boundingRect = flowStore.getState().domNode?.getBoundingClientRect();
     setFlowNodes((flowNodes) =>
       nodeData.map((node) => {
         // Only update data of existing nodes while retaining their position
         const existingRfNode = flowNodes.find((n) => n.id === node.id);
-        return existingRfNode ? { ...existingRfNode, data: node.data } : node;
+        if (existingRfNode) return { ...existingRfNode, data: node.data };
+        // If bounding rectangle is not available, return the node with default position
+        if (!boundingRect) return { ...node };
+        const viewportCenter = rfInstance.screenToFlowPosition({
+          x: boundingRect.x + boundingRect.width / 2,
+          y: boundingRect.y + boundingRect.height / 2,
+        });
+        // NOTE: We do not have access to the width and height of the node here, so the node will show up exactly in the center of the viewport
+        return { ...node, position: viewportCenter };
       }),
     );
     setFlowEdges(edgeData);
-  }, [nodeData, edgeData, setFlowNodes, setFlowEdges]);
+  }, [rfInstance, nodeData, edgeData, setFlowNodes, setFlowEdges]);
 
   // NOTE: This is triggered before all the other event handlers e.g. onNodeDelete, onEdgesDelete, onNodesChange, onEdgesChange
   // All nodes and edges returned by this handler will then be passed to the respective event handlers
