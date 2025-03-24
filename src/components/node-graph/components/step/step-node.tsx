@@ -112,8 +112,9 @@ export function StepNode({ data }: { data: Step }) {
   const _isPyRunFunc = data.type === "PY_RUN_FUNCTION_STEP";
   const _isPyRunFuncWithNoFunction = _isPyRunFunc && !(data as PyRunFunctionStep).function_identifier;
   const editableLabel = editable && !_isPyRunFunc;
-  const canAddSockets = editable && !_isPyRunFunc;
-  const canDeleteSockets = editable && !_isPyRunFunc;
+  const _isStepWithModifiableSockets = ["INPUT_STEP", "OUTPUT_STEP"].includes(data.type);
+  const canAddSockets = editable && !_isPyRunFunc && _isStepWithModifiableSockets;
+  const canDeleteSockets = editable && !_isPyRunFunc && _isStepWithModifiableSockets;
 
   // `Input` and `Output` steps have the sockets and handles in their custom metadata
   // components, so we there's no need to provide them with default sockets and handles
