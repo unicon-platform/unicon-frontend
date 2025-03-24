@@ -209,10 +209,12 @@ function Tree({
                 "nodrag inline max-w-fit rounded-sm border border-gray-500/50 bg-transparent p-1 font-mono text-xs",
               )}
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyUp={(e) => {
-                e.preventDefault();
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  e.preventDefault();
                   setIsEditing(false);
                   handleNameChange(item.name, name);
                 }
@@ -228,6 +230,7 @@ function Tree({
               className={cn("inline-block", { "border border-input px-1": isEditing })}
               spellCheck={false}
               onClick={(e) => {
+                e.preventDefault();
                 if (onPathChange) {
                   setIsEditing(true);
                   e.stopPropagation();
@@ -258,9 +261,9 @@ function Tree({
                   )}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onKeyUp={(e) => {
-                    e.preventDefault();
+                  onKeyDown={(e) => {
                     if (e.key === "Enter") {
+                      e.preventDefault();
                       setIsEditing(false);
                       handleNameChange(item.name, name);
                     }
