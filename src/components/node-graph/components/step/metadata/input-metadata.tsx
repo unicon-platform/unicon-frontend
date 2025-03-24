@@ -16,7 +16,7 @@ import {
 import { createSocket } from "@/lib/compute-graph";
 import { DragItemType } from "@/lib/drag";
 import { isFolder, TreeFile, TreeFolder } from "@/lib/files";
-import { isUniconFile, uuid } from "@/lib/utils";
+import { isUniconFile } from "@/lib/utils";
 
 type OwnProps = {
   step: InputStep;
@@ -44,26 +44,6 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     dispatch({
       type: GraphActionType.UpdateSocketLabel,
       payload: { stepId: step.id, socketId, newSocketLabel },
-    });
-  };
-
-  const handleSocketChangeToFile = (socket: StepSocket) => () => {
-    dispatch({
-      type: GraphActionType.UpdateSocketMetadata,
-      payload: {
-        stepId: step.id,
-        socketId: socket.id,
-        socketMetadata: {
-          label: "file.py",
-          data: {
-            id: uuid(),
-            path: "file.py",
-            content: "print('Hello World')",
-            trusted: true,
-            size_limit: 0,
-          },
-        },
-      },
     });
   };
 
@@ -147,19 +127,6 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     });
   };
 
-  const onChangeToValue = (socket: StepSocket) => () => {
-    // De-select the socket to close the file editor
-    dispatch({ type: GraphActionType.DeselectSocket });
-    dispatch({
-      type: GraphActionType.UpdateSocketMetadata,
-      payload: {
-        stepId: step.id,
-        socketId: socket.id,
-        socketMetadata: { data: null },
-      },
-    });
-  };
-
   const editableInputTable = (
     <Table hideOverflow>
       <TableHeader>
@@ -179,8 +146,6 @@ const InputMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             socket={socket}
             onDelete={deleteSocket(socket.id)}
             onEditSocketLabel={handleEditSocketLabel(socket.id)}
-            onChangeToFile={handleSocketChangeToFile(socket)}
-            onChangeToValue={onChangeToValue(socket)}
             onChangeValue={onChangeValue(socket)}
             onUpdateSocketMetadata={updateSocketMetadata(index)}
             step={step}
