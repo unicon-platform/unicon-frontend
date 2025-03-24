@@ -62,6 +62,13 @@ const NodeGraph: React.FC<NodeGraphProps> = ({
     });
   }, [sharedUserInput, dispatch]);
 
+  useEffect(() => {
+    dispatch({
+      type: GraphActionType.UpdateFiles,
+      payload: { files: taskFiles },
+    });
+  }, [taskFiles]);
+
   const wrappedDispatch = useCallback(
     (action: GraphAction) => {
       dispatch(action);

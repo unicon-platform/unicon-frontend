@@ -21,6 +21,7 @@ import {
   isRequiredInputStep,
   isResultSocket,
 } from "@/lib/compute-graph";
+import { isUniconFile } from "@/lib/utils";
 
 export type GraphState = {
   id: string;
@@ -52,6 +53,7 @@ export enum GraphActionType {
   // Special actions
   UpdateUserInputStep = "UPDATE_USER_INPUT_STEP",
   UpdatePyRunFunctionStep = "UPDATE_FUNCTION_IDENTIFIER_STEP",
+  UpdateFiles = "UPDATE_FILES",
 }
 
 interface BaseGraphAction {
@@ -161,6 +163,11 @@ interface UpdatePyRunFunctionStepAction extends BaseGraphAction {
   };
 }
 
+interface UpdateFilesAction extends BaseGraphAction {
+  type: GraphActionType.UpdateFiles;
+  payload: { files: UniconFile[] };
+}
+
 export type GraphAction =
   | AddStepAction
   | DeleteStepAction
@@ -175,7 +182,8 @@ export type GraphAction =
   | SelectSocketAction
   | DeselectSocketAction
   | UpdateUserInputStepAction
-  | UpdatePyRunFunctionStepAction;
+  | UpdatePyRunFunctionStepAction
+  | UpdateFilesAction;
 
 const _filterInvalidEdges = (state: GraphState) => {
   state.edges = state.edges.filter((edge) => {
@@ -417,6 +425,18 @@ const updatePyRunFunctionStep = (state: GraphState, { payload }: UpdatePyRunFunc
   return state;
 };
 
+const updateFiles = (state: GraphState, { payload }: UpdateFilesAction) => {
+  const idToFile: Record<string, UniconFile> = payload.files.reduce((acc, file) => ({ ...acc, [file.id]: file }), {});
+  state.steps = state.steps.map((node) => {
+    if (node.type !== "INPUT_STEP") return node;
+    const outputs = (node as InputStep).outputs.map((output) =>
+      isUniconFile(output.data) && output.data.id in idToFile ? { ...output, data: idToFile[output.data.id] } : output,
+    );
+    return { ...node, outputs };
+  });
+  return state;
+};
+
 const addStep = (state: GraphState, { payload }: AddStepAction) => {
   state.steps.push(payload.step);
   return state;
@@ -575,6 +595,7 @@ const actionHandlers = {
   [GraphActionType.DeleteEdge]: deleteEdge,
   [GraphActionType.UpdateUserInputStep]: updateUserInputStep,
   [GraphActionType.UpdatePyRunFunctionStep]: updatePyRunFunctionStep,
+  [GraphActionType.UpdateFiles]: updateFiles,
 };
 
 export const graphReducer: ImmerReducer<GraphState, GraphAction> = (
