@@ -119,7 +119,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
       {description.length > 0 && (
         <div className="flex flex-col gap-2">
           <div className="text-lg font-medium">Description</div>
-          <p className="text-muted-foreground">{description}</p>
+          <p className="whitespace-pre-line text-muted-foreground">{description}</p>
         </div>
       )}
       {supporting_files && supporting_files.length > 0 && (

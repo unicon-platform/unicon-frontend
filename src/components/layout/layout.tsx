@@ -40,7 +40,7 @@ const Layout: React.FC<PropsWithChildren> = () => {
               {user && (
                 <>
                   <AppSidebar pathname={pathname} />
-                  <main className="w-full p-4">
+                  <main className="w-full overflow-auto p-4">
                     <div className="flex items-center gap-2">
                       <SidebarTrigger />
                       <Breadcrumb />
