@@ -16,7 +16,7 @@ importers:
         version: 17.0.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@hey-api/client-axios':
         specifier: ^0.5.3
-        version: 0.5.3(axios@1.8.1)
+        version: 0.5.3(axios@1.8.2)
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.54.2(react@18.3.1))
@@ -93,8 +93,8 @@ importers:
         specifier: ^12.4.4
         version: 12.4.4(@types/react@18.3.18)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: ^1.8.1
-        version: 1.8.1
+        specifier: ^1.8.2
+        version: 1.8.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1471,8 +1471,8 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  axios@1.8.1:
-    resolution: {integrity: sha512-NN+fvwH/kV01dYUQ3PTOZns4LWtWhOFCAhQ/pHb88WQ1hNe5V/dvFwc4VJcDL11LT9xSX0QtsR8sWUuyOuOq7g==}
+  axios@1.8.2:
+    resolution: {integrity: sha512-ls4GYBm5aig9vWx8AWDSGLpnpDQRtWAfrjU+EuytuODrFBkqesN2RkOQCBzrA1RQNHw1SmRMSDDDSwzNAYQ6Rg==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3253,9 +3253,9 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@hey-api/client-axios@0.5.3(axios@1.8.1)':
+  '@hey-api/client-axios@0.5.3(axios@1.8.2)':
     dependencies:
-      axios: 1.8.1
+      axios: 1.8.2
 
   '@hey-api/json-schema-ref-parser@1.0.1':
     dependencies:
@@ -4199,7 +4199,7 @@ snapshots:
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
 
-  axios@1.8.1:
+  axios@1.8.2:
     dependencies:
       follow-redirects: 1.15.9
       form-data: 4.0.2
