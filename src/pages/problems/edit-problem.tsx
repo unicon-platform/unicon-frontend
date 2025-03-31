@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import EditProblemForm from "@/features/problems/form/edit-problem-form";
 import { getProblemById } from "@/features/problems/queries";
@@ -7,7 +7,7 @@ import { Unauthorized } from "@/pages/error";
 
 const EditProblem = () => {
   const id = useProblemId();
-  const { data } = useQuery(getProblemById(Number(id)));
+  const { data } = useSuspenseQuery(getProblemById(Number(id)));
   if (data && !data.edit) throw Unauthorized;
 
   return data && <EditProblemForm id={Number(id)} problem={data} />;

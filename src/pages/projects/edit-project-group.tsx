@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { TrashIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GoPencil } from "react-icons/go";
@@ -26,9 +26,9 @@ import { Unauthorized } from "@/pages/error";
 const EditProjectGroup = () => {
   const projectId = useProjectId();
   const groupId = useGroupId();
-  const { data: project, isLoading } = useQuery(getProjectById(projectId));
-  const { data: group, isLoading: isLoadingGroup } = useQuery(getProjectGroupById(projectId, groupId));
-  const { data: users, isLoading: isLoadingUsers } = useQuery(getProjectUsersById(projectId));
+  const { data: project } = useSuspenseQuery(getProjectById(projectId));
+  const { data: group } = useSuspenseQuery(getProjectGroupById(projectId, groupId));
+  const { data: users } = useSuspenseQuery(getProjectUsersById(projectId));
 
   if (project && !project.edit_groups) throw Unauthorized;
 
@@ -47,10 +47,6 @@ const EditProjectGroup = () => {
   const updateGroupMutation = useUpdateGroup(projectId, groupId);
   const deleteGroupMutation = useDeleteGroup(projectId, groupId);
   const navigate = useNavigate();
-
-  if (isLoading || isLoadingGroup || isLoadingUsers) {
-    return <div>Loading...</div>;
-  }
 
   if (!project || !group || !users) {
     return <div>Something went wrong.</div>;

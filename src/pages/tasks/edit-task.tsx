@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId, useTaskId } from "@/features/projects/hooks/use-id";
@@ -12,7 +12,7 @@ const EditTask = () => {
   const problemId = useProblemId();
   const taskId = useTaskId();
 
-  const { data: problem, isLoading } = useQuery(getProblemById(problemId));
+  const { data: problem, isLoading } = useSuspenseQuery(getProblemById(problemId));
   if (problem && !problem.edit) throw Unauthorized;
 
   const task = problem?.tasks.find((task) => task.id === taskId);

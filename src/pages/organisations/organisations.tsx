@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -10,7 +10,7 @@ import { JoinOrganisationDialog } from "@/features/organisations/components/join
 import { getOrganisations } from "@/features/organisations/queries";
 
 const Organisations = () => {
-  const { data: organisations, isLoading } = useQuery(getOrganisations());
+  const { data: organisations, isLoading } = useSuspenseQuery(getOrganisations());
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
 
   return (

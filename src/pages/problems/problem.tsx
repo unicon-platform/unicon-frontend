@@ -43,12 +43,13 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
   const isSubmissionView = submissionId !== undefined;
 
   const projectId = useProjectId();
-  const problemId = useProblemId();
+  const urlProblemId = useProblemId();
+  const problemId = id ?? urlProblemId;
 
   const navigate = useNavigate();
 
-  const createSubmission = useCreateProblemSubmission(id ?? problemId);
-  const { data: problem } = useQuery(getProblemById(id ?? problemId));
+  const createSubmission = useCreateProblemSubmission(problemId);
+  const { data: problem } = useQuery(getProblemById(problemId));
   if (!problem) return;
 
   const {
@@ -77,7 +78,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="flex items-center gap-4 text-3xl font-medium">
           <span>
-            {problem.name} (<code>#{id ?? problemId}</code>)
+            {problem.name} (<code>#{problemId}</code>)
           </span>
           {restricted && <RestrictedBadge />}
           {!published && <DraftBadge />}
@@ -146,7 +147,7 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
             key={task.id}
             index={index}
             task={task}
-            problemId={id ?? problemId}
+            problemId={problemId}
             projectId={projectId}
             canEdit={false}
             canSubmit={!isSubmissionView && canSubmit}

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const SubmissionResults = () => {
 
   const [pending, setPending] = useState(true);
 
-  const { data: submission } = useQuery({
+  const { data: submission } = useSuspenseQuery({
     ...getSubmissionById(Number(id)),
     refetchInterval: pending ? 5000 : false,
   });

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const CreateProgramming = () => {
   const navigate = useNavigate();
   const createTaskMutation = useCreateTask(problemId);
 
-  const { data } = useQuery(getProblemById(problemId));
+  const { data } = useSuspenseQuery(getProblemById(problemId));
   if (data && !data.edit) throw Unauthorized;
 
   const onSubmit: SubmitHandler<ProgTaskFormT> = async (form) => {

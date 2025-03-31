@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -13,11 +13,8 @@ import { getProjectById, getProjectGroupsById } from "@/features/projects/querie
 
 const ProjectGroups = () => {
   const id = useProjectId();
-  const { data: project, isLoading } = useQuery(getProjectById(id));
-  const { data: groups, isLoading: isLoadingGroups } = useQuery(getProjectGroupsById(id));
-  if (isLoading || isLoadingGroups) {
-    return <div>Loading...</div>;
-  }
+  const { data: project } = useSuspenseQuery(getProjectById(id));
+  const { data: groups } = useSuspenseQuery(getProjectGroupsById(id));
 
   if (!project || !groups) {
     return <div>Something went wrong.</div>;

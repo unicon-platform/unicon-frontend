@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { MiniGroupPublic, SubmissionPublic, UserPublic } from "@/api";
@@ -36,8 +36,8 @@ const getGroupsFromSubmissions = (submissions: SubmissionPublic[]) => {
 
 const Submissions = () => {
   const projectId = useProjectId();
-  const { data: project } = useQuery(getProjectById(Number(projectId)));
-  const { data: submissions, isLoading } = useQuery(getAllProjectSubmissions(projectId));
+  const { data: project } = useSuspenseQuery(getProjectById(Number(projectId)));
+  const { data: submissions } = useSuspenseQuery(getAllProjectSubmissions(projectId));
   const [userFilter, setUserFilter] = useState<number | null>(null);
   const [groupFilter, setGroupFilter] = useState<number | null>(null);
   const [problemFilter, setProblemFilter] = useState<number | null>(null);
@@ -130,9 +130,7 @@ const Submissions = () => {
           </Select>
         )}
       </div>
-      <div className="mt-8">
-        {!isLoading && submissions && <SubmissionsTable data={filteredSubmissions} showUser={showUser} />}
-      </div>
+      <div className="mt-8">{submissions && <SubmissionsTable data={filteredSubmissions} showUser={showUser} />}</div>
     </div>
   );
 };

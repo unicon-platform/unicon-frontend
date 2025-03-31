@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
@@ -10,7 +10,7 @@ import { getProjectById } from "@/features/projects/queries";
 
 const Project = () => {
   const id = useProjectId();
-  const { data: project, isLoading } = useQuery(getProjectById(Number(id)));
+  const { data: project, isLoading } = useSuspenseQuery(getProjectById(Number(id)));
 
   const [newProblemOpen, setNewProblemOpen] = useState(false);
 

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const CreateMultipleChoice = () => {
   const createTaskMutation = useCreateTask(problemId);
   const navigate = useNavigate();
 
-  const { data } = useQuery(getProblemById(problemId));
+  const { data } = useSuspenseQuery(getProblemById(problemId));
   if (data && !data.edit) {
     throw Unauthorized;
   }
