@@ -2,12 +2,12 @@ import "@/index.css";
 
 import { Navigate, UIMatch } from "react-router-dom";
 
-import { getGroup, OrganisationPublic, Problem as ProblemType, ProblemPublic, ProjectPublic } from "@/api";
+import { GroupPublic, OrganisationPublic, Problem as ProblemType, ProblemPublic, ProjectPublic } from "@/api";
 import AuthenticatedPage from "@/components/layout/authenticated-page";
 import Layout from "@/components/layout/layout.tsx";
 import { getOrganisationById } from "@/features/organisations/queries";
 import { getProblemById } from "@/features/problems/queries";
-import { getProjectById } from "@/features/projects/queries";
+import { getProjectById, getProjectGroupById } from "@/features/projects/queries";
 import CreateSubmission from "@/pages/create-submission";
 import Error from "@/pages/error";
 import Login from "@/pages/login";
@@ -119,7 +119,7 @@ export const routes = [
               { index: true, element: <Projects /> },
               {
                 path: ":projectId",
-                handle: () => ({
+                handle: {
                   getData: (match: UIMatch) => ({
                     queryOptions: getProjectById(Number(match.params.projectId)),
                     extractData: (data: ProjectPublic) => {
@@ -135,7 +135,7 @@ export const routes = [
                       ];
                     },
                   }),
-                }),
+                },
                 children: [
                   {
                     index: true,
@@ -171,20 +171,22 @@ export const routes = [
                       {
                         path: ":groupId",
                         element: <EditProjectGroup />,
-                        handle: (match: UIMatch) => ({
-                          getData: async () => {
-                            const group = (await getGroup({ path: { id: Number(match.params.groupId) } })).data;
-                            if (!group) {
-                              return [];
-                            }
-                            return [
-                              {
-                                title: group.name,
-                                url: "/projects/" + match.params.projectId + "/groups/" + group.id,
-                              },
-                            ];
-                          },
-                        }),
+                        handle: {
+                          getData: (match: UIMatch) => ({
+                            queryOptions: getProjectGroupById(
+                              Number(match.params.projectId),
+                              Number(match.params.groupId),
+                            ),
+                            extractData: (data: GroupPublic) => {
+                              return [
+                                {
+                                  title: data.name,
+                                  url: "/projects/" + match.params.projectId + "/groups/" + match.params.groupId,
+                                },
+                              ];
+                            },
+                          }),
+                        },
                       },
                     ],
                   },
