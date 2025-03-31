@@ -218,7 +218,7 @@ export const routes = [
                     path: "problems",
                     handle: {
                       getData: (match: UIMatch) => ({
-                        queryOptions: getProblemById(Number(match.params.projectId)),
+                        queryOptions: getProblemById(Number(match.params.problemId)),
                         extractData: (data: ProblemPublic) => {
                           return [
                             { title: "Problems", url: `/projects/${match.params.projectId}` },

@@ -51,8 +51,14 @@ export const useCreateProblem = (project_id: number) => {
 };
 
 export const useUpdateProblem = (problemId: number) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ProblemUpdate) => updateProblem({ body: data, path: { id: problemId } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ProblemQueryKeys.Problem, problemId],
+      });
+    },
   });
 };
 
