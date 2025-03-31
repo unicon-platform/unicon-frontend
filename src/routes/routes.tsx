@@ -2,9 +2,12 @@ import "@/index.css";
 
 import { Navigate, UIMatch } from "react-router-dom";
 
-import { GroupPublic, OrganisationPublicWithProjects, Problem as ProblemType, ProjectPublicWithProblems } from "@/api";
+import { getGroup, OrganisationPublic, Problem as ProblemType, ProblemPublic, ProjectPublic } from "@/api";
 import AuthenticatedPage from "@/components/layout/authenticated-page";
 import Layout from "@/components/layout/layout.tsx";
+import { getOrganisationById } from "@/features/organisations/queries";
+import { getProblemById } from "@/features/problems/queries";
+import { getProjectById } from "@/features/projects/queries";
 import CreateSubmission from "@/pages/create-submission";
 import Error from "@/pages/error";
 import Login from "@/pages/login";
@@ -29,7 +32,6 @@ import CreateMultipleResponse from "@/pages/tasks/create-multiple-response";
 import CreateProgramming from "@/pages/tasks/create-programming";
 import CreateShortAnswer from "@/pages/tasks/create-short-answer";
 import EditTask from "@/pages/tasks/edit-task";
-import { groupLoader, organisationLoader, problemLoader, projectLoader } from "@/routes/loaders";
 
 export const routes = [
   {
@@ -47,7 +49,7 @@ export const routes = [
           {
             path: "organisations",
             handle: {
-              crumb: () => ({ label: "Organisations", href: "/organisations" }),
+              crumb: () => ({ title: "Organisations", url: "/organisations" }),
             },
             children: [
               { index: true, element: <Organisations /> },
@@ -56,8 +58,8 @@ export const routes = [
                 element: <CreateOrganisation />,
                 handle: {
                   crumb: () => ({
-                    label: "New organisation",
-                    href: "/organisations/new",
+                    title: "New organisation",
+                    url: "/organisations/new",
                   }),
                 },
               },
@@ -69,7 +71,7 @@ export const routes = [
                     element: <Organisation />,
                     handle: {
                       crumb: () => ({
-                        label: "Projects",
+                        title: "Projects",
                       }),
                     },
                   },
@@ -78,7 +80,7 @@ export const routes = [
                     element: <CreateProject />,
                     handle: {
                       crumb: () => ({
-                        label: "New project",
+                        title: "New project",
                       }),
                     },
                   },
@@ -87,16 +89,22 @@ export const routes = [
                     element: <OrganisationUsers />,
                     handle: {
                       crumb: () => ({
-                        label: "Users",
+                        title: "Users",
                       }),
                     },
                   },
                 ],
-                loader: organisationLoader,
                 handle: {
-                  crumb: (match: UIMatch<OrganisationPublicWithProjects>) => ({
-                    label: match.data.name,
-                    href: `/organisations/${match.data.id}`,
+                  getData: (match: UIMatch) => ({
+                    queryOptions: getOrganisationById(Number(match.params.organisationId)),
+                    extractData: (data: OrganisationPublic) => {
+                      return [
+                        {
+                          title: data.name,
+                          url: "/organisations/" + data.id,
+                        },
+                      ];
+                    },
                   }),
                 },
               },
@@ -105,55 +113,57 @@ export const routes = [
           {
             path: "projects",
             handle: {
-              crumb: () => ({ label: "Projects", href: "/projects" }),
+              crumb: () => ({ title: "Projects", url: "/projects" }),
             },
             children: [
               { index: true, element: <Projects /> },
               {
                 path: ":projectId",
-                handle: {
-                  crumb: (match: UIMatch<ProjectPublicWithProblems>) => {
-                    return [
-                      {
-                        label: match.data.organisation.name,
-                        href: "/organisations/" + match.data.organisation.id,
-                      },
-                      {
-                        label: match.data.name,
-                        href: "/projects/" + match.data.id,
-                      },
-                    ];
-                  },
-                },
-                loader: projectLoader,
+                handle: () => ({
+                  getData: (match: UIMatch) => ({
+                    queryOptions: getProjectById(Number(match.params.projectId)),
+                    extractData: (data: ProjectPublic) => {
+                      return [
+                        {
+                          title: data.organisation.name,
+                          url: "/organisations/" + data.organisation.id,
+                        },
+                        {
+                          title: data.name,
+                          url: "/projects/" + data.id,
+                        },
+                      ];
+                    },
+                  }),
+                }),
                 children: [
                   {
                     index: true,
                     element: <Project />,
                     handle: {
-                      crumb: () => ({ label: "Problems" }),
+                      crumb: () => ({ title: "Problems" }),
                     },
                   },
                   {
                     path: "roles",
                     element: <ProjectRoles />,
                     handle: {
-                      crumb: () => ({ label: "Roles" }),
+                      crumb: () => ({ title: "Roles" }),
                     },
                   },
                   {
                     path: "users",
                     element: <ProjectUsers />,
                     handle: {
-                      crumb: () => ({ label: "Users" }),
+                      crumb: () => ({ title: "Users" }),
                     },
                   },
                   {
                     path: "groups",
                     handle: {
                       crumb: (match: UIMatch) => ({
-                        label: "Groups",
-                        href: `/projects/${match.params.projectId}/groups`,
+                        title: "Groups",
+                        url: `/projects/${match.params.projectId}/groups`,
                       }),
                     },
                     children: [
@@ -161,15 +171,20 @@ export const routes = [
                       {
                         path: ":groupId",
                         element: <EditProjectGroup />,
-                        loader: groupLoader,
-                        handle: {
-                          crumb: (match: UIMatch<GroupPublic>) => {
-                            return {
-                              label: match.data.name,
-                              href: `/projects/${match.params.projectId}/groups/${match.params.groupId}`,
-                            };
+                        handle: (match: UIMatch) => ({
+                          getData: async () => {
+                            const group = (await getGroup({ path: { id: Number(match.params.groupId) } })).data;
+                            if (!group) {
+                              return [];
+                            }
+                            return [
+                              {
+                                title: group.name,
+                                url: "/projects/" + match.params.projectId + "/groups/" + group.id,
+                              },
+                            ];
                           },
-                        },
+                        }),
                       },
                     ],
                   },
@@ -177,8 +192,8 @@ export const routes = [
                     path: "submissions",
                     handle: {
                       crumb: (match: UIMatch) => ({
-                        label: "Submissions",
-                        href: `/projects/${match.params.projectId}/submissions`,
+                        title: "Submissions",
+                        url: `/projects/${match.params.projectId}/submissions`,
                       }),
                     },
                     children: [
@@ -191,7 +206,7 @@ export const routes = [
                         element: <SubmissionResults />,
                         handle: {
                           crumb: (match: UIMatch) => ({
-                            label: match.params.submissionId,
+                            title: match.params.submissionId,
                           }),
                         },
                       },
@@ -199,17 +214,19 @@ export const routes = [
                   },
                   {
                     path: "problems",
-                    loader: problemLoader,
                     handle: {
-                      crumb: (match: UIMatch<ProblemType>) => {
-                        return [
-                          { label: "Problems", href: `/projects/${match.params.projectId}` },
-                          {
-                            label: match.data.name,
-                            href: `/projects/${match.params.projectId}/problems/${match.params.problemId}`,
-                          },
-                        ];
-                      },
+                      getData: (match: UIMatch) => ({
+                        queryOptions: getProblemById(Number(match.params.projectId)),
+                        extractData: (data: ProblemPublic) => {
+                          return [
+                            { title: "Problems", url: `/projects/${match.params.projectId}` },
+                            {
+                              title: data.name,
+                              url: "/projects/" + match.params.projectId + "/problems/" + data.id,
+                            },
+                          ];
+                        },
+                      }),
                     },
                     children: [
                       {
@@ -220,8 +237,8 @@ export const routes = [
                             path: "edit",
                             handle: {
                               crumb: (match: UIMatch) => ({
-                                label: "Edit",
-                                href: `/projects/${match.params.projectId}/problems/${match.params.problemId}/edit`,
+                                title: "Edit",
+                                url: `/projects/${match.params.projectId}/problems/${match.params.problemId}/edit`,
                               }),
                             },
                             children: [
@@ -232,14 +249,18 @@ export const routes = [
                               {
                                 path: "tasks/:taskId",
                                 element: <EditTask />,
-                                loader: problemLoader,
                                 handle: {
-                                  crumb: (match: UIMatch<ProblemType>) => ({
-                                    label: `Task ${
-                                      (match.data.tasks.find((task) => task.id === Number(match.params.taskId))
-                                        ?.order_index ?? 0) + 1
-                                    }`,
-                                    href: `/projects/${match.params.projectId}/problems/${match.params.problemId}/edit`,
+                                  getData: (match: UIMatch) => ({
+                                    queryOptions: getProblemById(Number(match.params.problemId)),
+                                    extractData: (data: ProblemType) => {
+                                      const task = data.tasks.find((task) => task.id === Number(match.params.taskId));
+                                      return [
+                                        {
+                                          title: `Task ${(task?.order_index ?? 0) + 1}`,
+                                          url: `/projects/${match.params.projectId}/problems/${match.params.problemId}/edit`,
+                                        },
+                                      ];
+                                    },
                                   }),
                                 },
                               },
@@ -251,7 +272,7 @@ export const routes = [
                                     element: <CreateMultipleChoice />,
                                     handle: {
                                       crumb: () => ({
-                                        label: "New Multiple Choice Task",
+                                        title: "New Multiple Choice Task",
                                       }),
                                     },
                                   },
@@ -260,7 +281,7 @@ export const routes = [
                                     element: <CreateMultipleResponse />,
                                     handle: {
                                       crumb: () => ({
-                                        label: "New Multiple Response Task",
+                                        title: "New Multiple Response Task",
                                       }),
                                     },
                                   },
@@ -269,7 +290,7 @@ export const routes = [
                                     element: <CreateShortAnswer />,
                                     handle: {
                                       crumb: () => ({
-                                        label: "New Short Answer Task",
+                                        title: "New Short Answer Task",
                                       }),
                                     },
                                   },
@@ -278,7 +299,7 @@ export const routes = [
                                     element: <CreateProgramming />,
                                     handle: {
                                       crumb: () => ({
-                                        label: "New Programming Task",
+                                        title: "New Programming Task",
                                       }),
                                     },
                                   },
@@ -290,7 +311,7 @@ export const routes = [
                             path: "submissions/new",
                             element: <CreateSubmission />,
                             handle: {
-                              crumb: () => ({ label: "New Submission" }),
+                              crumb: () => ({ title: "New Submission" }),
                             },
                           },
                         ],
