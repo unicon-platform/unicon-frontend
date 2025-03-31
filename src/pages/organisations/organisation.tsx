@@ -82,7 +82,9 @@ const Organisation = () => {
         {organisation.projects.length === 0 && <EmptyPlaceholder description="No projects found." />}
         {organisation.projects.map((project) => (
           <Card className="group flex justify-between p-4 hover:opacity-80" key={project.id}>
-            <CardTitle>{project.name}</CardTitle>
+            <CardTitle>
+              <Link to={`/projects/${project.id}`}>{project.name}</Link>
+            </CardTitle>
             <div className="relative flex gap-4">
               {organisation.edit && (
                 <DropdownMenu>
