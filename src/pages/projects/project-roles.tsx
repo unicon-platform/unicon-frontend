@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,8 @@ import RolesTable from "@/features/projects/table/roles/roles-table";
 
 const ProjectRoles = () => {
   const id = useProjectId();
-  const { data: project, isLoading } = useQuery(getProjectById(Number(id)));
-  const { data: roles, isLoading: isLoadingRoles, error } = useQuery(getProjectRolesById(id));
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data: project } = useSuspenseQuery(getProjectById(Number(id)));
+  const { data: roles, error } = useSuspenseQuery(getProjectRolesById(id));
 
   if (!project) {
     return <div>Something went wrong.</div>;
@@ -41,7 +37,7 @@ const ProjectRoles = () => {
         )}
       </div>
       <div className="flex flex-col gap-8">
-        {!isLoadingRoles && roles && (
+        {roles && (
           <>
             <div>
               <h3 className="mb-2 text-xl font-[450]">Permissions</h3>

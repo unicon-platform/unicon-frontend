@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { ProgrammingTask, ProgrammingTaskResult, TaskAttemptPublic } from "@/api";
 import TestcaseResult from "@/components/tasks/submission-results/result-types/testcase-result";
@@ -13,7 +13,7 @@ type OwnProps = {
 
 const ProgrammingResult: React.FC<OwnProps> = ({ taskAttempt, problemId }) => {
   const taskResult = taskAttempt.task_results[0] as unknown as ProgrammingTaskResult;
-  const { data: problem } = useQuery(getProblemById(problemId));
+  const { data: problem } = useSuspenseQuery(getProblemById(problemId));
 
   if (taskResult.result === null || !problem) {
     return null;

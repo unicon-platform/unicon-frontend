@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Crown, EllipsisVertical } from "lucide-react";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
@@ -23,7 +23,7 @@ import InvitationKeyDisplay from "@/features/projects/table/roles/invitation-key
 
 const OrganisationUsers = () => {
   const id = useOrganisationId();
-  const { data, isLoading } = useQuery(getOrganisationMembersById(id));
+  const { data, isLoading } = useSuspenseQuery(getOrganisationMembersById(id));
   const createKeyMutation = useCreateOrganisationInvitationKey(id);
   const deleteKeyMutation = useDeleteOrganisationInvitationKey(id);
   const updateMemberMutation = useUpdateMember(id);

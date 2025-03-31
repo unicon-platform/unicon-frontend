@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, Edit, EllipsisVertical, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,7 +21,7 @@ import { useOrganisationId } from "@/features/projects/hooks/use-id";
 
 const Organisation = () => {
   const id = useOrganisationId();
-  const { data: organisation, isLoading } = useQuery(getOrganisationById(id));
+  const { data: organisation } = useSuspenseQuery(getOrganisationById(id));
   const deleteOrganisationMutation = useDeleteOrganisation(id);
   const deleteProjectMutation = useDeleteProject(id);
   const navigate = useNavigate();
@@ -30,10 +30,6 @@ const Organisation = () => {
   // is preventing is making the dialogs disappear on clicking the menu button
   const [editProject, setEditProject] = useState<ProjectPublic | null>(null);
   const [deleteProject, setDeleteProject] = useState<ProjectPublic | null>(null);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   if (!organisation) {
     return <div>Something went wrong.</div>;
@@ -86,7 +82,9 @@ const Organisation = () => {
         {organisation.projects.length === 0 && <EmptyPlaceholder description="No projects found." />}
         {organisation.projects.map((project) => (
           <Card className="group flex justify-between p-4 hover:opacity-80" key={project.id}>
-            <CardTitle>{project.name}</CardTitle>
+            <CardTitle>
+              <Link to={`/projects/${project.id}`}>{project.name}</Link>
+            </CardTitle>
             <div className="relative flex gap-4">
               {organisation.edit && (
                 <DropdownMenu>

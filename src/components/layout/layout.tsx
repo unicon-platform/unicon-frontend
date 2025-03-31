@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, Suspense, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Outlet, useLocation } from "react-router-dom";
 
 import AppSidebar from "@/components/layout/app-sidebar";
 import Breadcrumb from "@/components/layout/breadcrumb";
+import { LoadingSpinner } from "@/components/layout/loader";
 import { PageContainer } from "@/components/layout/page-container";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
@@ -46,12 +47,23 @@ const Layout: React.FC<PropsWithChildren> = () => {
                       <Breadcrumb />
                     </div>
                     <PageContainer>
-                      <Outlet />
+                      <Suspense
+                        fallback={
+                          <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-4">
+                            <div>
+                              <LoadingSpinner className="m-auto h-20 w-20" />
+                              <p className="mt-6">Loading, please wait...</p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <Outlet />
+                      </Suspense>
                     </PageContainer>
                   </main>
                 </>
               )}
-              {!user && <Outlet />}
+              <Suspense fallback={<LoadingSpinner />}>{!user && !isLoading && <Outlet />}</Suspense>
             </div>
           </SidebarProvider>
         </TooltipProvider>

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronDown, ChevronUp, Folder, FolderOpen, Plus, UsersIcon } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ import { JoinProjectDialog } from "@/features/projects/components/join-project-d
 import { getProjects } from "@/features/projects/queries";
 
 const Projects = () => {
-  const { data: projects, isLoading } = useQuery(getProjects());
+  const { data: projects, isLoading } = useSuspenseQuery(getProjects());
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [expandedOrgs, setExpandedOrgs] = useState<Record<number, boolean>>({});
 
