@@ -1,5 +1,4 @@
-export const isTextFile = (f: File): boolean =>
-  f.type.startsWith("text") || f.type === "" || f.type === "application/json";
+export const isTextFile = (f: File): boolean => f.type.startsWith("text") || f.type === "application/json";
 
 export const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} bytes`;
