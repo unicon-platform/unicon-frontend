@@ -204,31 +204,23 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   // Always default to the latest attempt and the latest result
   useEffect(() => {
     if (attempts.length === 0) return;
-    // NOTE: If there is a selected attempt, we don't want to change it
-    const latestAttemptIdx = selectedAttemptIdx ?? attempts.length - 1;
-    // NOTE: It is guaranteed that every attempt has at least one result
-    const latestResultIdx = attempts[latestAttemptIdx].task_results.length - 1;
-    setSelectedAttemptIdx(latestAttemptIdx);
-    setSelectedResultIdx(latestResultIdx);
+    setSelectedAttemptIdx(selectedAttemptIdx ?? 0);
+    setSelectedResultIdx(0);
   }, [attempts]);
 
   // When an attempt is selected, select the latest result
   useEffect(() => {
     if (selectedAttemptIdx === null) return;
-    const latestResultIdx = attempts[selectedAttemptIdx].task_results.length - 1;
-    setSelectedResultIdx(latestResultIdx);
+    setSelectedResultIdx(0);
   }, [selectedAttemptIdx]);
 
   // Sort attempts by recency (by ID which is monotonically increasing)
   const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id);
-  const selectedAttempt = selectedAttemptIdx !== null ? attempts[selectedAttemptIdx] : null;
+  const selectedAttempt = selectedAttemptIdx !== null ? attemptsDesc[selectedAttemptIdx] : null;
 
-  const attemptResults = selectedAttempt?.task_results ?? [];
-  // Sort results by recency
-  // NOTE: Results are stored in ascending (earliest -> latest) order (guaranteed by the API),
-  // therefore we reverse the order
-  const attemptResultsDesc = [...attemptResults].reverse();
-  const selectedResult = selectedResultIdx !== null ? attemptResults[selectedResultIdx] : null;
+  // Sort results by recency (by ID which is monotonically increasing)
+  const attemptResultsDesc = [...(selectedAttempt?.task_results ?? [])].sort((a, b) => b.id - a.id);
+  const selectedResult = selectedResultIdx !== null ? attemptResultsDesc[selectedResultIdx] : null;
 
   const selectAttemptUserInputs = selectedAttempt?.other_fields["user_input"] as Array<RequiredInput>;
   // Map of IDs to user inputs
@@ -341,7 +333,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               <SelectContent>
                 {attemptsDesc.map((attempt, index) => (
                   // The value is the index in reverse order since it is sorted by recency
-                  <SelectItem key={attempt.id} value={`${attempts.length - index - 1}`}>
+                  <SelectItem key={attempt.id} value={`${index}`}>
                     Attempt #{attempts.length - index}
                   </SelectItem>
                 ))}
@@ -359,7 +351,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 <SelectContent>
                   {attemptResultsDesc.map((taskResult, index) => (
                     // The value is the index in reverse order since it is sorted by recency
-                    <SelectItem key={taskResult.id} value={`${attemptResultsDesc.length - index - 1}`}>
+                    <SelectItem key={taskResult.id} value={`${index}`}>
                       Result #{selectedAttempt.task_results.length - index}
                     </SelectItem>
                   ))}
@@ -375,7 +367,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           </div>
           {selectedAttemptIdx !== null && selectedAttempt && (
             <TaskResultCard
-              title={`Attempt ${selectedAttemptIdx + 1}`}
+              title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
                 ...selectedAttempt,
                 task_results: selectedResult ? [selectedResult] : [],
