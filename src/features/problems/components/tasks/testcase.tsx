@@ -32,7 +32,12 @@ const Testcase: React.FC<TestcaseProps> = ({
   onSettingsChange,
   onDuplicateTestcase,
 }) => {
-  const settings = { name: testcase.name, isPrivate: testcase.is_private, showNodeGraph: testcase.show_node_graph };
+  const settings = {
+    name: testcase.name,
+    isPrivate: testcase.is_private,
+    showNodeGraph: testcase.show_node_graph,
+    score: testcase.score ?? 1,
+  };
 
   return (
     <NodeGraph

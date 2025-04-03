@@ -235,7 +235,12 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
     const testcase = form.getValues("testcases")[index];
     const newTestcase = {
       ...testcase,
-      ...{ name: change.name, is_private: change.isPrivate, show_node_graph: change.showNodeGraph },
+      ...{
+        name: change.name,
+        is_private: change.isPrivate,
+        show_node_graph: change.showNodeGraph,
+        score: change.score,
+      },
     };
 
     testcases.update(index, newTestcase);
