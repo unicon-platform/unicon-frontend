@@ -30,6 +30,7 @@ const problemFormSchema = z
     started_at: z.string().nullable(),
     ended_at: z.string().nullable(),
     closed_at: z.string().nullable(),
+    leaderboard_enabled: z.boolean(),
   })
   .superRefine(({ started_at, ended_at, closed_at }, ctx) => {
     const startedDate = started_at ? parseISO(started_at) : new Date();
@@ -154,7 +155,7 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
                 <DateTimeField name="ended_at" label="Due Date" />
                 <DateTimeField name="closed_at" label="Lock Date" />
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
                 <RadioBooleanField
                   label="Access control"
                   name="restricted"
@@ -162,6 +163,12 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
                   falseLabel="Unrestricted"
                 />
                 <RadioBooleanField label="Visibility" name="published" trueLabel="Published" falseLabel="Draft" />
+                <RadioBooleanField
+                  label="Leaderboard"
+                  name="leaderboard_enabled"
+                  trueLabel="Enabled"
+                  falseLabel="Disabled"
+                />
               </div>
             </div>
           </div>
