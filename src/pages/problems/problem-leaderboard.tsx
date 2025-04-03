@@ -31,6 +31,7 @@ const Problem = ({ id, submissionId }: ProblemProps) => {
       {!isSubmissionView && (
         <ProblemTabs
           leaderboardEnabled={problem.leaderboard_enabled ?? false}
+          defaultValue="leaderboard"
           problemId={problemId}
           projectId={projectId}
         />

@@ -7,19 +7,20 @@ type ProblemTabsProps = {
   projectId: number;
   problemId: number;
   leaderboardEnabled: boolean;
+  defaultValue?: "problem" | "leaderboard";
 };
 
-export const ProblemTabs: React.FC<ProblemTabsProps> = ({ leaderboardEnabled, projectId, problemId }) => {
+export const ProblemTabs: React.FC<ProblemTabsProps> = ({ leaderboardEnabled, projectId, problemId, defaultValue }) => {
   return (
     leaderboardEnabled && (
-      <Tabs defaultValue="problem">
+      <Tabs defaultValue={defaultValue ?? "problem"}>
         <TabsList>
-          <TabsTrigger value="problem">
-            <Link to={`/projects/${projectId}/problems/${problemId}`}>Problem</Link>
-          </TabsTrigger>
-          <TabsTrigger value="leaderboard">
-            <Link to={`/projects/${projectId}/problems/${problemId}/leaderboard`}>Leaderboard</Link>
-          </TabsTrigger>
+          <Link to={`/projects/${projectId}/problems/${problemId}`}>
+            <TabsTrigger value="problem">Problem</TabsTrigger>
+          </Link>
+          <Link to={`/projects/${projectId}/problems/${problemId}/leaderboard`}>
+            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+          </Link>
         </TabsList>
       </Tabs>
     )
