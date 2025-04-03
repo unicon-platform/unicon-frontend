@@ -17,6 +17,7 @@ import OrganisationUsers from "@/pages/organisations/organisation-users";
 import Organisations from "@/pages/organisations/organisations";
 import EditProblem from "@/pages/problems/edit-problem";
 import Problem from "@/pages/problems/problem";
+import ProblemLeaderboard from "@/pages/problems/problem-leaderboard";
 import CreateProject from "@/pages/projects/create-project";
 import EditProjectGroup from "@/pages/projects/edit-project-group";
 import Project from "@/pages/projects/project";
@@ -235,6 +236,10 @@ export const routes = [
                         path: ":problemId",
                         children: [
                           { index: true, element: <Problem /> },
+                          {
+                            path: "leaderboard",
+                            element: <ProblemLeaderboard />,
+                          },
                           {
                             path: "edit",
                             handle: {

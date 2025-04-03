@@ -7,6 +7,7 @@ import { ProblemDescription } from "@/pages/problems/sections/problem-descriptio
 import { ProblemFiles } from "@/pages/problems/sections/problem-files";
 import { ProblemHeader } from "@/pages/problems/sections/problem-header";
 import { ProblemSubmissionInfo } from "@/pages/problems/sections/problem-submission-info";
+import { ProblemTabs } from "@/pages/problems/sections/problem-tabs";
 import { ProblemTaskList } from "@/pages/problems/sections/problem-task-list";
 import { ProblemTimeline } from "@/pages/problems/sections/problem-timeline";
 
@@ -30,23 +31,32 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
   const { edit: canEdit, make_submission: canSubmit, description, supporting_files } = problem;
 
   return (
-    <div className="flex w-full flex-col gap-8">
+    <div className="flex w-full flex-col gap-4">
       <ProblemHeader
         problem={problem}
         projectId={projectId}
         canEdit={!isSubmissionView && canEdit}
         canSubmit={!isSubmissionView && canSubmit}
       />
-      {isSubmissionView && <ProblemSubmissionInfo submittedAt={submittedAt!} />}
-      <ProblemTimeline startedAt={problem.started_at} endedAt={problem.ended_at} closedAt={problem.closed_at} />
-      <ProblemDescription description={description} />
-      <ProblemFiles files={supporting_files} />
-      <ProblemTaskList
-        problem={problem}
-        projectId={projectId}
-        isSubmissionView={isSubmissionView}
-        submissionAttempts={submissionAttempts}
-      />
+      {!isSubmissionView && (
+        <ProblemTabs
+          leaderboardEnabled={problem.leaderboard_enabled ?? false}
+          problemId={problemId}
+          projectId={projectId}
+        />
+      )}
+      <div className="flex flex-col gap-8">
+        {isSubmissionView && <ProblemSubmissionInfo submittedAt={submittedAt!} />}
+        <ProblemTimeline startedAt={problem.started_at} endedAt={problem.ended_at} closedAt={problem.closed_at} />
+        <ProblemDescription description={description} />
+        <ProblemFiles files={supporting_files} />
+        <ProblemTaskList
+          problem={problem}
+          projectId={projectId}
+          isSubmissionView={isSubmissionView}
+          submissionAttempts={submissionAttempts}
+        />
+      </div>
     </div>
   );
 };

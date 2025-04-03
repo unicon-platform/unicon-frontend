@@ -341,6 +341,7 @@ export type Problem = {
     name: string;
     restricted: boolean;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     description: string;
     supporting_files?: Array<FileOrm>;
     tasks: Array<({
@@ -389,6 +390,7 @@ export type ProblemPublic = {
     name: string;
     restricted: boolean;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     description: string;
     supporting_files?: Array<FileOrm>;
     tasks: Array<({
@@ -413,6 +415,7 @@ export type ProblemUpdate = {
     name: string;
     restricted: boolean;
     published: boolean;
+    leaderboard_enabled: boolean;
     description: string;
     task_order: Array<TaskOrder>;
     started_at: string;
