@@ -82,12 +82,14 @@ export const toProgrammingTask = (form: ProgTaskFormT): Omit<ProgrammingTask, "o
   required_inputs: form.required_user_inputs,
   testcases: form.testcases,
   files: form.files,
+  min_score_to_pass: form.min_score_to_pass ?? null,
 });
 
 export const fromProgrammingTask = (progTask: ProgrammingTask): ProgTaskFormT => ({
   title: progTask.title,
   description: progTask.description ?? "",
   max_attempts: progTask.max_attempts,
+  min_score_to_pass: progTask.min_score_to_pass,
   environment: {
     ...progTask.environment,
     language: "Python",
