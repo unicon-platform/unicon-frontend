@@ -57,6 +57,7 @@ const ExpectedOutputTable: React.FC<{ sockets: OutputSocket[] }> = ({ sockets })
 type SettingsChange = {
   name?: string;
   isPrivate?: boolean;
+  score: number;
 };
 
 type TestcaseTabsProps = {
