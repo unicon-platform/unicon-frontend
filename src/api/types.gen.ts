@@ -177,6 +177,7 @@ export type MultipleChoiceTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -201,6 +202,7 @@ export type MultipleResponseTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -378,6 +380,7 @@ export type ProblemOrm = {
     ended_at: string | null;
     closed_at: string | null;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     project_id: number;
 };
 
@@ -425,6 +428,7 @@ export type ProgrammingTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -621,6 +625,7 @@ export type ShortAnswerTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     expected_answer?: string | null;
 };
 
@@ -718,6 +723,7 @@ export type TaskOrm = {
     order_index: number;
     problem_id: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
 };
 
 export type TaskOrder = {
@@ -763,6 +769,7 @@ export type Testcase = {
     order_index: number;
     is_private?: boolean;
     name?: string;
+    score?: number;
     show_node_graph?: boolean;
 };
 
