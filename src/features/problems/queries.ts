@@ -7,6 +7,7 @@ import {
   deleteFileFromProblem,
   deleteTask,
   getProblem,
+  getProblemLeaderboard,
   getProblemTaskAttemptResults,
   getProjectSubmissions,
   getPythonVersions,
@@ -160,6 +161,13 @@ export const getProblemById = (problemId: number) => {
   return queryOptions({
     queryKey: [ProblemQueryKeys.Problem, problemId],
     queryFn: () => getProblem({ path: { id: problemId } }).then((response) => response.data),
+  });
+};
+
+export const getProblemLeaderboardById = (problemId: number) => {
+  return queryOptions({
+    queryKey: [ProblemQueryKeys.Problem, problemId, "leaderboard"],
+    queryFn: () => getProblemLeaderboard({ path: { id: problemId } }).then((response) => response.data),
   });
 };
 
