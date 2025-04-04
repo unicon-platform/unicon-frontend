@@ -9,9 +9,11 @@ interface NumberFieldProps {
   placeholder?: string;
   description?: string;
   className?: string;
+  min?: number;
+  max?: number;
 }
 
-function NumberField({ name, label, placeholder, description, className }: NumberFieldProps) {
+function NumberField({ name, label, placeholder, description, className, min, max }: NumberFieldProps) {
   const { control } = useFormContext();
   return (
     <FormField
@@ -21,7 +23,7 @@ function NumberField({ name, label, placeholder, description, className }: Numbe
         <FormItem>
           {label && <FormLabel className="!text-current">{label}</FormLabel>}
           <FormControl>
-            <Input type="number" placeholder={placeholder} {...field} className={className} />
+            <Input type="number" placeholder={placeholder} {...field} min={min} max={max} className={className} />
           </FormControl>
           <FormMessage />
           {description && <FormDescription>{description}</FormDescription>}

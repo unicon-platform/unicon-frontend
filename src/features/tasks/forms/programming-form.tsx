@@ -24,6 +24,7 @@ import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import { getSupportedPythonVersions } from "@/features/problems/queries";
 import FileInputSection from "@/features/tasks/forms/programming/file-inputs-section";
 import { AttemptLimitSection } from "@/features/tasks/forms/sections";
+import { MinScoreSection } from "@/features/tasks/forms/sections/min-score-section";
 import { DEFAULT_PY_VERSION, ProgTaskFormT, ProgTaskFormZ } from "@/lib/schema/prog-task-form";
 import { isUniconFile, useSyncFormFieldsMultiple, uuid } from "@/lib/utils";
 
@@ -235,7 +236,12 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
     const testcase = form.getValues("testcases")[index];
     const newTestcase = {
       ...testcase,
-      ...{ name: change.name, is_private: change.isPrivate, show_node_graph: change.showNodeGraph },
+      ...{
+        name: change.name,
+        is_private: change.isPrivate,
+        show_node_graph: change.showNodeGraph,
+        score: change.score,
+      },
     };
 
     testcases.update(index, newTestcase);
@@ -255,6 +261,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
           <FormSection title="Description">
             <TextAreaField name="description" rows={4} />
           </FormSection>
+          <MinScoreSection />
           <AttemptLimitSection />
           <hr />
           <FormSection title="Environment">

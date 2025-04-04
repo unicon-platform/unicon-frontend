@@ -57,6 +57,7 @@ const ExpectedOutputTable: React.FC<{ sockets: OutputSocket[] }> = ({ sockets })
 type SettingsChange = {
   name?: string;
   isPrivate?: boolean;
+  score: number;
 };
 
 type TestcaseTabsProps = {
@@ -105,6 +106,7 @@ const TestcaseTabs: React.FC<TestcaseTabsProps> = ({
               <div className="flex max-w-fit items-center gap-2 rounded-full text-sm shadow-sm">
                 <span className={cn("font-mono", { "text-zinc-300": !testcase.name })}>#{index + 1}</span>
                 {testcase.name && <span className="truncate text-white">{testcase.name}</span>}
+                <span>({testcase.score} pts)</span>
                 {testcase.is_private && <LockIcon className="h-3.5 w-3.5 flex-shrink-0 text-zinc-400" />}
               </div>
             </TabsTrigger>

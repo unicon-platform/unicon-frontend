@@ -23,6 +23,7 @@ export type TestcaseSettingsType = {
   name?: string;
   isPrivate?: boolean;
   showNodeGraph?: boolean;
+  score: number;
 };
 
 type OwnProps = {
@@ -35,6 +36,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
   const [name, setName] = useState(settings.name ?? "");
   const [isPrivate, setIsPrivate] = useState(!!settings.isPrivate);
   const [showNodeGraph, setShowNodeGraph] = useState(!!settings.showNodeGraph);
+  const [score, setScore] = useState(settings.score);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -49,6 +51,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
           setName(settings.name ?? "");
           setIsPrivate(!!settings.isPrivate);
           setShowNodeGraph(!!settings.showNodeGraph);
+          setScore(settings.score);
         }}
       >
         <DialogHeader>
@@ -76,6 +79,10 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
               checked={isPrivate}
               onCheckedChange={() => setIsPrivate((isPrivate) => !isPrivate)}
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="score">Score</Label>
+            <Input type="number" id="score" value={score} onChange={(e) => setScore(parseInt(e.target.value))} />
           </div>
           {!isPrivate && (
             <div className="mt-2">
@@ -109,6 +116,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
                   name,
                   isPrivate,
                   showNodeGraph,
+                  score,
                 })
               }
             >

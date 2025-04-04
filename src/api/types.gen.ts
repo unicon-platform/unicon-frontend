@@ -142,6 +142,26 @@ export type InvitationKeyPublic = {
 
 export type Language = 'PYTHON';
 
+export type Leaderboard = {
+    tasks: Array<ProgrammingTask>;
+    results: Array<LeaderboardUser>;
+};
+
+export type LeaderboardUser = {
+    id: number;
+    username: string;
+    task_results: Array<LeaderboardUserTaskResult>;
+    solved: number;
+};
+
+export type LeaderboardUserTaskResult = {
+    task_id: number;
+    score: number;
+    attempts: number;
+    passed: boolean;
+    latest_attempt_date?: string | null;
+};
+
 export type LoopStep = {
     id: string;
     inputs: Array<StepSocket>;
@@ -177,6 +197,7 @@ export type MultipleChoiceTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -201,6 +222,7 @@ export type MultipleResponseTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -339,6 +361,7 @@ export type Problem = {
     name: string;
     restricted: boolean;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     description: string;
     supporting_files?: Array<FileOrm>;
     tasks: Array<({
@@ -378,6 +401,7 @@ export type ProblemOrm = {
     ended_at: string | null;
     closed_at: string | null;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     project_id: number;
 };
 
@@ -386,6 +410,7 @@ export type ProblemPublic = {
     name: string;
     restricted: boolean;
     published?: boolean;
+    leaderboard_enabled?: boolean;
     description: string;
     supporting_files?: Array<FileOrm>;
     tasks: Array<({
@@ -410,6 +435,7 @@ export type ProblemUpdate = {
     name: string;
     restricted: boolean;
     published: boolean;
+    leaderboard_enabled: boolean;
     description: string;
     task_order: Array<TaskOrder>;
     started_at: string;
@@ -425,6 +451,7 @@ export type ProgrammingTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -621,6 +648,7 @@ export type ShortAnswerTask = {
     autograde?: boolean;
     order_index: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
     expected_answer?: string | null;
 };
 
@@ -718,6 +746,7 @@ export type TaskOrm = {
     order_index: number;
     problem_id: number;
     max_attempts?: number | null;
+    min_score_to_pass?: number | null;
 };
 
 export type TaskOrder = {
@@ -763,6 +792,7 @@ export type Testcase = {
     order_index: number;
     is_private?: boolean;
     name?: string;
+    score?: number;
     show_node_graph?: boolean;
 };
 
@@ -985,6 +1015,33 @@ export type UpdateProblemResponses = {
 };
 
 export type UpdateProblemResponse = UpdateProblemResponses[keyof UpdateProblemResponses];
+
+export type GetProblemLeaderboardData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/leaderboard';
+};
+
+export type GetProblemLeaderboardErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetProblemLeaderboardError = GetProblemLeaderboardErrors[keyof GetProblemLeaderboardErrors];
+
+export type GetProblemLeaderboardResponses = {
+    /**
+     * Successful Response
+     */
+    200: Leaderboard;
+};
+
+export type GetProblemLeaderboardResponse = GetProblemLeaderboardResponses[keyof GetProblemLeaderboardResponses];
 
 export type AddTaskToProblemData = {
     body: ({
