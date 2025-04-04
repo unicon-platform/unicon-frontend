@@ -142,6 +142,26 @@ export type InvitationKeyPublic = {
 
 export type Language = 'PYTHON';
 
+export type Leaderboard = {
+    tasks: Array<ProgrammingTask>;
+    results: Array<LeaderboardUser>;
+};
+
+export type LeaderboardUser = {
+    id: number;
+    username: string;
+    task_results: Array<LeaderboardUserTaskResult>;
+    solved: number;
+};
+
+export type LeaderboardUserTaskResult = {
+    task_id: number;
+    score: number;
+    attempts: number;
+    passed: boolean;
+    latest_attempt_date?: string | null;
+};
+
 export type LoopStep = {
     id: string;
     inputs: Array<StepSocket>;
@@ -995,6 +1015,33 @@ export type UpdateProblemResponses = {
 };
 
 export type UpdateProblemResponse = UpdateProblemResponses[keyof UpdateProblemResponses];
+
+export type GetProblemLeaderboardData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/leaderboard';
+};
+
+export type GetProblemLeaderboardErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetProblemLeaderboardError = GetProblemLeaderboardErrors[keyof GetProblemLeaderboardErrors];
+
+export type GetProblemLeaderboardResponses = {
+    /**
+     * Successful Response
+     */
+    200: Leaderboard;
+};
+
+export type GetProblemLeaderboardResponse = GetProblemLeaderboardResponses[keyof GetProblemLeaderboardResponses];
 
 export type AddTaskToProblemData = {
     body: ({
