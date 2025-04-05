@@ -140,7 +140,7 @@ const EditProjectGroup = () => {
                 <div className="flex items-center gap-2">
                   <Checkbox className="h-4 w-4" checked />
                   {groupMember.user.username}
-                  <Badge variant="secondary">{userMap.get(groupMember.user.id)?.roles[0]?.name}</Badge>
+                  <Badge variant="secondary">{userMap.get(groupMember.user.id)?.roles[0]?.name ?? "-"}</Badge>
                 </div>
                 <Select
                   value={groupMember.is_supervisor ? "supervisor" : "member"}

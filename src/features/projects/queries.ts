@@ -18,10 +18,13 @@ import {
   GroupUpdate,
   joinProject,
   ProjectCreate,
+  removeUserFromProject,
   RoleCreate,
   RolePublic,
   updateGroup,
   updateRole,
+  updateUsersInProject,
+  UserRoleUpdate,
 } from "@/api";
 
 export enum ProjectQueryKeys {
@@ -88,6 +91,28 @@ export const useJoinProject = () => {
     onSuccess: () =>
       queryClient.invalidateQueries({
         queryKey: [ProjectQueryKeys.Project],
+      }),
+  });
+};
+
+export const useUpdateProjectUsers = (projectId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UserRoleUpdate[]) => updateUsersInProject({ path: { id: projectId }, body: data }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [ProjectQueryKeys.Project, projectId, ProjectQueryKeys.User],
+      }),
+  });
+};
+
+export const useRemoveProjectUser = (projectId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: number) => removeUserFromProject({ path: { id: projectId, user_id: userId } }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [ProjectQueryKeys.Project, projectId, ProjectQueryKeys.User],
       }),
   });
 };

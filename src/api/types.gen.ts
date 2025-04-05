@@ -842,6 +842,11 @@ export type UserPublicWithRolesAndGroups = {
     group_members: Array<GroupMemberPublicWithGroup>;
 };
 
+export type UserRoleUpdate = {
+    user_id: number;
+    role_id: number;
+};
+
 export type ValidationError = {
     loc: Array<string | number>;
     msg: string;
@@ -1834,6 +1839,57 @@ export type GetProjectUsersResponses = {
 };
 
 export type GetProjectUsersResponse = GetProjectUsersResponses[keyof GetProjectUsersResponses];
+
+export type UpdateUsersInProjectData = {
+    body: Array<UserRoleUpdate>;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/projects/{id}/users';
+};
+
+export type UpdateUsersInProjectErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateUsersInProjectError = UpdateUsersInProjectErrors[keyof UpdateUsersInProjectErrors];
+
+export type UpdateUsersInProjectResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type RemoveUserFromProjectData = {
+    body?: never;
+    path: {
+        id: number;
+        user_id: number;
+    };
+    query?: never;
+    url: '/projects/{id}/users/{user_id}';
+};
+
+export type RemoveUserFromProjectErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveUserFromProjectError = RemoveUserFromProjectErrors[keyof RemoveUserFromProjectErrors];
+
+export type RemoveUserFromProjectResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type GetProjectGroupsData = {
     body?: never;
