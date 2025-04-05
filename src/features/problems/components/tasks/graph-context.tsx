@@ -522,6 +522,10 @@ const updateSocketLabel = (state: GraphState, { payload }: UpdateSocketLabelActi
   if (socket === undefined) return state;
 
   socket.label = payload.newSocketLabel;
+  if (isUniconFile(socket.data)) {
+    socket.data.path = payload.newSocketLabel;
+  }
+
   return state;
 };
 
