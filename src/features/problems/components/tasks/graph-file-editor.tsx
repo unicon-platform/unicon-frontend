@@ -8,10 +8,11 @@ import {
   GraphContext,
   GraphDispatchContext,
 } from "@/features/problems/components/tasks/graph-context";
+import { isRequiredInputStep } from "@/lib/compute-graph";
 import { isUniconFile } from "@/lib/utils";
 
 const GraphFileEditor = () => {
-  const { selectedStepId, selectedSocketId, steps } = useContext(GraphContext)!;
+  const { selectedStepId, selectedSocketId, edit, steps, files: taskFiles } = useContext(GraphContext)!;
 
   const dispatch = useContext(GraphDispatchContext)!;
 
@@ -43,6 +44,8 @@ const GraphFileEditor = () => {
   if (!isUniconFile(selectedSocket.data)) return null;
 
   const file = selectedSocket.data;
+  const isUserInput = isRequiredInputStep(selectedStep);
+  const isTaskFile = taskFiles.some((taskFile) => taskFile.id === file.id);
 
   return (
     <FileEditor
@@ -52,9 +55,9 @@ const GraphFileEditor = () => {
       onFileNameChange={updateFileName}
       onFileContentChange={updateFileContent}
       onFileClosed={() => dispatch({ type: GraphActionType.DeselectSocket })}
-      // We disallow editing because it would be overwritten when files are edited in the file tree.
-      canEditFileName={false}
-      canEditFileContent={false}
+      // We disallow editing for shared task files because it would be overwritten when files are edited in the file tree.
+      canEditFileName={edit && !isUserInput && !isTaskFile}
+      canEditFileContent={edit && !isUserInput && !isTaskFile}
     />
   );
 };
