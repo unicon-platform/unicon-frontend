@@ -14,6 +14,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { getUserProfile } from "@/features/auth/queries";
 import { useUserStore } from "@/store/user/user-store-provider";
 
+export const LoadingPage = () => {
+  return (
+    <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-4">
+      <div>
+        <LoadingSpinner className="m-auto h-20 w-20" />
+        <p className="mt-6">Loading, please wait...</p>
+      </div>
+    </div>
+  );
+};
 const Layout: React.FC<PropsWithChildren> = () => {
   const { data: userProfile, isLoading } = useQuery(getUserProfile());
 
@@ -47,16 +57,7 @@ const Layout: React.FC<PropsWithChildren> = () => {
                       <Breadcrumb />
                     </div>
                     <PageContainer>
-                      <Suspense
-                        fallback={
-                          <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-4">
-                            <div>
-                              <LoadingSpinner className="m-auto h-20 w-20" />
-                              <p className="mt-6">Loading, please wait...</p>
-                            </div>
-                          </div>
-                        }
-                      >
+                      <Suspense fallback={<LoadingPage />}>
                         <Outlet />
                       </Suspense>
                     </PageContainer>
