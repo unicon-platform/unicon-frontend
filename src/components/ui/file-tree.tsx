@@ -137,7 +137,18 @@ function Tree({
     if (oldName === newName) {
       return;
     }
-    const newPath = removeLeadingSlash(item.path.split("/").slice(0, -1).join("/") + "/" + newName);
+
+    const isFolder = item.path.endsWith("/");
+    const parts = item.path.split("/");
+
+    // A folder is a path that ends with / while a file does not.
+    // So the parts (split by /) have a "" at end for folders
+    // If the item is a folder, we thus need to rename the SECOND LAST part (the last part is an empty string)
+    // If the item is a file, we need to rename the LAST part.
+    const newPath = isFolder
+      ? parts.slice(0, -2).concat([newName, ""]).join("/")
+      : removeLeadingSlash(parts.slice(0, -1).join("/") + "/" + newName);
+
     const success = onPathChange?.(item.path, newPath);
     if (!success) {
       toast.toast({
