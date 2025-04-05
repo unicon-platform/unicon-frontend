@@ -39,7 +39,8 @@ const InputMetadataRow: React.FC<OwnProps> = ({
   isEditable,
   onUpdateSocketMetadata,
 }) => {
-  const { selectedSocketId, selectedStepId } = useContext(GraphContext)!;
+  const { selectedSocketId, selectedStepId, files } = useContext(GraphContext)!;
+  const isSharedTaskFile = files.some((file) => isUniconFile(socket.data) && file.id === socket.data?.id);
   const rowIsSelected = selectedSocketId === socket.id && selectedStepId === step.id;
   return (
     <TableRow className={cn({ "!bg-emerald-900 hover:bg-emerald-800": rowIsSelected })}>
@@ -51,7 +52,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
         )}
       </TableCell>
       <TableCell>
-        <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={isEditable} />
+        <SocketLabelInput value={socket.label} onChange={onEditSocketLabel} canEdit={isEditable && !isSharedTaskFile} />
       </TableCell>
       <TableCell>
         <SocketTypeBadge socket={socket} />
@@ -61,7 +62,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
         {socket.data && isUniconFile(socket.data) ? (
           <div className="flex items-center gap-2">
             <ViewFileButton step={step} socket={socket} />
-            {isEditable && !socket.data.on_minio && (
+            {isEditable && !socket.data.on_minio && !isSharedTaskFile && (
               <ConfirmationDialog
                 onConfirm={onChangeToValue}
                 description="Are you sure you want to change this file to a primitive value?"
