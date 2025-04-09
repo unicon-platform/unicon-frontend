@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp, FileQuestion, Group, ListChecks, User2 } from "lucide-react";
+import { ChevronDown, ChevronUp, FileQuestion, Group, User2 } from "lucide-react";
 import { AiFillSecurityScan } from "react-icons/ai";
 import { GoPeople, GoProject, GoProjectSymlink } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
@@ -57,11 +57,12 @@ const PROJECT_SIDEBAR_ITEMS: SidebarItem<keyof Omit<ProjectPublicWithProblems, "
     icon: <FileQuestion />,
     label: "Problems",
   },
-  {
-    path: "/submissions",
-    icon: <ListChecks />,
-    label: "Submissions",
-  },
+  // TODO: Disable submissions for user testing (09/04/25)
+  // {
+  //   path: "/submissions",
+  //   icon: <ListChecks />,
+  //   label: "Submissions",
+  // },
   {
     path: "/users",
     icon: <GoPeople />,
