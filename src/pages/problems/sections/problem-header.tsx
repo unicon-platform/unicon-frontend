@@ -49,10 +49,10 @@ export const ProblemHeader: React.FC<ProblemHeaderProps> = ({ problem, projectId
           {canSubmit && (
             <ConfirmationDialog
               onConfirm={handleSubmit}
-              title="Confirm Submission"
-              description="Are you sure you want to submit?"
+              title="Finalize Submission"
+              description="Are you sure you want to submit? Ensure that you have mark your attempts for submission."
             >
-              <Button variant="primary">Submit</Button>
+              <Button variant="primary">Finalize</Button>
             </ConfirmationDialog>
           )}
         </div>
