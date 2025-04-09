@@ -9,9 +9,16 @@ import { ErrorAlert } from "@/components/form/fields";
 import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
-import { getTaskAttemptResults, useCreateTaskAttempt, useRerunTaskAttempt } from "@/features/problems/queries";
+import {
+  getTaskAttemptResults,
+  useCreateTaskAttempt,
+  useMarkTaskAttemptForSubmission,
+  useRerunTaskAttempt,
+  useUnmarkTaskAttemptForSubmission,
+} from "@/features/problems/queries";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
 import { downloadFile, formatFileSize, isTextFile } from "@/lib/files";
@@ -226,6 +233,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   // Map of IDs to user inputs
   const userInputs = Object.fromEntries(selectAttemptUserInputs?.map((input) => [input.id, input.data]) ?? []);
 
+  const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
+
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
   const rerunAttempt = (attemptId: number) => {
     rerunAttemptMut.mutate(attemptId, {
@@ -233,7 +242,26 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
       onSuccess: () => setError(""),
     });
   };
-  const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
+
+  const submitAttemptMut = useMarkTaskAttemptForSubmission(problemId);
+  const unSubmitAttemptMut = useUnmarkTaskAttemptForSubmission(problemId);
+
+  const submitAttempt = (attemptId: number) => {
+    submitAttemptMut.mutate(attemptId, {
+      onError: () => setError("Failed to mark attempt for submission"),
+      onSuccess: () => setError(""),
+    });
+  };
+
+  const unSubmitAttempt = (attemptId: number) => {
+    unSubmitAttemptMut.mutate(attemptId, {
+      onError: () => setError("Failed to unmark attempt for submission"),
+      onSuccess: () => setError(""),
+    });
+  };
+
+  const handleMarkForSubmission = (attemptId: number) => (checked: boolean) =>
+    checked ? submitAttempt(attemptId) : unSubmitAttempt(attemptId);
 
   const debouncedSetFileContents = useDebouncedCallback(
     (fileId: string, newContent: string | File | UniconFile) =>
@@ -291,7 +319,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
     : Number.MAX_SAFE_INTEGER;
   const isOutOfAttempts = !canSubmitWithoutLimit && attemptsLeft === 0;
   const submitLabel =
-    "Submit" +
+    "Run Code" +
     (hasLimit && !canSubmitWithoutLimit ? ` (${attemptsLeft} attempt${attemptsLeft === 1 ? "" : "s"} left)` : "");
 
   return (
@@ -363,6 +391,16 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 <RefreshCcw />
                 Rerun
               </Button>
+            )}
+            {selectedAttempt && (
+              <div className="flex items-center gap-2">
+                <span>Mark for submission</span>
+                <Switch
+                  id={`submit-toggle-${selectedAttempt.id}`}
+                  checked={selectedAttempt.marked_for_submission}
+                  onCheckedChange={handleMarkForSubmission(selectedAttempt.id)}
+                />
+              </div>
             )}
           </div>
           {selectedAttemptIdx !== null && selectedAttempt && (

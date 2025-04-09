@@ -22,6 +22,8 @@ import {
   rerunTaskAttempt,
   ShortAnswerTask,
   submitProblemTaskAttempt,
+  submitTaskAttempt,
+  unsubmitTaskAttempt,
   updateProblem,
   updateTask,
   uploadFilesToProblem,
@@ -133,6 +135,36 @@ export const useDeleteTask = (problemId: number, taskId: number) => {
     mutationFn: () =>
       deleteTask({
         path: { id: problemId, task_id: taskId },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ProblemQueryKeys.Problem, problemId],
+      });
+    },
+  });
+};
+
+export const useMarkTaskAttemptForSubmission = (problemId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (attemptId: number) =>
+      submitTaskAttempt({
+        path: { attempt_id: attemptId },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [ProblemQueryKeys.Problem, problemId],
+      });
+    },
+  });
+};
+
+export const useUnmarkTaskAttemptForSubmission = (problemId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (attemptId: number) =>
+      unsubmitTaskAttempt({
+        path: { attempt_id: attemptId },
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({

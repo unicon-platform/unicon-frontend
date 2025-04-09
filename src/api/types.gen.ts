@@ -711,6 +711,7 @@ export type TaskAttemptPublic = {
     user_id: number;
     task_id: number;
     task_type: TaskType;
+    marked_for_submission: boolean;
     other_fields: {
         [key: string]: unknown;
     };
@@ -724,6 +725,7 @@ export type TaskAttemptResult = {
     user_id: number;
     task_id: number;
     task_type: TaskType;
+    marked_for_submission: boolean;
     other_fields: {
         [key: string]: unknown;
     };
@@ -1206,6 +1208,56 @@ export type DeleteFileFromProblemErrors = {
 export type DeleteFileFromProblemError = DeleteFileFromProblemErrors[keyof DeleteFileFromProblemErrors];
 
 export type DeleteFileFromProblemResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type SubmitTaskAttemptData = {
+    body?: never;
+    path: {
+        attempt_id: number;
+    };
+    query?: never;
+    url: '/problems/attempts/{attempt_id}/submit';
+};
+
+export type SubmitTaskAttemptErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitTaskAttemptError = SubmitTaskAttemptErrors[keyof SubmitTaskAttemptErrors];
+
+export type SubmitTaskAttemptResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type UnsubmitTaskAttemptData = {
+    body?: never;
+    path: {
+        attempt_id: number;
+    };
+    query?: never;
+    url: '/problems/attempts/{attempt_id}/unsubmit';
+};
+
+export type UnsubmitTaskAttemptErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UnsubmitTaskAttemptError = UnsubmitTaskAttemptErrors[keyof UnsubmitTaskAttemptErrors];
+
+export type UnsubmitTaskAttemptResponses = {
     /**
      * Successful Response
      */

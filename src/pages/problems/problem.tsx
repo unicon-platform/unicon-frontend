@@ -36,7 +36,8 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
         problem={problem}
         projectId={projectId}
         canEdit={!isSubmissionView && canEdit}
-        canSubmit={!isSubmissionView && canSubmit}
+        /* TODO: Disable submissions for user testing (09/04/25) */
+        canSubmit={false && !isSubmissionView && canSubmit} // eslint-disable-line no-constant-binary-expression
       />
       {!isSubmissionView && (
         <ProblemTabs
