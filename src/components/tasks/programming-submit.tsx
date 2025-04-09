@@ -163,6 +163,11 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
             </TooltipTrigger>
           </Tooltip>
         </TooltipProvider>
+        {isUniconFile(defaultContent) && defaultContent.size_limit !== undefined && defaultContent.size_limit > 0 && (
+          <span className="text-sm text-muted-foreground">
+            Size limit: {formatFileSize(defaultContent.size_limit * 1024)}
+          </span>
+        )}
       </div>
       {renderContent(content)}
     </div>
