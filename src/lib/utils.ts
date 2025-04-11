@@ -15,6 +15,20 @@ export function uuid(): string {
   return randomUUID();
 }
 
+export const groupBy = <T, K extends string | number | symbol>(
+  array: T[],
+  keyFn: (item: T, index: number, array: T[]) => K,
+): Record<K, T[]> => {
+  return array.reduce(
+    (result: Record<K, T[]>, current: T, index: number) => {
+      const key = keyFn(current, index, array);
+      (result[key] ||= []).push(current);
+      return result;
+    },
+    {} as Record<K, T[]>,
+  );
+};
+
 // https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify
 // useful for doing comparison (so the order of key creation doesn't matter)
 export function JSONstringifyOrder(obj: object, space?: string | number) {
