@@ -198,6 +198,7 @@ export type MultipleChoiceTask = {
     order_index: number;
     max_attempts?: number | null;
     min_score_to_pass?: number | null;
+    updated_version_id?: number | null;
     choices: Array<Choice>;
     expected_answer: string;
 };
@@ -223,6 +224,7 @@ export type MultipleResponseTask = {
     order_index: number;
     max_attempts?: number | null;
     min_score_to_pass?: number | null;
+    updated_version_id?: number | null;
     choices: Array<Choice>;
     expected_answer: Array<string>;
 };
@@ -452,6 +454,7 @@ export type ProgrammingTask = {
     order_index: number;
     max_attempts?: number | null;
     min_score_to_pass?: number | null;
+    updated_version_id?: number | null;
     environment: ComputeContext;
     required_inputs: Array<RequiredInput>;
     testcases: Array<Testcase>;
@@ -649,6 +652,7 @@ export type ShortAnswerTask = {
     order_index: number;
     max_attempts?: number | null;
     min_score_to_pass?: number | null;
+    updated_version_id?: number | null;
     expected_answer?: string | null;
 };
 
@@ -749,6 +753,7 @@ export type TaskOrm = {
     problem_id: number;
     max_attempts?: number | null;
     min_score_to_pass?: number | null;
+    triggered_rerun?: boolean;
 };
 
 export type TaskOrder = {
@@ -1023,6 +1028,150 @@ export type UpdateProblemResponses = {
 
 export type UpdateProblemResponse = UpdateProblemResponses[keyof UpdateProblemResponses];
 
+export type DeleteTaskData = {
+    body?: never;
+    path: {
+        task_id: number;
+        id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/tasks/{task_id}';
+};
+
+export type DeleteTaskErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteTaskError = DeleteTaskErrors[keyof DeleteTaskErrors];
+
+export type DeleteTaskResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetProblemTaskData = {
+    body?: never;
+    path: {
+        id: number;
+        task_id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/tasks/{task_id}';
+};
+
+export type GetProblemTaskErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetProblemTaskError = GetProblemTaskErrors[keyof GetProblemTaskErrors];
+
+export type GetProblemTaskResponses = {
+    /**
+     * Successful Response
+     */
+    200: ({
+        type?: 'PROGRAMMING_TASK';
+    } & ProgrammingTask) | ({
+        type?: 'MULTIPLE_CHOICE_TASK';
+    } & MultipleChoiceTask) | ({
+        type?: 'MULTIPLE_RESPONSE_TASK';
+    } & MultipleResponseTask) | ({
+        type?: 'SHORT_ANSWER_TASK';
+    } & ShortAnswerTask);
+};
+
+export type GetProblemTaskResponse = GetProblemTaskResponses[keyof GetProblemTaskResponses];
+
+export type SubmitProblemTaskAttemptData = {
+    body: UserInput;
+    path: {
+        task_id: number;
+        id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/tasks/{task_id}';
+};
+
+export type SubmitProblemTaskAttemptErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitProblemTaskAttemptError = SubmitProblemTaskAttemptErrors[keyof SubmitProblemTaskAttemptErrors];
+
+export type SubmitProblemTaskAttemptResponses = {
+    /**
+     * Successful Response
+     */
+    200: TaskAttemptPublic;
+};
+
+export type SubmitProblemTaskAttemptResponse = SubmitProblemTaskAttemptResponses[keyof SubmitProblemTaskAttemptResponses];
+
+export type UpdateTaskData = {
+    body: TaskUpdate;
+    path: {
+        task_id: number;
+        id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/tasks/{task_id}';
+};
+
+export type UpdateTaskErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateTaskError = UpdateTaskErrors[keyof UpdateTaskErrors];
+
+export type UpdateTaskResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
+export type GetProblemTaskVersionsData = {
+    body?: never;
+    path: {
+        id: number;
+        task_id: number;
+    };
+    query?: never;
+    url: '/problems/{id}/tasks/{task_id}/versions';
+};
+
+export type GetProblemTaskVersionsErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetProblemTaskVersionsError = GetProblemTaskVersionsErrors[keyof GetProblemTaskVersionsErrors];
+
+export type GetProblemTaskVersionsResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<number>;
+};
+
+export type GetProblemTaskVersionsResponse = GetProblemTaskVersionsResponses[keyof GetProblemTaskVersionsResponses];
+
 export type GetProblemLeaderboardData = {
     body?: never;
     path: {
@@ -1077,86 +1226,6 @@ export type AddTaskToProblemErrors = {
 export type AddTaskToProblemError = AddTaskToProblemErrors[keyof AddTaskToProblemErrors];
 
 export type AddTaskToProblemResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type DeleteTaskData = {
-    body?: never;
-    path: {
-        task_id: number;
-        id: number;
-    };
-    query?: never;
-    url: '/problems/{id}/tasks/{task_id}';
-};
-
-export type DeleteTaskErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type DeleteTaskError = DeleteTaskErrors[keyof DeleteTaskErrors];
-
-export type DeleteTaskResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
-};
-
-export type SubmitProblemTaskAttemptData = {
-    body: UserInput;
-    path: {
-        task_id: number;
-        id: number;
-    };
-    query?: never;
-    url: '/problems/{id}/tasks/{task_id}';
-};
-
-export type SubmitProblemTaskAttemptErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type SubmitProblemTaskAttemptError = SubmitProblemTaskAttemptErrors[keyof SubmitProblemTaskAttemptErrors];
-
-export type SubmitProblemTaskAttemptResponses = {
-    /**
-     * Successful Response
-     */
-    200: TaskAttemptPublic;
-};
-
-export type SubmitProblemTaskAttemptResponse = SubmitProblemTaskAttemptResponses[keyof SubmitProblemTaskAttemptResponses];
-
-export type UpdateTaskData = {
-    body: TaskUpdate;
-    path: {
-        task_id: number;
-        id: number;
-    };
-    query?: never;
-    url: '/problems/{id}/tasks/{task_id}';
-};
-
-export type UpdateTaskErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type UpdateTaskError = UpdateTaskErrors[keyof UpdateTaskErrors];
-
-export type UpdateTaskResponses = {
     /**
      * Successful Response
      */
