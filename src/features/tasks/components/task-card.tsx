@@ -53,7 +53,7 @@ const TaskCard: React.FC<OwnProps> = ({
   const numberOfVersions = taskVersionIds?.length ?? 0;
   const isProgrammingTask = updatedTask.type === "PROGRAMMING_TASK";
 
-  if (isLoading) {
+  if (isLoading || !task) {
     return (
       <Card className="bg-inherit">
         <CardHeader>
