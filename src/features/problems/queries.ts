@@ -8,7 +8,9 @@ import {
   deleteTask,
   getProblem,
   getProblemLeaderboard,
+  getProblemTask,
   getProblemTaskAttemptResults,
+  getProblemTaskVersions,
   getProjectSubmissions,
   getPythonVersions,
   getSubmission,
@@ -200,6 +202,21 @@ export const getProblemLeaderboardById = (problemId: number) => {
   return queryOptions({
     queryKey: [ProblemQueryKeys.Problem, problemId, "leaderboard"],
     queryFn: () => getProblemLeaderboard({ path: { id: problemId } }).then((response) => response.data),
+  });
+};
+
+export const getTaskById = (problemId: number, taskId: number) => {
+  return queryOptions({
+    queryKey: [ProblemQueryKeys.Problem, problemId, "Task", taskId],
+    queryFn: () => getProblemTask({ path: { id: problemId, task_id: taskId } }).then((response) => response.data),
+  });
+};
+
+export const getTaskVersionsById = (problemId: number, taskId: number) => {
+  return queryOptions({
+    queryKey: [ProblemQueryKeys.Problem, problemId, "Task", taskId, "versions"],
+    queryFn: () =>
+      getProblemTaskVersions({ path: { id: problemId, task_id: taskId } }).then((response) => response.data),
   });
 };
 
