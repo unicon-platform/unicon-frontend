@@ -733,6 +733,7 @@ export type TaskAttemptResult = {
     other_fields: {
         [key: string]: unknown;
     };
+    invalidated?: boolean;
     task_results: Array<TaskResult>;
     has_private_failure?: boolean;
 };

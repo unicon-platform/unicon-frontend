@@ -342,8 +342,9 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   }, [selectedTaskVersionId, selectedAttempt, attemptsDesc]);
 
   const hasLimit = typeof task.max_attempts === "number";
+
   const attemptsLeft = hasLimit
-    ? Math.max((task.max_attempts as number) - (attempts?.length ?? 0), 0)
+    ? Math.max((task.max_attempts as number) - (attempts.filter((attempt) => !attempt.invalidated).length ?? 0), 0)
     : Number.MAX_SAFE_INTEGER;
   const isOutOfAttempts = !canSubmitWithoutLimit && attemptsLeft === 0;
   const isUpdatedTask = !task.updated_version_id;
