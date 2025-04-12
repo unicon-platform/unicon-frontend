@@ -16,11 +16,10 @@ type OwnProps = {
   onSaveWithoutRerun: () => void;
   isSafe: boolean;
 };
-const RerunDialog: React.FC<OwnProps> = ({ isSafe, onClose, onSaveWithRerun, onSaveWithoutRerun }) => {
-  const title = isSafe ? "Rerun past attempts?" : "Changes may break previous attempts.";
-  const description = isSafe
-    ? "If you do not rerun, users will need to manually rerun their own submissions."
-    : "Rerunning could cause inconsistencies in previous attempts' result displays.";
+const RerunDialog: React.FC<OwnProps> = ({ onClose, onSaveWithRerun, onSaveWithoutRerun }) => {
+  const title = "Rerun past attempts?";
+  const description =
+    "If you do not rerun, users will need to manually rerun their own submissions. This also wipes the leaderboard for this task.";
 
   return (
     <AlertDialog open onOpenChange={onClose}>
@@ -32,23 +31,10 @@ const RerunDialog: React.FC<OwnProps> = ({ isSafe, onClose, onSaveWithRerun, onS
         <AlertDialogFooter className="sm:justify-between">
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <div className="flex space-x-2">
-            {isSafe && (
-              <>
-                <Button variant="destructive" onClick={onSaveWithoutRerun}>
-                  Save only
-                </Button>
-                <AlertDialogAction onClick={onSaveWithRerun}>Save and rerun</AlertDialogAction>
-              </>
-            )}
-            {!isSafe && (
-              <>
-                {/* TODO: change this to alertdialogaction */}
-                <Button variant="destructive" onClick={onSaveWithRerun}>
-                  Save and rerun
-                </Button>
-                <AlertDialogAction onClick={onSaveWithoutRerun}>Save only</AlertDialogAction>
-              </>
-            )}
+            <Button variant="destructive" onClick={onSaveWithoutRerun}>
+              Save only
+            </Button>
+            <AlertDialogAction onClick={onSaveWithRerun}>Save and rerun</AlertDialogAction>
           </div>
         </AlertDialogFooter>
       </AlertDialogContent>
