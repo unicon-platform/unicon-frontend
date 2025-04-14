@@ -455,7 +455,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 Rerun
               </Button>
             )}
-            {selectedAttempt && (
+            {selectedAttempt && isUpdatedTask && (
               <div className="flex items-center gap-2">
                 <span>Mark for submission</span>
                 <Switch
