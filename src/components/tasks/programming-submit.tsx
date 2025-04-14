@@ -1,28 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { DownloadIcon, FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { createFile, File as UniconFile, ProgrammingTask, RequiredInput } from "@/api";
 import { ErrorAlert } from "@/components/form/fields";
 import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import {
   getTaskAttemptResults,
+  getTaskVersionsById,
   useCreateTaskAttempt,
   useMarkTaskAttemptForSubmission,
   useRerunTaskAttempt,
   useUnmarkTaskAttemptForSubmission,
 } from "@/features/problems/queries";
+import { SelectedTaskIdContext } from "@/features/tasks/components/task-card";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
 import { downloadFile, formatFileSize, isTextFile } from "@/lib/files";
-import { isUniconFile } from "@/lib/utils";
+import { groupBy, isUniconFile } from "@/lib/utils";
 import { formatDateShort } from "@/utils/date";
 
 type FileCardProps = {
@@ -227,7 +237,12 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   }, [selectedAttemptIdx]);
 
   // Sort attempts by recency (by ID which is monotonically increasing)
-  const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id);
+  const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id).map((attempt, index) => ({ ...attempt, index }));
+
+  // Group by task_id
+  const groupedAttempts = groupBy(attemptsDesc, (attempt) => attempt.task_id);
+  const { data: taskVersionIds } = useQuery(getTaskVersionsById(problemId, task.id));
+  const taskVersionCount = taskVersionIds?.length ?? 0;
   const selectedAttempt = selectedAttemptIdx !== null ? attemptsDesc[selectedAttemptIdx] : null;
 
   // Sort results by recency (by ID which is monotonically increasing)
@@ -241,6 +256,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   const createAttemptMut = useCreateTaskAttempt(problemId, task.id);
 
   const rerunAttemptMut = useRerunTaskAttempt(problemId);
+  const { selectedTaskVersionId, setSelectedTaskVersionId } = useContext(SelectedTaskIdContext)!;
   const rerunAttempt = (attemptId: number) => {
     rerunAttemptMut.mutate(attemptId, {
       onError: () => setError("Failed to rerun attempt"),
@@ -318,11 +334,20 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
     [createAttemptMut, fileContents, requiredFileInputs, refetchAttempts, task.id],
   );
 
+  useEffect(() => {
+    if (selectedAttempt && selectedAttempt.task_id !== selectedTaskVersionId) {
+      const newSelectedAttemptIdx = attemptsDesc.findIndex((attempt) => attempt.task_id === selectedTaskVersionId);
+      setSelectedAttemptIdx(newSelectedAttemptIdx === -1 ? null : newSelectedAttemptIdx);
+    }
+  }, [selectedTaskVersionId, selectedAttempt, attemptsDesc]);
+
   const hasLimit = typeof task.max_attempts === "number";
+
   const attemptsLeft = hasLimit
-    ? Math.max((task.max_attempts as number) - (attempts?.length ?? 0), 0)
+    ? Math.max((task.max_attempts as number) - (attempts.filter((attempt) => !attempt.invalidated).length ?? 0), 0)
     : Number.MAX_SAFE_INTEGER;
   const isOutOfAttempts = !canSubmitWithoutLimit && attemptsLeft === 0;
+  const isUpdatedTask = !task.updated_version_id;
   const submitLabel =
     "Run Code" +
     (hasLimit && !canSubmitWithoutLimit ? ` (${attemptsLeft} attempt${attemptsLeft === 1 ? "" : "s"} left)` : "");
@@ -345,9 +370,28 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               ))}
             </div>
             {error && <ErrorAlert message={error} className="mt-2 whitespace-pre font-mono" />}
-            <Button className="mt-6" type="submit" disabled={createAttemptMut.isPending || isOutOfAttempts}>
-              {isSubmitting ? "Submitting..." : submitLabel}
-            </Button>
+            {isUpdatedTask ? (
+              <Button
+                className="mt-6"
+                type="submit"
+                disabled={createAttemptMut.isPending || isOutOfAttempts || !isUpdatedTask}
+              >
+                {isSubmitting ? "Submitting..." : submitLabel}
+              </Button>
+            ) : (
+              <Button
+                className="mt-6"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (taskVersionIds) {
+                    setSelectedTaskVersionId(taskVersionIds[0]);
+                  }
+                }}
+              >
+                Switch to latest version to submit code
+              </Button>
+            )}
           </form>
         </TaskSection>
       )}
@@ -357,18 +401,32 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
           <div className="flex items-center gap-4">
             <Select
               value={selectedAttemptIdx?.toString() ?? ""}
-              onValueChange={(value) => setSelectedAttemptIdx(+value)}
+              onValueChange={(value) => {
+                setSelectedAttemptIdx(+value);
+                setSelectedTaskVersionId(attemptsDesc[+value].task_id);
+              }}
               disabled={attempts === undefined || attempts.length == 0}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select an attempt" />
               </SelectTrigger>
               <SelectContent>
-                {attemptsDesc.map((attempt, index) => (
-                  // The value is the index in reverse order since it is sorted by recency
-                  <SelectItem key={attempt.id} value={`${index}`}>
-                    Attempt #{attempts.length - index}
-                  </SelectItem>
+                {taskVersionIds?.map((taskId, index) => (
+                  <SelectGroup key={taskId}>
+                    <SelectLabel>
+                      Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
+                    </SelectLabel>
+                    {(groupedAttempts[taskId] ?? []).length === 0 && (
+                      <SelectItem disabled value="-1">
+                        No attempts
+                      </SelectItem>
+                    )}
+                    {groupedAttempts[taskId]?.map((attempt) => (
+                      <SelectItem key={attempt.id} value={`${attempt.index}`}>
+                        Attempt #{attempts.length - attempt.index}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 ))}
               </SelectContent>
             </Select>
@@ -397,7 +455,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 Rerun
               </Button>
             )}
-            {selectedAttempt && (
+            {selectedAttempt && isUpdatedTask && (
               <div className="flex items-center gap-2">
                 <span>Mark for submission</span>
                 <Switch
@@ -408,7 +466,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               </div>
             )}
           </div>
-          {selectedAttemptIdx !== null && selectedAttempt && (
+          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id. 
+            Hence `selectedAttempt.task_id === selectedTaskVersionId` is to make sure the website doesn't crash when that happens.
+          */}
+          {selectedAttemptIdx !== null && selectedAttempt && selectedAttempt.task_id === selectedTaskVersionId && (
             <TaskResultCard
               title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
