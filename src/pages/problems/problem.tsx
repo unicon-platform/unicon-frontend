@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { TaskAttemptPublic } from "@/api";
+import { TaskAttemptPublic, UserPublicWithRolesAndGroups } from "@/api";
 import { getProblemById } from "@/features/problems/queries";
 import { useProblemId, useProjectId } from "@/features/projects/hooks/use-id";
 import { ProblemDescription } from "@/pages/problems/sections/problem-description";
@@ -14,11 +14,11 @@ import { ProblemTimeline } from "@/pages/problems/sections/problem-timeline";
 type ProblemProps = {
   id?: number;
   submissionId?: number;
+  submissionUser: UserPublicWithRolesAndGroups;
   submissionAttempts?: TaskAttemptPublic[];
-  submittedAt?: string;
 };
 
-const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemProps) => {
+const Problem = ({ id, submissionId, submissionAttempts, submissionUser }: ProblemProps) => {
   const isSubmissionView = submissionId !== undefined;
 
   const projectId = useProjectId();
@@ -47,8 +47,8 @@ const Problem = ({ id, submissionId, submissionAttempts, submittedAt }: ProblemP
         />
       )}
       <div className="flex flex-col gap-8">
-        {isSubmissionView && <ProblemSubmissionInfo submittedAt={submittedAt!} />}
         <ProblemTimeline startedAt={problem.started_at} endedAt={problem.ended_at} closedAt={problem.closed_at} />
+        {isSubmissionView && <ProblemSubmissionInfo projectId={projectId} submissionUser={submissionUser} />}
         <ProblemDescription description={description} />
         <ProblemFiles files={supporting_files} />
         <ProblemTaskList

@@ -30,8 +30,8 @@ const SubmissionResults = () => {
     <Problem
       id={problemId}
       submissionId={parseInt(id!)}
+      submissionUser={submission.user}
       submissionAttempts={task_attempts}
-      submittedAt={submission.submitted_at ?? undefined}
     />
   );
 };
