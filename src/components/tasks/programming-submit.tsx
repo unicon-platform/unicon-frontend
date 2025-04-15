@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { DownloadIcon, FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
+import { CheckIcon, DownloadIcon, FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { createFile, File as UniconFile, ProgrammingTask, RequiredInput } from "@/api";
+import { createFile, File as UniconFile, ProgrammingTask, RequiredInput, TaskAttemptPublic } from "@/api";
 import { ErrorAlert } from "@/components/form/fields";
 import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import { Button } from "@/components/ui/button";
@@ -79,9 +79,10 @@ type EditorProps = {
   currentContent: string | File | UniconFile | null;
   defaultContent: File | UniconFile;
   onFileContentChange: (newContent: string | File | UniconFile) => void;
+  readOnly?: boolean;
 };
 
-const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultContent, onFileContentChange }) => {
+const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultContent, onFileContentChange, readOnly }) => {
   const [content, setContent] = useState<string | File | UniconFile>(currentContent ?? defaultContent);
 
   useEffect(() => {
@@ -144,7 +145,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
         fileName={fileName}
         fileContent={isUniconFile(data) ? data.content : data}
         onFileContentChange={onFileContentChange}
-        canEditFileContent={true}
+        canEditFileContent={!readOnly}
       />
     );
   };
@@ -156,28 +157,33 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
           <FileTextIcon size={20} />
           <h3 className="font-medium">{fileName}</h3>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipContent side="right" align="center">
-              <p>
-                Upload a file<br></br>
-                The file name does not need to be same, it will be renamed automatically
-              </p>
-            </TooltipContent>
-            <input type="file" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
-            <TooltipTrigger asChild type="button">
-              {/* Proxy click event to HTML input element above */}
-              <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
-                <UploadIcon size={10} />
-              </Button>
-            </TooltipTrigger>
-          </Tooltip>
-        </TooltipProvider>
-        {isUniconFile(defaultContent) && defaultContent.size_limit !== undefined && defaultContent.size_limit > 0 && (
-          <span className="text-sm text-muted-foreground">
-            Size limit: {formatFileSize(defaultContent.size_limit * 1024)}
-          </span>
+        {!readOnly && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipContent side="right" align="center">
+                <p>
+                  Upload a file<br></br>
+                  The file name does not need to be same, it will be renamed automatically
+                </p>
+              </TooltipContent>
+              <input type="file" style={{ display: "none" }} ref={fileInputRef} onChange={handleFileUpload} />
+              <TooltipTrigger asChild type="button">
+                {/* Proxy click event to HTML input element above */}
+                <Button type="button" variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                  <UploadIcon size={10} />
+                </Button>
+              </TooltipTrigger>
+            </Tooltip>
+          </TooltipProvider>
         )}
+        {!readOnly &&
+          isUniconFile(defaultContent) &&
+          defaultContent.size_limit !== undefined &&
+          defaultContent.size_limit > 0 && (
+            <span className="text-sm text-muted-foreground">
+              Size limit: {formatFileSize(defaultContent.size_limit * 1024)}
+            </span>
+          )}
       </div>
       {renderContent(content)}
     </div>
@@ -189,6 +195,7 @@ type ProgrammingSubmitFormProps = {
   task: ProgrammingTask;
   canSubmit: boolean;
   canSubmitWithoutLimit: boolean;
+  submissionAttempt?: TaskAttemptPublic;
 };
 
 export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
@@ -196,6 +203,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   task,
   canSubmit,
   canSubmitWithoutLimit,
+  submissionAttempt,
 }) => {
   const { data, refetch: refetchAttempts } = useQuery({
     ...getTaskAttemptResults(problemId, task.id),
@@ -207,6 +215,8 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   });
 
   const attempts = data ?? [];
+  // Sort attempts by recency (by ID which is monotonically increasing)
+  const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id).map((attempt, index) => ({ ...attempt, index }));
 
   // Filter required inputs to only include file inputs
   // NOTE: We assume that all required inputs needed for submission are files
@@ -225,19 +235,17 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
 
   // Always default to the latest attempt and the latest result
   useEffect(() => {
-    if (attempts.length === 0) return;
-    setSelectedAttemptIdx(selectedAttemptIdx ?? 0);
+    if (attemptsDesc.length === 0) return;
+    const submissionAttemptIdx = attemptsDesc.findIndex((attempt) => attempt.id === submissionAttempt?.id);
+    setSelectedAttemptIdx(submissionAttemptIdx !== -1 ? submissionAttemptIdx : (selectedAttemptIdx ?? 0));
     setSelectedResultIdx(0);
-  }, [attempts]);
+  }, [attempts, submissionAttempt]);
 
   // When an attempt is selected, select the latest result
   useEffect(() => {
     if (selectedAttemptIdx === null) return;
     setSelectedResultIdx(0);
   }, [selectedAttemptIdx]);
-
-  // Sort attempts by recency (by ID which is monotonically increasing)
-  const attemptsDesc = [...attempts].sort((a, b) => b.id - a.id).map((attempt, index) => ({ ...attempt, index }));
 
   // Group by task_id
   const groupedAttempts = groupBy(attemptsDesc, (attempt) => attempt.task_id);
@@ -354,23 +362,24 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
 
   return (
     <div className="flex flex-col gap-6">
-      {canSubmit && (
-        <TaskSection>
-          <TaskSectionHeader content="Submission" />
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-4">
-              {requiredFileInputs.map(({ id, data: templateContent }) => (
-                <Editor
-                  key={id}
-                  fileName={templateContent.path}
-                  currentContent={(userInputs[id] as UniconFile) ?? null}
-                  defaultContent={templateContent}
-                  onFileContentChange={handleFileChange(id)}
-                />
-              ))}
-            </div>
-            {error && <ErrorAlert message={error} className="mt-2 whitespace-pre font-mono" />}
-            {isUpdatedTask ? (
+      <TaskSection>
+        <TaskSectionHeader content="Submission" />
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-4">
+            {requiredFileInputs.map(({ id, data: templateContent }) => (
+              <Editor
+                key={id}
+                fileName={templateContent.path}
+                currentContent={(userInputs[id] as UniconFile) ?? null}
+                defaultContent={templateContent}
+                onFileContentChange={handleFileChange(id)}
+                readOnly={!canSubmit}
+              />
+            ))}
+          </div>
+          {canSubmit && error && <ErrorAlert message={error} className="mt-2 whitespace-pre font-mono" />}
+          {canSubmit &&
+            (isUpdatedTask ? (
               <Button
                 className="mt-6"
                 type="submit"
@@ -391,10 +400,9 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               >
                 Switch to latest version to submit code
               </Button>
-            )}
-          </form>
-        </TaskSection>
-      )}
+            ))}
+        </form>
+      </TaskSection>
       <TaskSection>
         <TaskSectionHeader content="Results" />
         <div className="relative flex flex-col gap-4">
@@ -413,7 +421,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               <SelectContent>
                 {taskVersionIds?.map((taskId, index) => (
                   <SelectGroup key={taskId}>
-                    <SelectLabel>
+                    <SelectLabel className="text-xs">
                       Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
                     </SelectLabel>
                     {(groupedAttempts[taskId] ?? []).length === 0 && (
@@ -423,7 +431,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                     )}
                     {groupedAttempts[taskId]?.map((attempt) => (
                       <SelectItem key={attempt.id} value={`${attempt.index}`}>
-                        Attempt #{attempts.length - attempt.index}
+                        <div className="flex items-center gap-2">
+                          Attempt #{attempts.length - attempt.index}{" "}
+                          {attempt.marked_for_submission && <CheckIcon className="h-4 w-4 text-green-400" />}
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -455,7 +466,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                 Rerun
               </Button>
             )}
-            {selectedAttempt && isUpdatedTask && (
+            {!submissionAttempt && selectedAttempt && isUpdatedTask && (
               <div className="flex items-center gap-2">
                 <span>Mark for submission</span>
                 <Switch

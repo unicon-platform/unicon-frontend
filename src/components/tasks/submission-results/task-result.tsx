@@ -1,5 +1,5 @@
 import { format, parseISO } from "date-fns";
-import { ClockIcon } from "lucide-react";
+import { CheckIcon, ClockIcon } from "lucide-react";
 
 import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
 import MultipleChoiceResult from "@/components/tasks/submission-results/result-types/multiple-choice-result";
@@ -106,6 +106,16 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
             pulse={attemptResult && attemptResult.status == "PENDING"}
           />
           <span className="text-lg font-medium">{title}</span>
+          {taskAttempt.marked_for_submission && (
+            <Tooltip>
+              <TooltipTrigger>
+                <CheckIcon className="text-green-500" />
+              </TooltipTrigger>
+              <TooltipContent side="top" align="center">
+                <p>The attempt is chosen for submission</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
           {attemptResult && renderTiming()}
         </CardTitle>
       </CardHeader>

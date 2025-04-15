@@ -14,7 +14,7 @@ import { ProblemTimeline } from "@/pages/problems/sections/problem-timeline";
 type ProblemProps = {
   id?: number;
   submissionId?: number;
-  submissionUser: UserPublicWithRolesAndGroups;
+  submissionUser?: UserPublicWithRolesAndGroups;
   submissionAttempts?: TaskAttemptPublic[];
 };
 
@@ -48,7 +48,9 @@ const Problem = ({ id, submissionId, submissionAttempts, submissionUser }: Probl
       )}
       <div className="flex flex-col gap-8">
         <ProblemTimeline startedAt={problem.started_at} endedAt={problem.ended_at} closedAt={problem.closed_at} />
-        {isSubmissionView && <ProblemSubmissionInfo projectId={projectId} submissionUser={submissionUser} />}
+        {isSubmissionView && submissionUser && (
+          <ProblemSubmissionInfo projectId={projectId} submissionUser={submissionUser} />
+        )}
         <ProblemDescription description={description} />
         <ProblemFiles files={supporting_files} />
         <ProblemTaskList
