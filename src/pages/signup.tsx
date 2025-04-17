@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError, HttpStatusCode } from "axios";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -57,18 +58,19 @@ const SignUp = () => {
   }
 
   const onSubmit: SubmitHandler<SignUpForm> = async (data) => {
-    const response = await signup({
-      body: { ...data, confirm_password: data.confirmPassword },
-      headers: undefined,
-      withCredentials: true,
-    });
+    try {
+      const response = await signup({
+        body: { ...data, confirm_password: data.confirmPassword },
+        headers: undefined,
+        withCredentials: true,
+      });
 
-    if (response.error) {
-      setIsError(true);
-    } else {
-      setIsError(false);
-      setUser(response.data.user);
-      navigate("/");
+      if (!response.error) setUser(response.data.user);
+    } catch (error) {
+      switch ((error as AxiosError).response?.status) {
+        case HttpStatusCode.BadRequest:
+          setIsError(true);
+      }
     }
   };
 
@@ -89,11 +91,6 @@ const SignUp = () => {
                 <form className="space-y-10" onSubmit={form.handleSubmit(onSubmit)}>
                   <div className="space-y-4">
                     <TextField label="Username" name="username" />
-                    {/* <PasswordField label="Password" name="password" />
-                    <PasswordField
-                      label="Confirm password"
-                      name="confirmPassword"
-                    /> */}
                     <Box className="flex flex-col space-y-2.5">
                       <FormField
                         control={form.control}
