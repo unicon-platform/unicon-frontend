@@ -18,7 +18,7 @@ export const ProblemSubmissionInfo: React.FC<ProblemSubmissionInfoProps> = ({ pr
         <UserIcon className="h-6 w-6" />
         <div className="flex flex-col gap-2">
           <span>{submissionUser.username}</span>
-          <Badge variant="outline" className="flex items-center gap-1 px-2 py-0.5 text-xs">
+          <Badge variant="outline" className="flex w-fit items-center gap-1 px-2 py-0.5 text-xs">
             {userRole?.name}
           </Badge>
         </div>
