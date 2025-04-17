@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { CheckIcon, DownloadIcon, FileIcon, FileTextIcon, RefreshCcw, UploadIcon, XIcon } from "lucide-react";
+import {
+  CheckIcon,
+  DownloadIcon,
+  FileIcon,
+  FileTextIcon,
+  RefreshCcw,
+  RefreshCwIcon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -115,6 +124,11 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
     onFileContentChange(defaultContent);
   }, [onFileContentChange]);
 
+  const onFileEditorContentChange = useDebouncedCallback((newContent: string) => {
+    setContent(newContent);
+    onFileContentChange(newContent);
+  }, 300);
+
   const renderContent = (data: string | File | UniconFile) => {
     if (data instanceof File) {
       return <FileCard file={data} onRemove={resetFile} />;
@@ -144,7 +158,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
         className="h-[40vh]"
         fileName={fileName}
         fileContent={isUniconFile(data) ? data.content : data}
-        onFileContentChange={onFileContentChange}
+        onFileContentChange={onFileEditorContentChange}
         canEditFileContent={!readOnly}
       />
     );
@@ -184,6 +198,10 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
               Size limit: {formatFileSize(defaultContent.size_limit * 1024)}
             </span>
           )}
+        <Button variant="ghost" className="rounded-full border px-3 text-xs" type="button" onClick={resetFile}>
+          <RefreshCwIcon size={1} />
+          Reset
+        </Button>
       </div>
       {renderContent(content)}
     </div>
