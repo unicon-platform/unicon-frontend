@@ -1,4 +1,4 @@
-import { BanIcon, ExpandIcon, InfoIcon, PenLineIcon } from "lucide-react";
+import { BanIcon, ExternalLinkIcon, InfoIcon, PenLineIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { ProblemBaseWithPermissions } from "@/api";
@@ -12,9 +12,13 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
   {
     header: "Name",
     cell: ({ row }) => {
+      const id = row.original.id;
       return (
+        // Underline when hovered
         <div className="flex items-center gap-2">
-          <span>{row.original.name}</span>
+          <Link to={`/projects/${row.original.project_id}/problems/${id}`}>
+            <span className="hover:underline">{row.original.name}</span>
+          </Link>
           {row.original.restricted && <RestrictedBadge />}
           {!row.original.published && <DraftBadge />}
         </div>
@@ -91,7 +95,7 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
               to={`/projects/${row.original.project_id}/problems/${id}`}
               className="hover:text-purple-300 hover:underline"
             >
-              <ExpandIcon size={18} />
+              <ExternalLinkIcon size={18} />
             </Link>
           )}
           {row.original.edit && (
