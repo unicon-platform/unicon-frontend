@@ -1,7 +1,6 @@
 import { ProgrammingTask, TaskAttemptPublic } from "@/api";
 import { ProgrammingEnvironment } from "@/components/tasks/programming-environment";
 import ProgrammingSubmitForm from "@/components/tasks/programming-submit";
-import TaskResultCard from "@/components/tasks/submission-results/task-result";
 import TestcaseTabs from "@/features/problems/components/tasks/testcase-tabs";
 import TaskContainer from "@/features/tasks/components/task-container";
 import TaskSection from "@/features/tasks/components/task-section";
@@ -34,15 +33,15 @@ export function Programming({
           <TestcaseTabs testcases={task.testcases} edit={false} taskFiles={task.files} />
         </div>
       </TaskSection>
-      {!canEdit && !submissionAttempt && (
+      {!canEdit && (
         <ProgrammingSubmitForm
           problemId={problemId}
           task={task}
           canSubmit={canSubmit}
           canSubmitWithoutLimit={canSubmitWithoutLimit}
+          submissionAttempt={submissionAttempt}
         />
       )}
-      {submissionAttempt && <TaskResultCard title="Submission" taskAttempt={submissionAttempt} problemId={problemId} />}
     </TaskContainer>
   );
 }
