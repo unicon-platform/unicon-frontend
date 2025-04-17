@@ -198,10 +198,12 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
               Size limit: {formatFileSize(defaultContent.size_limit * 1024)}
             </span>
           )}
-        <Button variant="ghost" className="rounded-full border px-3 text-xs" type="button" onClick={resetFile}>
-          <RefreshCwIcon size={1} />
-          Reset
-        </Button>
+        {!readOnly && (
+          <Button variant="ghost" className="rounded-full border px-3 text-xs" type="button" onClick={resetFile}>
+            <RefreshCwIcon size={1} />
+            Reset
+          </Button>
+        )}
       </div>
       {renderContent(content)}
     </div>
