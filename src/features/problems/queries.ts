@@ -242,12 +242,12 @@ export const useCreateTaskAttempt = (problemId: number, taskId: number) => {
   });
 };
 
-export const getTaskAttemptResults = (problemId: number, taskId: number) => {
+export const getTaskAttemptResults = (problemId: number, taskId: number, userId: number) => {
   return queryOptions({
-    queryKey: [ProblemQueryKeys.Problem, problemId, ProblemQueryKeys.TaskResult, taskId],
+    queryKey: [ProblemQueryKeys.Problem, problemId, ProblemQueryKeys.TaskResult, taskId, userId],
     queryFn: () =>
       getProblemTaskAttemptResults({
-        path: { id: problemId, task_id: taskId },
+        path: { id: problemId, task_id: taskId, user_id: userId },
       }).then((response) => response.data),
   });
 };

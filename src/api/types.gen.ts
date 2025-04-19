@@ -1363,10 +1363,11 @@ export type GetProblemTaskAttemptResultsData = {
     body?: never;
     path: {
         task_id: number;
+        user_id: number | null;
         id: number;
     };
     query?: never;
-    url: '/problems/{id}/tasks/{task_id}/attempts';
+    url: '/problems/{id}/tasks/{task_id}/attempts/{user_id}';
 };
 
 export type GetProblemTaskAttemptResultsErrors = {

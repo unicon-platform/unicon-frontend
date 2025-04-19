@@ -340,7 +340,7 @@ export const getProblemTaskAttemptResults = <ThrowOnError extends boolean = fals
                 type: 'http'
             }
         ],
-        url: '/problems/{id}/tasks/{task_id}/attempts',
+        url: '/problems/{id}/tasks/{task_id}/attempts/{user_id}',
         ...options
     });
 };

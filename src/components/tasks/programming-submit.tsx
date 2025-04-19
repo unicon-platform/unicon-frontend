@@ -42,6 +42,7 @@ import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
 import { downloadFile, formatFileSize, isTextFile } from "@/lib/files";
 import { groupBy, isUniconFile } from "@/lib/utils";
+import { useUserStore } from "@/store/user/user-store-provider";
 import { formatDateShort } from "@/utils/date";
 
 type FileCardProps = {
@@ -225,8 +226,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
   canSubmitWithoutLimit,
   submissionAttempt,
 }) => {
+  const user = useUserStore((store) => store.user)!;
+
   const { data, refetch: refetchAttempts } = useQuery({
-    ...getTaskAttemptResults(problemId, task.id),
+    ...getTaskAttemptResults(problemId, task.id, submissionAttempt ? submissionAttempt.user_id : user.id),
     refetchInterval: ({ state: { data } }) =>
       // Only refetch if there is a pending task result
       data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status === "PENDING"))
