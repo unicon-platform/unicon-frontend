@@ -31,9 +31,9 @@ export const columns: ColumnDef<Result>[] = [
     header: "Label",
   },
   {
-    accessorFn: ({ value }) => JSON.stringify(value),
+    accessorFn: ({ value }) => JSON.stringify(value, null, 2),
     header: "Got",
-    cell: ({ getValue }) => <div className="font-mono">{getValue<string>()}</div>,
+    cell: ({ getValue }) => <p className="whitespace-pre-wrap font-mono">{getValue<string>().replace(/\\n/g, "\n")}</p>,
   },
   {
     id: "expected",
