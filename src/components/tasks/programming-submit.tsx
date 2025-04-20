@@ -500,7 +500,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               </div>
             )}
           </div>
-          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id. 
+          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id.
             Hence `selectedAttempt.task_id === selectedTaskVersionId` is to make sure the website doesn't crash when that happens.
           */}
           {selectedAttemptIdx !== null && selectedAttempt && selectedAttempt.task_id === selectedTaskVersionId && (
@@ -508,9 +508,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
                 ...selectedAttempt,
-                task_results: selectedResult ? [selectedResult] : [],
+                task_results: attemptResultsDesc,
                 task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
               }}
+              attemptResult={selectedResult}
               problemId={problemId}
             />
           )}
