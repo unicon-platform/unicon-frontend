@@ -457,7 +457,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               <SelectContent>
                 {taskVersionIds?.map((taskId, index) => (
                   <SelectGroup key={taskId}>
-                    <SelectLabel className="text-xs">
+                    <SelectLabel className="text-purple-400">
                       Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
                     </SelectLabel>
                     {(groupedAttempts[taskId] ?? []).length === 0 && (
