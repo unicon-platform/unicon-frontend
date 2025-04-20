@@ -4,11 +4,11 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-type ProgressProps = typeof ProgressPrimitive.Root & {
+interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
   duration?: number;
-};
+}
 
-const Progress = React.forwardRef<React.ElementRef<ProgressProps>, React.ComponentPropsWithoutRef<ProgressProps>>(
+const Progress = React.forwardRef<React.ElementRef<typeof ProgressPrimitive.Root>, ProgressProps>(
   ({ className, value, duration, ...props }, ref) => (
     <ProgressPrimitive.Root
       ref={ref}

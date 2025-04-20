@@ -37,16 +37,16 @@ const ATTEMPT_STATUS_MESSAGE: Record<TaskEvalStatus, string> = {
 type TaskResultCardProps = {
   problemId: number;
   taskAttempt: TaskAttemptPublic;
-  attemptResult: TaskResult;
+  attemptResult: TaskResult | null;
   title: string;
 };
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, attemptResult, title }) => {
-  const getCompletedAtEstimate = () => {
+  const getCompletedAtEstimate = (attemptResult: TaskResult) => {
     const elapsedTimeMsList = taskAttempt.task_results
       .filter((taskResult) => taskResult.completed_at !== null)
       .map((taskResult) =>
-        differenceInMilliseconds(parseISO(taskResult.completed_at), parseISO(taskResult.started_at)),
+        differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
       );
 
     const avgeElapsedTimeMs =
@@ -55,12 +55,12 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
     return addMilliseconds(parseISO(attemptResult.started_at), avgeElapsedTimeMs);
   };
 
-  const completedAt: Date = attemptResult.completed_at
-    ? parseISO(attemptResult.completed_at)
-    : getCompletedAtEstimate();
-
-  const renderTiming = () => {
+  const renderTiming = (attemptResult: TaskResult) => {
     const startedAtDate = parseISO(attemptResult.started_at);
+    const completedAt: Date = attemptResult.completed_at
+      ? parseISO(attemptResult.completed_at)
+      : getCompletedAtEstimate(attemptResult);
+
     return (
       <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
         <Tooltip>
@@ -93,13 +93,17 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
     );
   };
 
-  const renderResult = () => {
+  const renderResult = (attemptResult: TaskResult) => {
     if (attemptResult.status !== "SUCCESS") {
       return (
         <>
           <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
           {attemptResult.status === "PENDING" && (
-            <ProgressInterval start={attemptResult.started_at} end={completedAt} className="mt-6" />
+            <ProgressInterval
+              start={attemptResult.started_at}
+              end={getCompletedAtEstimate(attemptResult)}
+              className="mt-6"
+            />
           )}
         </>
       );
@@ -127,7 +131,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         <CardTitle className="flex items-center gap-4">
           <StatusIndicator
             color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-purple-400"}
-            pulse={attemptResult && attemptResult.status == "PENDING"}
+            pulse={attemptResult ? attemptResult.status == "PENDING" : false}
           />
           <span className="text-lg font-medium">{title}</span>
           {taskAttempt.marked_for_submission && (
@@ -140,12 +144,12 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
               </TooltipContent>
             </Tooltip>
           )}
-          {attemptResult && renderTiming()}
+          {attemptResult && renderTiming(attemptResult)}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {attemptResult ? (
-          renderResult()
+          renderResult(attemptResult)
         ) : (
           <div className="flex flex-col gap-2">
             <span className="font-medium">No results found for this attempt 🥺</span>
