@@ -15,6 +15,7 @@ const FileZ = z.object({
   trusted: z.boolean().optional(),
   key: z.string().optional().nullable(),
   on_minio: z.boolean().optional(),
+  is_binary: z.boolean().optional(),
   size_limit: z.number(),
 });
 

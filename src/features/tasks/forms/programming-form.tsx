@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import { GraphAction, graphReducer } from "@/features/problems/components/tasks/graph-context";
@@ -38,6 +39,7 @@ const createDefaultUserInput = () => ({
     content: "# INSERT FILE TEMPLATE HERE",
     trusted: false,
     size_limit: 0,
+    is_binary: false,
   },
 });
 
@@ -167,7 +169,12 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
 
   const updateUserInput = (
     index: number,
-    { newLabel, newFileContent, newSizeLimit }: { newLabel?: string; newFileContent?: string; newSizeLimit?: number },
+    {
+      newLabel,
+      newFileContent,
+      newSizeLimit,
+      isBinary,
+    }: { newLabel?: string; newFileContent?: string; newSizeLimit?: number; isBinary?: boolean } = {},
   ) => {
     const oldInput = userInputs.fields[index];
     const oldFileData = oldInput.data as UniconFile;
@@ -179,6 +186,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
         path: newLabel ?? oldInput.label,
         content: newFileContent ?? oldFileData.content,
         size_limit: newSizeLimit ?? oldFileData.size_limit ?? 0,
+        is_binary: isBinary ?? oldFileData.is_binary,
       },
     });
   };
@@ -409,6 +417,16 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                       onChange={(newLabel) => updateUserInput(index, { newLabel })}
                       canEdit={true}
                     />
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <p>Binary File</p>
+                        <InfoTooltip content="If checked, this file will be treated as a binary file. Users will only be able to upload instead of editing the file textually." />
+                      </div>
+                      <Switch
+                        checked={(input.data as UniconFile).is_binary}
+                        onCheckedChange={(checked) => updateUserInput(index, { isBinary: checked })}
+                      />
+                    </div>
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">
                         <EyeIcon size={15} />

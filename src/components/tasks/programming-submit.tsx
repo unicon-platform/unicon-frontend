@@ -152,6 +152,19 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
           </div>
         </div>
       );
+    } else if (isUniconFile(data) && data.is_binary) {
+      return (
+        <div className="mt-2 flex w-fit items-center gap-2 text-sm text-zinc-400">
+          {readOnly ? (
+            <span>No file is uploaded</span>
+          ) : (
+            <>
+              <UploadIcon className="h-4 w-4" />
+              <span>Click the upload button to select and upload your file</span>
+            </>
+          )}
+        </div>
+      );
     }
 
     return (
@@ -166,7 +179,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 rounded-lg border p-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <FileTextIcon size={20} />
