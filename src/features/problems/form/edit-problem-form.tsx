@@ -5,7 +5,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Problem } from "@/api";
-import { DateTimeField, RadioBooleanField, TextAreaField, TextField } from "@/components/form/fields";
+import { RichTextEditorAdvanced } from "@/components/editor";
+import { DateTimeField, RadioBooleanField, TextField } from "@/components/form/fields";
 import ErrorAlert from "@/components/form/fields/error-alert";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ type ProblemFormType = z.infer<typeof problemFormSchema>;
 
 const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
   const [error, setError] = useState("");
+  const [content, setContent] = useState(problem.description);
 
   const updateProblemMutation = useUpdateProblem(id);
 
@@ -62,6 +64,14 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
     resolver: zodResolver(problemFormSchema),
     defaultValues: problem,
   });
+
+  useEffect(() => {
+    form.setValue("description", content);
+  }, [content, form]);
+
+  const onChangeContent = (value: string) => {
+    setContent(value);
+  };
 
   const [bufferedFiles, setBufferedFiles] = useState<BufferedFiles>({ filesToAdd: [], fileIdsToRemove: [] });
   const hasBufferedFileState = bufferedFiles.filesToAdd.length > 0 || bufferedFiles.fileIdsToRemove.length > 0;
@@ -149,7 +159,8 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
             </div>
             <div className="flex w-full flex-col gap-4">
               <TextField label="Title" name="name" />
-              <TextAreaField label="Description" name="description" rows={5} />
+              <label>Description</label>
+              <RichTextEditorAdvanced content={content} onChangeContent={onChangeContent} />
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <DateTimeField name="started_at" label="Release Date" />
                 <DateTimeField name="ended_at" label="Due Date" />

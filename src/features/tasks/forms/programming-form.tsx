@@ -3,12 +3,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/r
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
 import { EyeIcon, InfoIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
 import { File as UniconFile, InputStep } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
-import { CheckboxField, NumberField, SelectField, TextAreaField, TextField } from "@/components/form/fields";
+import { RichTextEditorBasic } from "@/components/editor";
+import { CheckboxField, NumberField, SelectField, TextField } from "@/components/form/fields";
 import FormSection from "@/components/form/form-section";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
@@ -80,10 +81,20 @@ type ProgrammingFormProps = {
 };
 
 const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, onSubmit, submitErrors }) => {
+  const [content, setContent] = useState(initialValue && initialValue.description ? initialValue.description : "");
+
   const form = useForm<ProgTaskFormT>({
     resolver: zodResolver(ProgTaskFormZ),
     defaultValues: initialValue ?? DEFAULT_FORM_VALUES,
   });
+
+  useEffect(() => {
+    form.setValue("description", content);
+  }, [content, form]);
+
+  const onChangeContent = (value: string) => {
+    setContent(value);
+  };
 
   const userInputs = useFieldArray({
     control: form.control,
@@ -259,7 +270,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
             <TextField name="title" className="w-1/3" />
           </FormSection>
           <FormSection title="Description">
-            <TextAreaField name="description" rows={4} />
+            <RichTextEditorBasic content={content} onChangeContent={onChangeContent} />
           </FormSection>
           <MinScoreSection />
           <AttemptLimitSection />

@@ -112,3 +112,7 @@ table > :last-child > :last-child > :last-child {
     @apply bg-background text-foreground;
   }
 }
+
+.node-katex > span {
+  background-color: transparent !important;
+}

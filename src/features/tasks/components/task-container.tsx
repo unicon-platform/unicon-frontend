@@ -1,7 +1,10 @@
+import "katex/dist/katex.min.css";
+
 import { PropsWithChildren } from "react";
 
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
+import { renderKatex } from "@/utils/katex";
 
 type OwnProps = {
   title: string;
@@ -20,7 +23,10 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ title, description, child
       {description && (
         <TaskSection>
           <TaskSectionHeader content="Description" />
-          <p className="whitespace-pre-line text-sm text-zinc-100">{description}</p>
+          <div
+            className="prose whitespace-pre-line text-sm text-zinc-100 dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: renderKatex(description) }}
+          ></div>
         </TaskSection>
       )}
       {children}
