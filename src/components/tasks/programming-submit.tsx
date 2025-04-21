@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import {
   getTaskAttemptResults,
@@ -152,6 +153,19 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
           </div>
         </div>
       );
+    } else if (isUniconFile(data) && data.is_binary) {
+      return (
+        <div className="mt-2 flex w-fit items-center gap-2 text-sm text-zinc-400">
+          {readOnly ? (
+            <span>No file is uploaded</span>
+          ) : (
+            <>
+              <UploadIcon className="h-4 w-4" />
+              <span>Click the upload button to select and upload your file</span>
+            </>
+          )}
+        </div>
+      );
     }
 
     return (
@@ -166,7 +180,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 rounded-lg border p-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <FileTextIcon size={20} />
@@ -233,7 +247,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
     refetchInterval: ({ state: { data } }) =>
       // Only refetch if there is a pending task result
       data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status === "PENDING"))
-        ? 5000
+        ? REFETCH_ATTEMPTS_INTERVAL_MS
         : false,
   });
 
@@ -444,7 +458,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               <SelectContent>
                 {taskVersionIds?.map((taskId, index) => (
                   <SelectGroup key={taskId}>
-                    <SelectLabel className="text-xs">
+                    <SelectLabel className="text-purple-400">
                       Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
                     </SelectLabel>
                     {(groupedAttempts[taskId] ?? []).length === 0 && (
@@ -500,7 +514,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               </div>
             )}
           </div>
-          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id. 
+          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id.
             Hence `selectedAttempt.task_id === selectedTaskVersionId` is to make sure the website doesn't crash when that happens.
           */}
           {selectedAttemptIdx !== null && selectedAttempt && selectedAttempt.task_id === selectedTaskVersionId && (
@@ -508,9 +522,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
                 ...selectedAttempt,
-                task_results: selectedResult ? [selectedResult] : [],
                 task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
               }}
+              attemptResult={selectedResult}
+              attempts={attemptsDesc}
               problemId={problemId}
             />
           )}

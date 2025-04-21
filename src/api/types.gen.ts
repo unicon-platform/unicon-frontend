@@ -58,6 +58,7 @@ export type File = {
     id: string;
     path: string;
     content: string;
+    is_binary?: boolean;
     on_minio?: boolean;
     key?: string | null;
     size_limit?: number;
