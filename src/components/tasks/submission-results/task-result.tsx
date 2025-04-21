@@ -89,7 +89,7 @@ type TaskResultCardProps = {
 };
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, attemptResult, attempts, title }) => {
-  const getCompletedAtEstimate = (attemptResult: TaskResult, smoothing: number = 2) => {
+  const getCompletedAtEstimate = (attemptResult: TaskResult, smoothing: number = 2, maxLength: number = 10) => {
     const results: Array<TaskResult> = attempts.reduce(
       (acc, attempt) => [...acc, ...attempt.task_results],
       [] as Array<TaskResult>,
@@ -99,14 +99,16 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       return null;
     }
 
-    const elapsedTimeMsList = completedResults.map((taskResult) =>
-      differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
-    );
+    const elapsedTimeMsListDesc = completedResults
+      .sort((a, b) => b.id - a.id)
+      .map((taskResult) =>
+        differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
+      );
 
-    const multiplier: number = smoothing / (elapsedTimeMsList.length + 1);
-    const avgElapsedTimeMs = elapsedTimeMsList.reduce(
-      (acc, elapsedTimeMs) => multiplier * elapsedTimeMs + (1 - multiplier) * acc,
-    );
+    const multiplier: number = smoothing / (elapsedTimeMsListDesc.length + 1);
+    const avgElapsedTimeMs = elapsedTimeMsListDesc
+      .splice(0, maxLength)
+      .reduce((acc, elapsedTimeMs) => multiplier * elapsedTimeMs + (1 - multiplier) * acc);
 
     return addMilliseconds(parseISO(attemptResult.started_at), avgElapsedTimeMs + REFETCH_ATTEMPTS_INTERVAL_MS);
   };
