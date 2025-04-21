@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import {
   getTaskAttemptResults,
@@ -233,7 +234,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
     refetchInterval: ({ state: { data } }) =>
       // Only refetch if there is a pending task result
       data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status === "PENDING"))
-        ? 5000
+        ? REFETCH_ATTEMPTS_INTERVAL_MS
         : false,
   });
 

@@ -9,6 +9,7 @@ import ProgrammingResult from "@/components/tasks/submission-results/result-type
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProgressInterval } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { formatIntervalDuration, relativeTime } from "@/utils/date";
@@ -105,7 +106,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
     const avgElapsedTimeMs =
       elapsedTimeMsList.reduce((acc, elapsedTimeMs) => acc + elapsedTimeMs, 0) / elapsedTimeMsList.length;
 
-    return addMilliseconds(parseISO(attemptResult.started_at), avgElapsedTimeMs);
+    return addMilliseconds(parseISO(attemptResult.started_at), avgElapsedTimeMs + REFETCH_ATTEMPTS_INTERVAL_MS);
   };
 
   const renderTiming = (attemptResult: TaskResult) => {
