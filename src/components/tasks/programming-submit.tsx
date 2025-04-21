@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import FileEditor from "@/features/problems/components/tasks/file-editor";
 import {
   getTaskAttemptResults,
@@ -246,7 +247,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
     refetchInterval: ({ state: { data } }) =>
       // Only refetch if there is a pending task result
       data?.some((taskAttempt) => taskAttempt.task_results.some((result) => result.status === "PENDING"))
-        ? 5000
+        ? REFETCH_ATTEMPTS_INTERVAL_MS
         : false,
   });
 
@@ -513,7 +514,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               </div>
             )}
           </div>
-          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id. 
+          {/* When the task version first changes, it renders the task before the useEffect to change the task_attempt id.
             Hence `selectedAttempt.task_id === selectedTaskVersionId` is to make sure the website doesn't crash when that happens.
           */}
           {selectedAttemptIdx !== null && selectedAttempt && selectedAttempt.task_id === selectedTaskVersionId && (
@@ -521,9 +522,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
                 ...selectedAttempt,
-                task_results: selectedResult ? [selectedResult] : [],
                 task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
               }}
+              attemptResult={selectedResult}
+              attempts={attemptsDesc}
               problemId={problemId}
             />
           )}
