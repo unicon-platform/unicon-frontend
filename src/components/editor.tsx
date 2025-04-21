@@ -145,6 +145,7 @@ export const RichTextEditorComponent: React.FC<RichTextEditorComponentProps> = (
   return (
     <RichTextEditor
       output="html"
+      dark={true}
       content={content}
       onChangeContent={onChangeContent}
       extensions={editorTypeExtensions[type]}

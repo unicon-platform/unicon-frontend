@@ -113,6 +113,10 @@ table > :last-child > :last-child > :last-child {
   }
 }
 
+.richtext-outline {
+  outline-color: hsl(var(--input)) !important;
+}
+
 .node-katex > span {
   background-color: transparent !important;
 }
