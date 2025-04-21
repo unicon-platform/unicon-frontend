@@ -112,3 +112,11 @@ table > :last-child > :last-child > :last-child {
     @apply bg-background text-foreground;
   }
 }
+
+.json-grid-container {
+  background-color: transparent !important;
+
+  .order {
+    background-color: transparent !important;
+  }
+}
