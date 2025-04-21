@@ -508,10 +508,10 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               title={`Attempt ${attemptsDesc.length - selectedAttemptIdx}`}
               taskAttempt={{
                 ...selectedAttempt,
-                task_results: attemptResultsDesc,
                 task: { ...task, problem_id: problemId, autograde: task.autograde ?? false, other_fields: { ...task } },
               }}
               attemptResult={selectedResult}
+              attempts={attemptsDesc}
               problemId={problemId}
             />
           )}

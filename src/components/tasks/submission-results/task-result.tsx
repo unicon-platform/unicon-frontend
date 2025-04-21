@@ -1,7 +1,8 @@
-import { addMilliseconds, differenceInMilliseconds, format, parseISO } from "date-fns";
+import { addMilliseconds, constructNow, differenceInMilliseconds, format, parseISO } from "date-fns";
 import { CheckIcon, ClockIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { TaskAttemptPublic, TaskEvalStatus, TaskResult } from "@/api";
+import { TaskAttemptPublic, TaskAttemptResult, TaskEvalStatus, TaskResult } from "@/api";
 import MultipleChoiceResult from "@/components/tasks/submission-results/result-types/multiple-choice-result";
 import MultipleResponseResult from "@/components/tasks/submission-results/result-types/multiple-response-result";
 import ProgrammingResult from "@/components/tasks/submission-results/result-types/programming-result";
@@ -26,6 +27,50 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ color, pulse }) => {
   );
 };
 
+type CompletionIndicatorProps = {
+  start: Date;
+  end: Date;
+  completed: boolean;
+};
+
+const CompletionIndicator: React.FC<CompletionIndicatorProps> = ({ start, end, completed }) => {
+  const [current, setCurrent] = useState(constructNow(Date.now()));
+  const startCurrent = completed ? start : current;
+
+  useEffect(() => {
+    const animate = () => {
+      setCurrent(constructNow(Date.now()));
+      if (!completed) {
+        requestAnimationFrame(animate);
+      }
+    };
+    const animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [start, end, completed]);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
+          <ClockIcon size={15} />
+          {startCurrent <= end
+            ? (!completed ? "ETA: " : "") + formatIntervalDuration(startCurrent, end)
+            : "Elapsed: " + formatIntervalDuration(start, startCurrent)}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="top" align="center">
+        <p className="text-sm font-medium">
+          {!completed ? "Estimated completion: " : "Completed at "}
+          {format(end, "dd MMM yyyy, HH:mm:ss")}
+        </p>
+        <p className="text-wrap text-xs">
+          Round trip time from submission to completion, including testcase execution and queue time.
+        </p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
 const ATTEMPT_STATUS_MESSAGE: Record<TaskEvalStatus, string> = {
   PENDING: "Hold tight! Your submission is being evaluated... ⏳",
   SKIPPED: "Hmm, this needs a human touch! 👀 Your submission requires manual grading by an instructor.",
@@ -38,26 +83,34 @@ type TaskResultCardProps = {
   problemId: number;
   taskAttempt: TaskAttemptPublic;
   attemptResult: TaskResult | null;
+  attempts: Array<TaskAttemptResult>;
   title: string;
 };
 
-const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, attemptResult, title }) => {
+const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, attemptResult, attempts, title }) => {
   const getCompletedAtEstimate = (attemptResult: TaskResult) => {
-    const elapsedTimeMsList = taskAttempt.task_results
-      .filter((taskResult) => taskResult.completed_at !== null)
-      .map((taskResult) =>
-        differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
-      );
+    const results: Array<TaskResult> = attempts.reduce(
+      (acc, attempt) => [...acc, ...attempt.task_results],
+      [] as Array<TaskResult>,
+    );
+    const completedResults: Array<TaskResult> = results.filter((taskResult) => taskResult.completed_at !== null);
+    if (completedResults.length == 0) {
+      return null;
+    }
 
-    const avgeElapsedTimeMs =
+    const elapsedTimeMsList = completedResults.map((taskResult) =>
+      differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
+    );
+
+    const avgElapsedTimeMs =
       elapsedTimeMsList.reduce((acc, elapsedTimeMs) => acc + elapsedTimeMs, 0) / elapsedTimeMsList.length;
 
-    return addMilliseconds(parseISO(attemptResult.started_at), avgeElapsedTimeMs);
+    return addMilliseconds(parseISO(attemptResult.started_at), avgElapsedTimeMs);
   };
 
   const renderTiming = (attemptResult: TaskResult) => {
-    const startedAtDate = parseISO(attemptResult.started_at);
-    const completedAt: Date = attemptResult.completed_at
+    const startedAt: Date = parseISO(attemptResult.started_at);
+    const completedAt: Date | null = attemptResult.completed_at
       ? parseISO(attemptResult.completed_at)
       : getCompletedAtEstimate(attemptResult);
 
@@ -65,45 +118,28 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
         <Tooltip>
           <TooltipTrigger>
-            <span>{relativeTime(startedAtDate)}</span>
+            <span>{relativeTime(startedAt)}</span>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
-            <span className="text-sm">Submitted at {format(startedAtDate, "dd MMM yyyy, HH:mm:ss")}</span>
+            <span className="text-sm">Submitted at {format(startedAt, "dd MMM yyyy, HH:mm:ss")}</span>
           </TooltipContent>
         </Tooltip>
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
-              <ClockIcon size={15} />
-              {!attemptResult.completed_at && "ETA: "}
-              {formatIntervalDuration(startedAtDate, completedAt)}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="top" align="center">
-            <p className="text-sm font-medium">
-              {!attemptResult.completed_at ? "Estimated completion: " : "Completed at "}
-              {format(completedAt, "dd MMM yyyy, HH:mm:ss")}
-            </p>
-            <p className="text-wrap text-xs">
-              Round trip time from submission to completion, including testcase execution and queue time.
-            </p>
-          </TooltipContent>
-        </Tooltip>
+        {completedAt && (
+          <CompletionIndicator start={startedAt} end={completedAt} completed={attemptResult.completed_at !== null} />
+        )}
       </div>
     );
   };
 
   const renderResult = (attemptResult: TaskResult) => {
     if (attemptResult.status !== "SUCCESS") {
+      const completedAtEstimate: Date | null | false =
+        attemptResult.status === "PENDING" && getCompletedAtEstimate(attemptResult);
       return (
         <>
           <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
-          {attemptResult.status === "PENDING" && (
-            <ProgressInterval
-              start={attemptResult.started_at}
-              end={getCompletedAtEstimate(attemptResult)}
-              className="mt-6"
-            />
+          {completedAtEstimate && (
+            <ProgressInterval start={parseISO(attemptResult.started_at)} end={completedAtEstimate} className="mt-6" />
           )}
         </>
       );
