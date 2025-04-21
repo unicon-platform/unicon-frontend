@@ -89,7 +89,7 @@ type TaskResultCardProps = {
 };
 
 const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt, attemptResult, attempts, title }) => {
-  const getCompletedAtEstimate = (attemptResult: TaskResult) => {
+  const getCompletedAtEstimate = (attemptResult: TaskResult, smoothing: number = 2) => {
     const results: Array<TaskResult> = attempts.reduce(
       (acc, attempt) => [...acc, ...attempt.task_results],
       [] as Array<TaskResult>,
@@ -103,8 +103,10 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       differenceInMilliseconds(parseISO(taskResult.completed_at || ""), parseISO(taskResult.started_at)),
     );
 
-    const avgElapsedTimeMs =
-      elapsedTimeMsList.reduce((acc, elapsedTimeMs) => acc + elapsedTimeMs, 0) / elapsedTimeMsList.length;
+    const multiplier: number = smoothing / (elapsedTimeMsList.length + 1);
+    const avgElapsedTimeMs = elapsedTimeMsList.reduce(
+      (acc, elapsedTimeMs) => multiplier * elapsedTimeMs + (1 - multiplier) * acc,
+    );
 
     return addMilliseconds(parseISO(attemptResult.started_at), avgElapsedTimeMs + REFETCH_ATTEMPTS_INTERVAL_MS);
   };
