@@ -8,7 +8,6 @@ import Layout from "@/components/layout/layout.tsx";
 import { getOrganisationById } from "@/features/organisations/queries";
 import { getProblemById } from "@/features/problems/queries";
 import { getProjectById, getProjectGroupById } from "@/features/projects/queries";
-import CreateSubmission from "@/pages/create-submission";
 import Error from "@/pages/error";
 import Login from "@/pages/login";
 import CreateOrganisation from "@/pages/organisations/create-organisation";
@@ -313,13 +312,6 @@ export const routes = [
                                 ],
                               },
                             ],
-                          },
-                          {
-                            path: "submissions/new",
-                            element: <CreateSubmission />,
-                            handle: {
-                              crumb: () => ({ title: "New Submission" }),
-                            },
                           },
                         ],
                       },

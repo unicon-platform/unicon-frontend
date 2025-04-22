@@ -14,7 +14,6 @@ import {
   getProjectSubmissions,
   getPythonVersions,
   getSubmission,
-  makeSubmission,
   MultipleChoiceTask,
   MultipleResponseTask,
   parsePythonFunctions,
@@ -256,43 +255,6 @@ export const getSubmissionById = (submissionId: number) => {
   return queryOptions({
     queryKey: [ProblemQueryKeys.Submission, submissionId],
     queryFn: () => getSubmission({ path: { submission_id: submissionId } }).then((response) => response.data),
-  });
-};
-
-type Submission = {
-  user_inputs: UserInput[];
-};
-
-export const useCreateSubmission = (problemId: number) => {
-  return useMutation({
-    mutationFn: (data: Submission) => {
-      return Promise.all(
-        data.user_inputs.map((input) =>
-          submitProblemTaskAttempt({
-            body: input,
-            path: {
-              id: problemId,
-              task_id: input.task_id,
-            },
-          }),
-        ),
-      ).then((response) =>
-        makeSubmission({
-          body: response.map((res) => res.data?.id).filter((id) => id !== undefined),
-          path: { id: problemId },
-        }),
-      );
-    },
-  });
-};
-
-export const useCreateProblemSubmission = (problemId: number) => {
-  return useMutation({
-    mutationFn: () =>
-      makeSubmission({
-        body: [],
-        path: { id: problemId },
-      }),
   });
 };
 
