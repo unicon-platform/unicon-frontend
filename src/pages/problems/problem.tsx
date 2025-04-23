@@ -28,17 +28,11 @@ const Problem = ({ id, submissionId, submissionAttempts, submissionUser }: Probl
   const { data: problem } = useQuery(getProblemById(problemId));
   if (!problem) return;
 
-  const { edit: canEdit, make_submission: canSubmit, description, supporting_files } = problem;
+  const { edit: canEdit, description, supporting_files } = problem;
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <ProblemHeader
-        problem={problem}
-        projectId={projectId}
-        canEdit={!isSubmissionView && canEdit}
-        /* TODO: Disable submissions for user testing (09/04/25) */
-        canSubmit={false && !isSubmissionView && canSubmit} // eslint-disable-line no-constant-binary-expression
-      />
+      <ProblemHeader problem={problem} projectId={projectId} canEdit={!isSubmissionView && canEdit} />
       {!isSubmissionView && (
         <ProblemTabs
           leaderboardEnabled={problem.leaderboard_enabled ?? false}

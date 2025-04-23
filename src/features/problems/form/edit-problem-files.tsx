@@ -120,7 +120,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, buffered
                     <Checkbox
                       checked={selectedBufferedFileIndexes.includes(index)}
                       onClick={() => {
-                        setSelectedFileIds((prev) =>
+                        setSelectedBufferedFileIndexes((prev) =>
                           prev.includes(index) ? prev.filter((id) => id !== index) : [...prev, index],
                         );
                       }}

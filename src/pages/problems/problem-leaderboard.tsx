@@ -91,7 +91,7 @@ const ProblemLeaderboard = ({ id }: ProblemLeaderboardProps) => {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <ProblemHeader problem={problem} projectId={projectId} canEdit={canEdit} canSubmit={false} />
+      <ProblemHeader problem={problem} projectId={projectId} canEdit={canEdit} />
       <ProblemTabs
         leaderboardEnabled={problem.leaderboard_enabled ?? false}
         defaultValue="leaderboard"

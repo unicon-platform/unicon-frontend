@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { isRouteErrorResponse, Link, useRouteError } from "react-router-dom";
+import { isRouteErrorResponse, Link, Navigate, useRouteError } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +32,8 @@ const ErrorPage: React.FC<OwnProps> = () => {
     if (routeError.response) {
       errorStatus = `[${routeError.response.status}] ${routeError.response.statusText}`;
       switch (routeError.response.status) {
+        case 401:
+          return <Navigate to="/login" />;
         case 404:
           errorMessage = ERROR_404;
           break;

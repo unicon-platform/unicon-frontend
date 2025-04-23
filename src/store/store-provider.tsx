@@ -1,6 +1,7 @@
 "use client";
 
 import { DefaultOptions, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import qs from "qs";
 import { ReactNode } from "react";
 
@@ -14,6 +15,16 @@ const queryClientConfig: DefaultOptions<Error> = {
     // If this value proves too high (stale values getting shown), we can try to lower it.
     // TODO: if https://github.com/uniconhq/backend/issues/125 is fixed, consider lowering this to 1000
     staleTime: 3000,
+    retry: (failureCount, error) => {
+      // Do not retry on 4xx errors
+      if (error instanceof AxiosError && error.response?.status && error.response?.status) {
+        const statusCode = error.response?.status;
+        if (statusCode >= 400 && statusCode < 500) {
+          return false;
+        }
+      }
+      return failureCount < 3;
+    },
   },
 };
 const queryClient = new QueryClient({ defaultOptions: queryClientConfig });
