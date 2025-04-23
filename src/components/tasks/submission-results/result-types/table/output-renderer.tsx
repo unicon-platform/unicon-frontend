@@ -31,7 +31,15 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({ output }) => {
   if (outputObject) {
     return (
       <Collapsible>
-        <JSONGrid data={outputObject} />
+        <JSONGrid
+          data={outputObject}
+          theme={"default"}
+          customTheme={{
+            bgColor: "transparent",
+            tableHeaderBgColor: "transparent",
+            selectHighlightBgColor: "#ffffff1a",
+          }}
+        />
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="w-full justify-between">
             Original Output
