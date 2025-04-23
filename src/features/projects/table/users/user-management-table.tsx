@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { ProjectPublicWithProblems, UserPublicWithRolesAndGroups } from "@/api";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
@@ -92,7 +93,15 @@ export const UserManagementTable: React.FC<UserManagementTableProps> = ({ projec
             const userRole = projectRoles.filter((role) => user.roles.some((userRole) => userRole.id === role.id))[0];
             return (
               <TableRow key={user.id}>
-                <TableCell>{user.username}</TableCell>
+                <TableCell className="gap-4">
+                  {user.username}
+                  {user.id === loggedInUser.id && (
+                    <>
+                      {" "}
+                      <Badge variant="outline">You</Badge>
+                    </>
+                  )}
+                </TableCell>
                 <TableCell>
                   <Select
                     value={userRole.id.toString()}
@@ -111,7 +120,7 @@ export const UserManagementTable: React.FC<UserManagementTableProps> = ({ projec
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <Button variant="outline" onClick={() => handleRemoveUser(user.id)}>
+                  <Button variant="destructive" onClick={() => handleRemoveUser(user.id)}>
                     {user.id === loggedInUser.id ? "Leave" : "Remove"}
                   </Button>
                 </TableCell>
