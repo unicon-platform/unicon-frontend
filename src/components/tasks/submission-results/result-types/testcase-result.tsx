@@ -45,7 +45,7 @@ const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase
       <div className="flex items-center gap-3">
         <span className="text-lg">Testcase {index + 1}</span>
         {result.elapsed_time_ns !== undefined && result.elapsed_time_ns !== null && (
-          <div className="flex items-center gap-1 rounded-md border px-2 py-1">
+          <div className="flex items-center gap-1 rounded-md border bg-secondary/50 px-2 py-1 text-secondary-foreground/75">
             <TimerIcon size={15} />
             <span className="font-mono text-xs">{formatElapsedTime(result.elapsed_time_ns)}</span>
           </div>

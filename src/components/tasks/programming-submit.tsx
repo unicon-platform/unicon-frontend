@@ -443,66 +443,68 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
       <TaskSection>
         <TaskSectionHeader content="Results" />
         <div className="relative flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <Select
-              value={selectedAttemptIdx?.toString() ?? ""}
-              onValueChange={(value) => {
-                setSelectedAttemptIdx(+value);
-                setSelectedTaskVersionId(attemptsDesc[+value].task_id);
-              }}
-              disabled={attempts === undefined || attempts.length == 0}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select an attempt" />
-              </SelectTrigger>
-              <SelectContent>
-                {taskVersionIds?.map((taskId, index) => (
-                  <SelectGroup key={taskId}>
-                    <SelectLabel className="text-xs text-primary/50">
-                      Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
-                    </SelectLabel>
-                    {(groupedAttempts[taskId] ?? []).length === 0 && (
-                      <SelectItem disabled value="-1">
-                        No attempts
-                      </SelectItem>
-                    )}
-                    {groupedAttempts[taskId]?.map((attempt) => (
-                      <SelectItem key={attempt.id} value={`${attempt.index}`}>
-                        <div className="flex items-center gap-2">
-                          Attempt #{attempts.length - attempt.index}{" "}
-                          {attempt.marked_for_submission && <CheckIcon className="h-4 w-4 text-success" />}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedAttempt && attemptResultsDesc.length > 0 && (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-row gap-4">
               <Select
-                key={selectedAttempt.id}
-                value={selectedResultIdx?.toString() ?? ""}
-                onValueChange={(value) => setSelectedResultIdx(+value)}
+                value={selectedAttemptIdx?.toString() ?? ""}
+                onValueChange={(value) => {
+                  setSelectedAttemptIdx(+value);
+                  setSelectedTaskVersionId(attemptsDesc[+value].task_id);
+                }}
+                disabled={attempts === undefined || attempts.length == 0}
               >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a result" />
+                  <SelectValue placeholder="Select an attempt" />
                 </SelectTrigger>
                 <SelectContent>
-                  {attemptResultsDesc.map((taskResult, index) => (
-                    // The value is the index in reverse order since it is sorted by recency
-                    <SelectItem key={taskResult.id} value={`${index}`}>
-                      Result #{selectedAttempt.task_results.length - index}
-                    </SelectItem>
+                  {taskVersionIds?.map((taskId, index) => (
+                    <SelectGroup key={taskId}>
+                      <SelectLabel className="text-xs text-primary/50">
+                        Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
+                      </SelectLabel>
+                      {(groupedAttempts[taskId] ?? []).length === 0 && (
+                        <SelectItem disabled value="-1">
+                          No attempts
+                        </SelectItem>
+                      )}
+                      {groupedAttempts[taskId]?.map((attempt) => (
+                        <SelectItem key={attempt.id} value={`${attempt.index}`}>
+                          <div className="flex items-center gap-2">
+                            Attempt #{attempts.length - attempt.index}{" "}
+                            {attempt.marked_for_submission && <CheckIcon className="h-4 w-4 text-success" />}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   ))}
                 </SelectContent>
               </Select>
-            )}
-            {selectedAttempt && (
-              <Button type="button" onClick={() => rerunAttempt(selectedAttempt.id)}>
-                <RefreshCcw />
-                Rerun
-              </Button>
-            )}
+              {selectedAttempt && attemptResultsDesc.length > 0 && (
+                <Select
+                  key={selectedAttempt.id}
+                  value={selectedResultIdx?.toString() ?? ""}
+                  onValueChange={(value) => setSelectedResultIdx(+value)}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select a result" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {attemptResultsDesc.map((taskResult, index) => (
+                      // The value is the index in reverse order since it is sorted by recency
+                      <SelectItem key={taskResult.id} value={`${index}`}>
+                        Result #{selectedAttempt.task_results.length - index}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {selectedAttempt && (
+                <Button type="button" onClick={() => rerunAttempt(selectedAttempt.id)}>
+                  <RefreshCcw />
+                  Rerun
+                </Button>
+              )}
+            </div>
             {!submissionAttempt && selectedAttempt && isUpdatedTask && (
               <div className="flex items-center gap-2">
                 <span>Mark for submission</span>

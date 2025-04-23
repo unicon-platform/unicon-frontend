@@ -52,7 +52,7 @@ const CompletionIndicator: React.FC<CompletionIndicatorProps> = ({ start, end, c
   return (
     <Tooltip>
       <TooltipTrigger>
-        <div className="flex items-center gap-1 rounded-md border px-2 py-1">
+        <div className="flex items-center gap-1 rounded-md border bg-secondary/50 px-2 py-1 text-secondary-foreground/75">
           <ClockIcon size={15} />
           {startCurrent <= end
             ? (!completed ? "ETA: " : "") + formatIntervalDuration(startCurrent, end)
@@ -123,7 +123,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       <div className="flex items-center gap-4 text-sm font-normal">
         <Tooltip>
           <TooltipTrigger>
-            <span>{relativeTime(startedAt)}</span>
+            <span className="text-muted-foreground">{relativeTime(startedAt)}</span>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
             <span className="text-sm">Submitted at {format(startedAt, "dd MMM yyyy, HH:mm:ss")}</span>
