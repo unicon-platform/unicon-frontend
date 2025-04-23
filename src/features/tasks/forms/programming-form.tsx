@@ -3,14 +3,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/r
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
 import { EyeIcon, InfoIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
 import { File as UniconFile, InputStep } from "@/api";
 import ConfirmationDialog from "@/components/confirmation-dialog";
-import { CheckboxField, NumberField, SelectField, TextAreaField, TextField } from "@/components/form/fields";
+import { CheckboxField, NumberField, SelectField, TextField } from "@/components/form/fields";
 import FormSection from "@/components/form/form-section";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
+import { MarkdownEditor } from "@/components/markdown/editor";
 import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import { Button } from "@/components/ui/button";
 import { Form, FormLabel } from "@/components/ui/form";
@@ -82,10 +83,21 @@ type ProgrammingFormProps = {
 };
 
 const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, onSubmit, submitErrors }) => {
+  const initialDescription: string = initialValue && initialValue.description ? initialValue.description : "";
+  const [description, setDescription] = useState(initialDescription);
+
   const form = useForm<ProgTaskFormT>({
     resolver: zodResolver(ProgTaskFormZ),
     defaultValues: initialValue ?? DEFAULT_FORM_VALUES,
   });
+
+  useEffect(() => {
+    form.setValue("description", description);
+  }, [description, form]);
+
+  const onChangeDescription = (markdown: string) => {
+    setDescription(markdown);
+  };
 
   const userInputs = useFieldArray({
     control: form.control,
@@ -267,7 +279,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
             <TextField name="title" className="w-1/3" />
           </FormSection>
           <FormSection title="Description">
-            <TextAreaField name="description" rows={4} />
+            <MarkdownEditor markdown={description} diffMarkdown={initialDescription} onChange={onChangeDescription} />
           </FormSection>
           <MinScoreSection />
           <AttemptLimitSection />
