@@ -2,7 +2,7 @@ import { EyeClosedIcon, EyeIcon } from "lucide-react";
 import { forwardRef, useState } from "react";
 
 import { Box } from "@/components/ui/box";
-import { Input, InputProps } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 export interface PasswordInputOnlyProps {
@@ -10,7 +10,7 @@ export interface PasswordInputOnlyProps {
   helperText?: string;
 }
 
-interface PasswordInputProps extends InputProps, PasswordInputOnlyProps {}
+interface PasswordInputProps extends React.ComponentProps<"input">, PasswordInputOnlyProps {}
 
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(({ helperText, className, ...props }, ref) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
