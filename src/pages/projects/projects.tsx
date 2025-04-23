@@ -33,7 +33,7 @@ const Projects = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <Button
-          variant="default"
+          variant="ghost"
           className="gap-2"
           onClick={() => {
             setJoinDialogOpen(true);
@@ -61,7 +61,7 @@ const Projects = () => {
                   onClick={() => toggleOrg(orgId)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-md text-white`}>
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-md text-primary-foreground`}>
                       <UsersIcon className="h-5 w-5" />
                     </div>
                     <div>
@@ -118,7 +118,7 @@ const Projects = () => {
           })
         ) : (
           <EmptyPlaceholder description="No projects found.">
-            <span className="cursor-pointer text-purple-400 hover:opacity-80" onClick={() => setJoinDialogOpen(true)}>
+            <span className="cursor-pointer text-primary hover:opacity-80" onClick={() => setJoinDialogOpen(true)}>
               Join a project with an invitation key.
             </span>
           </EmptyPlaceholder>

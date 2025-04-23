@@ -7,7 +7,7 @@ import MultipleChoiceResult from "@/components/tasks/submission-results/result-t
 import MultipleResponseResult from "@/components/tasks/submission-results/result-types/multiple-response-result";
 import ProgrammingResult from "@/components/tasks/submission-results/result-types/programming-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProgressInterval } from "@/components/ui/progress";
+import { ProgressInterval } from "@/components/ui/progress-interval";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
@@ -52,7 +52,7 @@ const CompletionIndicator: React.FC<CompletionIndicatorProps> = ({ start, end, c
   return (
     <Tooltip>
       <TooltipTrigger>
-        <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1">
+        <div className="flex items-center gap-1 rounded-md border px-2 py-1">
           <ClockIcon size={15} />
           {startCurrent <= end
             ? (!completed ? "ETA: " : "") + formatIntervalDuration(startCurrent, end)
@@ -120,7 +120,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       : getCompletedAtEstimate(attemptResult);
 
     return (
-      <div className="flex items-center gap-4 text-sm font-normal text-zinc-400">
+      <div className="flex items-center gap-4 text-sm font-normal">
         <Tooltip>
           <TooltipTrigger>
             <span>{relativeTime(startedAt)}</span>
@@ -142,7 +142,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         attemptResult.status === "PENDING" && getCompletedAtEstimate(attemptResult);
       return (
         <>
-          <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
+          <span className="font-mono text-sm">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
           {completedAtEstimate && (
             <ProgressInterval start={parseISO(attemptResult.started_at)} end={completedAtEstimate} className="mt-6" />
           )}
@@ -157,9 +157,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         return <MultipleChoiceResult taskAttempt={taskAttempt} />;
       case "SHORT_ANSWER_TASK":
         return (
-          <pre className="whitespace-pre-wrap rounded-md bg-gray-900 p-4 text-gray-100">
-            {JSON.stringify(attemptResult.result, null, 2)}
-          </pre>
+          <pre className="whitespace-pre-wrap rounded-md p-4">{JSON.stringify(attemptResult.result, null, 2)}</pre>
         );
       case "MULTIPLE_RESPONSE_TASK":
         return <MultipleResponseResult taskAttempt={taskAttempt} />;
@@ -171,14 +169,14 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
       <CardHeader>
         <CardTitle className="flex items-center gap-4">
           <StatusIndicator
-            color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-purple-400"}
+            color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-primary"}
             pulse={attemptResult ? attemptResult.status == "PENDING" : false}
           />
           <span className="text-lg font-medium">{title}</span>
           {taskAttempt.marked_for_submission && (
             <Tooltip>
               <TooltipTrigger>
-                <CheckIcon className="text-green-500" />
+                <CheckIcon className="text-success" />
               </TooltipTrigger>
               <TooltipContent side="top" align="center">
                 <p>The attempt is chosen for submission</p>
@@ -194,7 +192,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         ) : (
           <div className="flex flex-col gap-2">
             <span className="font-medium">No results found for this attempt 🥺</span>
-            <p className="text-zinc-300">
+            <p>
               Fret not, this is not your fault. The adminstrator might have made a change to the task which invalidated
               your attempt. All you have to do is to submit a new attempt or re-run this attempt by clicking the
               "Re-run" button right above, and you will be good to go!

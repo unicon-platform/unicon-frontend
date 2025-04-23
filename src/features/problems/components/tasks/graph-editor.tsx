@@ -24,6 +24,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import { GraphEdgeStr as GraphEdge } from "@/api";
 import { StepEdge } from "@/components/node-graph/components/step/step-edge";
 import { StepNode } from "@/components/node-graph/components/step/step-node";
+import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { FileTree } from "@/components/ui/file-tree";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -281,10 +282,12 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
     highlighted: isUniconFile(selectedSocket?.data) && selectedSocket?.data.id === file.id,
   }));
 
+  const { theme } = useTheme();
+
   return (
     <div
-      className={cn(className, {
-        "fixed inset-0 z-30 h-full bg-black/100 animate-in fade-in": expanded,
+      className={cn(className, "rounded-md border", {
+        "fixed inset-0 z-30 h-full border animate-in fade-in": expanded,
       })}
       data-state={expanded ? "open" : "closed"}
     >
@@ -320,7 +323,7 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
             nodesConnectable={edit}
             edgesReconnectable={edit}
             isValidConnection={isValidConnection}
-            colorMode="dark"
+            colorMode={theme}
             proOptions={{ hideAttribution: true }}
             className={cn(!layoutApplied && "")}
           >
@@ -352,7 +355,10 @@ const GraphEditor: React.FC<GraphEditorProps> = ({
                 </Button>
               </div>
             </div>
-            <Background variant={BackgroundVariant.Dots} style={{ backgroundColor: "#1c1c1c" }} />
+            <Background
+              variant={BackgroundVariant.Dots}
+              style={{ backgroundColor: theme === "dark" ? "#1c1c1c" : "#f5f5f5" }}
+            />
             <Controls showInteractive={edit} />
             <MiniMap pannable className="opacity-50 hover:opacity-100" />
             {/* <DevTools position="bottom-left" /> */}

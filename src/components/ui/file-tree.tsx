@@ -72,7 +72,7 @@ export function FileTree({
   }));
 
   return (
-    <Sidebar {...props} className="relative h-full w-[300px] rounded-md border" variant="filetree" collapsible="none">
+    <Sidebar {...props} className="relative h-full w-[300px] rounded-md border" collapsible="none">
       <SidebarContent className="h-full overflow-y-auto" ref={drop}>
         <SidebarGroup className="relative h-full">
           {onCloseFileTree && (
@@ -203,12 +203,12 @@ function Tree({
       <DeleteContextMenu onPathDelete={onPathDelete} path={item.path}>
         <SidebarMenuButton
           className={cn({
-            "bg-emerald-900 hover:bg-emerald-800": item.highlighted,
+            "bg-primary/10 hover:bg-primary/20": item.highlighted,
             "data-[active=true]:bg-transparent": !item.highlighted,
-            "bg-red-200 opacity-50": isDragging,
+            "bg-destructive opacity-50": isDragging,
           })}
           type="button"
-          size="big"
+          size="lg"
           onClick={item.onClick}
           ref={drag}
         >
@@ -217,7 +217,7 @@ function Tree({
             <input
               type="text"
               className={cn(
-                "nodrag inline max-w-fit rounded-sm border border-gray-500/50 bg-transparent p-1 font-mono text-xs",
+                "nodrag inline max-w-fit rounded-sm border border-primary/30 bg-transparent p-1 font-mono text-xs",
               )}
               value={name}
               onChange={(e) => {
@@ -268,7 +268,7 @@ function Tree({
                 <input
                   type="text"
                   className={cn(
-                    "nodrag inline max-w-fit rounded-sm border border-gray-500/50 bg-transparent p-1 font-mono text-xs",
+                    "nodrag inline max-w-fit rounded-sm border border-primary/30 bg-transparent p-1 font-mono text-xs",
                   )}
                   value={name}
                   onChange={(e) => setName(e.target.value)}

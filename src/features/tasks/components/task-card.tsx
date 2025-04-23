@@ -63,8 +63,8 @@ const TaskCard: React.FC<OwnProps> = ({
   if (isLoading || !task) {
     return (
       <Card className="bg-inherit">
-        <CardHeader>
-          <CardTitle className="-mx-6 -mt-6 flex items-center justify-between rounded-t-xl bg-neutral-800 px-6 pb-4 pt-4">
+        <CardHeader className="bg-primary/10">
+          <CardTitle className="-mx-6 -mt-6 flex items-center justify-between rounded-t-xl px-6 pb-4 pt-4">
             <div className="flex items-center gap-4">
               {canEdit && <GripVertical className="-mr-2" />}
               <span className="text-lg font-medium">Task #{index + 1}</span>
@@ -94,7 +94,7 @@ const TaskCard: React.FC<OwnProps> = ({
               )}
               {canEdit && (
                 <>
-                  <Button asChild variant="ghost" className="hover:text-purple-300">
+                  <Button asChild variant="outline">
                     <Link to={`/projects/${projectId}/problems/${problemId}/edit/tasks/${updatedTask.id}`}>
                       <Pencil />
                       Edit
@@ -123,7 +123,7 @@ const TaskCard: React.FC<OwnProps> = ({
       <Card className="bg-inherit" {...(provided?.draggableProps ?? {})} ref={provided?.innerRef}>
         <CardHeader>
           <CardTitle
-            className="-mx-6 -mt-6 flex items-center justify-between rounded-t-xl bg-neutral-800 px-6 pb-4 pt-4"
+            className="-mx-6 -mt-6 flex items-center justify-between rounded-t-xl bg-primary/5 px-6 pb-4 pt-4"
             {...(provided?.dragHandleProps ?? {})}
           >
             <div className="flex items-center gap-4">
@@ -156,7 +156,7 @@ const TaskCard: React.FC<OwnProps> = ({
               )}
               {canEdit && (
                 <>
-                  <Button asChild variant="ghost" className="hover:text-purple-300">
+                  <Button asChild variant="outline">
                     <Link to={`/projects/${projectId}/problems/${problemId}/edit/tasks/${updatedTask.id}`}>
                       <Pencil />
                       Edit
@@ -174,7 +174,7 @@ const TaskCard: React.FC<OwnProps> = ({
           </CardTitle>
           <CardContent className="p-0 py-2">
             {!isSelectedVersionUpdated && (
-              <Alert variant="warning" className="mb-2 flex items-center gap-2">
+              <Alert variant="destructive" className="mb-2 flex items-center gap-2">
                 <div>
                   <CircleAlert className="h-4 w-4" />
                 </div>

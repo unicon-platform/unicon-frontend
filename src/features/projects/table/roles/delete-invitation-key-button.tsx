@@ -12,7 +12,7 @@ const DeleteInvitationKeyButton: React.FC<OwnProps> = ({ role }) => {
 
   return (
     <ConfirmationDialog onConfirm={() => deleteInvitationKeyMutation.mutate()}>
-      <Button variant="destructive">delete</Button>
+      <Button variant="destructive">Delete</Button>
     </ConfirmationDialog>
   );
 };

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@radix-ui/react-collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { produce } from "immer";
-import { EyeIcon, InfoIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
+import { EditIcon, InfoIcon, PlusIcon, Trash, UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
@@ -264,7 +264,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
         <UnsavedChangesHandler form={form} />
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
           <FormSection title="Title">
-            <TextField name="title" className="w-1/3" />
+            <TextField name="title" className="w-full" />
           </FormSection>
           <FormSection title="Description">
             <TextAreaField name="description" rows={4} />
@@ -366,7 +366,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                 ))}
               </div>
               {slurmOptions.filter((opt) => opt.length).length > 0 && (
-                <span className="text-gray-500">
+                <span>
                   Preview of <code>srun</code> command used to execute programs:{" "}
                   <code className="rounded-md border px-2 py-1 font-mono">{`srun ${slurmOptions.join(" ")}`}</code>
                 </span>
@@ -399,12 +399,12 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                 Files that the user must provide for submission
                 <br />
                 <br />
-                You can choose to provide a template for each file using the "View/Edit" button
+                You can choose to provide a template for each file using the button with edit icon.
               </p>
             }
           >
             <div className="flex flex-col items-start gap-4">
-              <Button variant="secondary" type="button" onClick={addUserInput}>
+              <Button variant="outline" type="button" onClick={addUserInput}>
                 <PlusIcon />
                 Add input
               </Button>
@@ -429,8 +429,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                     </div>
                     <CollapsibleTrigger asChild>
                       <Button variant="secondary" type="button" className="text-xs">
-                        <EyeIcon size={15} />
-                        View/Edit
+                        <EditIcon size={15} />
                       </Button>
                     </CollapsibleTrigger>
                     <ConfirmationDialog
@@ -451,7 +450,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
                         onFileContentChange={(newFileContent: string) => updateUserInput(index, { newFileContent })}
                         canEditFileContent
                       />
-                      <div className="flex items-center gap-2 bg-zinc-900 p-2">
+                      <div className="flex items-center gap-2 p-2">
                         File size limit (Optional):
                         <InfoTooltip content="A value of 0 will be intepreted as allowing unlimited file size." />
                         <Input
@@ -474,7 +473,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
             <div className="sticky top-0 z-20 w-full">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">Testcases</h2>
-                <Button variant="secondary" type="button" onClick={addTestcase}>
+                <Button variant="outline" type="button" onClick={addTestcase}>
                   <PlusIcon />
                   Add testcase
                 </Button>
@@ -496,7 +495,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
             </div>
           </div>
           {submitErrors && submitErrors.length > 0 && (
-            <div className="flex w-fit flex-col gap-4 rounded-md border border-red-500 p-4 text-red-500">
+            <div className="flex w-fit flex-col gap-4 rounded-md border">
               <div className="flex items-center gap-2">
                 <InfoIcon size={18} />
                 <span className="font-medium">Errors</span>
@@ -510,7 +509,9 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
               </div>
             </div>
           )}
-          <Button className="w-fit bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
+          <Button variant="default" className="w-fit">
+            Submit
+          </Button>
         </form>
       </Form>
     </div>

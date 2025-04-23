@@ -2,6 +2,7 @@ import { Editor, OnChange as EditorContentOnChange } from "@monaco-editor/react"
 import { FileIcon, X } from "lucide-react";
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 
+import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
 type FileTabProps = {
@@ -49,8 +50,8 @@ const FileTab: React.FC<FileTabProps> = ({ fileName, onFileNameChange, onFileClo
   }, [isEditing]);
 
   return (
-    <div className="group flex h-8 items-center gap-1.5 border-t border-t-purple-400 px-3">
-      <FileIcon size={15} className="text-purple-400" />
+    <div className="group flex h-8 items-center gap-1.5 border px-3 text-primary">
+      <FileIcon size={15} />
       {isEditing ? (
         <input
           ref={inputRef}
@@ -59,12 +60,12 @@ const FileTab: React.FC<FileTabProps> = ({ fileName, onFileNameChange, onFileClo
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={finishEditing}
           onKeyDown={handleKeyDown}
-          className="h-6 w-32 border bg-[#1e1e1e] px-1 font-mono text-sm text-zinc-200 outline-none"
+          className="h-6 w-32 border px-1 font-mono text-sm outline-none"
           autoFocus
         />
       ) : (
         <span
-          className={cn("cursor-default select-none text-sm text-zinc-200", canEdit && "cursor-text")}
+          className={cn("cursor-default select-none text-sm", canEdit && "cursor-text")}
           onClick={startEditing}
           title={fileName}
         >
@@ -74,10 +75,10 @@ const FileTab: React.FC<FileTabProps> = ({ fileName, onFileNameChange, onFileClo
 
       {onFileClosed && (
         <button
-          className="ml-1 flex h-4 w-4 items-center justify-center rounded-sm opacity-0 transition-opacity hover:bg-[#333] hover:opacity-100 focus:outline-none group-hover:opacity-70"
+          className="ml-1 flex h-4 w-4 items-center justify-center rounded-sm opacity-0 transition-opacity hover:bg-secondary hover:opacity-100 focus:outline-none group-hover:opacity-70"
           onClick={onFileClosed}
         >
-          <X className="h-3 w-3 text-zinc-200" />
+          <X className="h-3 w-3" />
         </button>
       )}
     </div>
@@ -106,6 +107,8 @@ const FileEditor: React.FC<FileEditorProps> = ({
   canEditFileContent = false,
   className,
 }) => {
+  const { theme } = useTheme();
+
   const updateFileName = (newValue: string) => {
     if (onFileNameChange) onFileNameChange(newValue);
   };
@@ -117,7 +120,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
 
   return (
     <div className={cn("flex h-full grow flex-col", className)}>
-      <div className="flex border-b border-[#333] bg-[#1e1e1e]">
+      <div className="flex border-b">
         <FileTab
           fileName={fileName}
           onFileNameChange={updateFileName}
@@ -126,9 +129,10 @@ const FileEditor: React.FC<FileEditorProps> = ({
         />
       </div>
       <Editor
-        theme="vs-dark"
+        theme={theme === "dark" ? "vs-dark" : "vs"}
         defaultLanguage="python"
         language={fileExtension}
+        className="border"
         options={{
           padding: { top: 8 },
           scrollBeyondLastLine: false,

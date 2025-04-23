@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ProjectPublicWithProblems, UserPublicWithRolesAndGroups } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { getProjectRolesById, useRemoveProjectUser, useUpdateProjectUsers } from "@/features/projects/queries";
 import { useUserStore } from "@/store/user/user-store-provider";
 
@@ -111,7 +111,7 @@ export const UserManagementTable: React.FC<UserManagementTableProps> = ({ projec
                   </Select>
                 </TableCell>
                 <TableCell>
-                  <Button variant={"secondary"} onClick={() => handleRemoveUser(user.id)}>
+                  <Button variant="outline" onClick={() => handleRemoveUser(user.id)}>
                     {user.id === loggedInUser.id ? "Leave" : "Remove"}
                   </Button>
                 </TableCell>

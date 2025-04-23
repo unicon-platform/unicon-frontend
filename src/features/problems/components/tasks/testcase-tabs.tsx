@@ -4,7 +4,7 @@ import { LockIcon } from "lucide-react";
 import { File as UniconFile, InputStep, OutputSocket, OutputStep, Testcase as TestcaseApi } from "@/api";
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GraphAction } from "@/features/problems/components/tasks/graph-context";
@@ -32,7 +32,7 @@ const ExpectedOutputTable: React.FC<{ sockets: OutputSocket[] }> = ({ sockets })
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-zinc-800 font-mono text-zinc-300">
+                        <Badge variant="outline" className="font-mono">
                           {socket.comparison.operator}
                         </Badge>
                         <span className="max-w-md truncate">{JSON.stringify(socket.comparison.value)}</span>
@@ -43,7 +43,7 @@ const ExpectedOutputTable: React.FC<{ sockets: OutputSocket[] }> = ({ sockets })
                     </TooltipContent>
                   </Tooltip>
                 ) : (
-                  <span className="italic text-zinc-500">No expected output, informational log/output only</span>
+                  <span className="italic">No expected output, informational log/output only</span>
                 )}
               </TableCell>
             </TableRow>
@@ -104,10 +104,10 @@ const TestcaseTabs: React.FC<TestcaseTabsProps> = ({
           {testcases.map((testcase, index) => (
             <TabsTrigger key={testcase.id} value={testcase.id} className="text-sm">
               <div className="flex max-w-fit items-center gap-2 rounded-full text-sm shadow-sm">
-                <span className={cn("font-mono", { "text-zinc-300": !testcase.name })}>#{index + 1}</span>
-                {testcase.name && <span className="truncate text-white">{testcase.name}</span>}
+                <span className={cn("font-mono", { "": !testcase.name })}>#{index + 1}</span>
+                {testcase.name && <span className="truncate">{testcase.name}</span>}
                 <span>({testcase.score} pts)</span>
-                {testcase.is_private && <LockIcon className="h-3.5 w-3.5 flex-shrink-0 text-zinc-400" />}
+                {testcase.is_private && <LockIcon className="h-3.5 w-3.5 flex-shrink-0" />}
               </div>
             </TabsTrigger>
           ))}

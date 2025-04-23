@@ -8,7 +8,7 @@ export const TimeDisplay = ({ label, datetime, iconName }: { label: string; date
   return (
     <Tooltip>
       <TooltipTrigger asChild className="cursor-default">
-        <div className="flex items-center gap-3 rounded-md p-4">
+        <div className="flex items-center gap-3 rounded-md bg-primary/5 p-4 hover:bg-primary/10">
           <DynamicIcon name={iconName} className="h-5 w-5" />
           <div className="flex flex-col gap-1">
             <span className="text-xs">{label}</span>

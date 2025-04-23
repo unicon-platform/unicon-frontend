@@ -45,7 +45,7 @@ const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase
       <div className="flex items-center gap-3">
         <span className="text-lg">Testcase {index + 1}</span>
         {result.elapsed_time_ns !== undefined && result.elapsed_time_ns !== null && (
-          <div className="flex items-center gap-1 rounded-md border bg-zinc-800 px-2 py-1 text-zinc-400">
+          <div className="flex items-center gap-1 rounded-md border px-2 py-1">
             <TimerIcon size={15} />
             <span className="font-mono text-xs">{formatElapsedTime(result.elapsed_time_ns)}</span>
           </div>
@@ -55,8 +55,13 @@ const TestcaseResult: React.FC<TestcaseResultProps> = ({ result, index, testcase
             <div
               className={cn(
                 "flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors",
-                { "border-emerald-400 bg-emerald-300 text-emerald-800 hover:bg-emerald-400": result.status === "OK" },
-                { "border-red-400 bg-red-300 text-red-800 hover:bg-red-400": result.status !== "OK" },
+                {
+                  "border-success/50 bg-success/20 text-success hover:bg-success/10": result.status === "OK",
+                },
+                {
+                  "border-destructive/50 bg-destructive/20 text-destructive hover:bg-destructive/10":
+                    result.status !== "OK",
+                },
               )}
             >
               {result.status === "OK" ? <CheckCircleIcon size={15} /> : <AlertCircleIcon size={15} />}

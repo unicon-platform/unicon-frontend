@@ -139,7 +139,7 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold">Edit problem</h1>
-            <Button variant="primary">Save</Button>
+            <Button variant="default">Save</Button>
           </div>
           {error && <ErrorAlert message={error} />}
           {/* Problem details */}

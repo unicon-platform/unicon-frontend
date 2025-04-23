@@ -75,7 +75,7 @@ const Submissions = () => {
       <div className="mt-4 grid grid-cols-3 gap-4">
         {/* Problem Filter */}
         <Select onValueChange={(value) => setProblemFilter(value === "all" ? null : Number(value))}>
-          <SelectTrigger className="border border-border bg-zinc-800">
+          <SelectTrigger className="border border-border">
             <SelectValue placeholder="Filter by problem" />
           </SelectTrigger>
           <SelectContent>
@@ -97,7 +97,7 @@ const Submissions = () => {
               }
             }}
           >
-            <SelectTrigger className="border border-border bg-zinc-800">
+            <SelectTrigger className="border border-border">
               <SelectValue placeholder="Filter by group" />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ const Submissions = () => {
             value={userFilter?.toString() || "all"}
             onValueChange={(value) => setUserFilter(value === "all" ? null : Number(value))}
           >
-            <SelectTrigger className="border border-border bg-zinc-800">
+            <SelectTrigger className="border border-border">
               <SelectValue placeholder="Filter by user" />
             </SelectTrigger>
             <SelectContent>

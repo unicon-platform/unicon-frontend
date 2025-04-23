@@ -11,7 +11,7 @@ const CreateInvitationKeyButton: React.FC<OwnProps> = ({ role }) => {
 
   return (
     <Button variant="outline" onClick={() => createInvitationKeyMutation.mutate()}>
-      create
+      Create
     </Button>
   );
 };

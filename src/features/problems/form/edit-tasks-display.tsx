@@ -1,6 +1,7 @@
 import { DragDropContext, Draggable, Droppable, OnDragEndResponder } from "@hello-pangea/dnd";
 import { PlusIcon } from "lucide-react";
 
+import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Button } from "@/components/ui/button";
 import CreateTaskPopover from "@/features/problems/form/create-task-popover";
 import { TaskType } from "@/features/problems/queries";
@@ -35,53 +36,52 @@ const EditTasksDisplay: React.FC<OwnProps> = ({ tasks, problemId, projectId, han
 
   return (
     <div>
-      <h2 className="min-w-[200px] text-lg font-medium">Tasks</h2>
-      {tasks.length === 0 && (
-        <div className="mt-4 rounded-sm bg-secondary p-4 text-center shadow-inner">
-          You don't have any tasks.{" "}
+      <div className="sticky top-0 z-20 w-full">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-medium">Tasks</h2>
           <CreateTaskPopover>
-            <span className="text-purple-400 hover:text-purple-400/80">Create one?</span>
-          </CreateTaskPopover>
-        </div>
-      )}
-      {tasks.length > 0 && (
-        <>
-          <CreateTaskPopover>
-            <Button variant="secondary" className="mt-2" type="button">
+            <Button variant="outline" className="mt-2" type="button">
               <PlusIcon />
               Add task
             </Button>
           </CreateTaskPopover>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="tasks">
-              {(provided) => (
-                <div className="mt-4 flex flex-col gap-6" ref={provided.innerRef} {...provided.droppableProps}>
-                  {tasks.map(
-                    (task, index) =>
-                      task && (
-                        <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
-                          {(provided) => (
-                            <TaskCard
-                              index={index}
-                              key={task.id}
-                              task={task}
-                              problemId={problemId}
-                              projectId={projectId}
-                              canEdit={true}
-                              canSubmit={false}
-                              canSubmitWithoutLimit={false}
-                              provided={provided}
-                            />
-                          )}
-                        </Draggable>
-                      ),
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </>
+        </div>
+      </div>
+      {tasks.length === 0 && (
+        <div className="mt-4">
+          <EmptyPlaceholder description="You don't have any tasks." />
+        </div>
+      )}
+      {tasks.length > 0 && (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="tasks">
+            {(provided) => (
+              <div className="mt-4 flex flex-col gap-6" ref={provided.innerRef} {...provided.droppableProps}>
+                {tasks.map(
+                  (task, index) =>
+                    task && (
+                      <Draggable draggableId={task.id.toString()} index={index} key={task.id}>
+                        {(provided) => (
+                          <TaskCard
+                            index={index}
+                            key={task.id}
+                            task={task}
+                            problemId={problemId}
+                            projectId={projectId}
+                            canEdit={true}
+                            canSubmit={false}
+                            canSubmitWithoutLimit={false}
+                            provided={provided}
+                          />
+                        )}
+                      </Draggable>
+                    ),
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
     </div>
   );

@@ -155,7 +155,7 @@ const Editor: React.FC<EditorProps> = ({ fileName, currentContent, defaultConten
       );
     } else if (isUniconFile(data) && data.is_binary) {
       return (
-        <div className="mt-2 flex w-fit items-center gap-2 text-sm text-zinc-400">
+        <div className="mt-2 flex w-fit items-center gap-2 text-sm">
           {readOnly ? (
             <span>No file is uploaded</span>
           ) : (
@@ -458,7 +458,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
               <SelectContent>
                 {taskVersionIds?.map((taskId, index) => (
                   <SelectGroup key={taskId}>
-                    <SelectLabel className="text-purple-400">
+                    <SelectLabel className="text-xs text-primary/50">
                       Version {taskVersionCount - index} {index === 0 ? " (Latest)" : ""}
                     </SelectLabel>
                     {(groupedAttempts[taskId] ?? []).length === 0 && (
@@ -470,7 +470,7 @@ export const ProgrammingSubmitForm: React.FC<ProgrammingSubmitFormProps> = ({
                       <SelectItem key={attempt.id} value={`${attempt.index}`}>
                         <div className="flex items-center gap-2">
                           Attempt #{attempts.length - attempt.index}{" "}
-                          {attempt.marked_for_submission && <CheckIcon className="h-4 w-4 text-green-400" />}
+                          {attempt.marked_for_submission && <CheckIcon className="h-4 w-4 text-success" />}
                         </div>
                       </SelectItem>
                     ))}

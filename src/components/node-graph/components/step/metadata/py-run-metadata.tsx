@@ -136,9 +136,9 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
     functionIdentifier && !functionSignatures?.filter((signature) => signature.name === functionIdentifier).length;
 
   return editable ? (
-    <div className="flex flex-col gap-2 border-b-2 border-zinc-800 px-3 pb-4">
+    <div className="flex flex-col gap-2 border-b-2 border-primary/10 px-3 pb-4">
       <div className="flex items-center gap-2">
-        <label className="text-nowrap font-mono text-sm text-zinc-400">Function Identifier:</label>
+        <label className="text-nowrap font-mono text-sm text-primary/60">Function Identifier:</label>
         <Select
           value={functionIdentifier ?? "-"}
           onValueChange={(newFunctionIdentifier) => {
@@ -171,17 +171,17 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <TriangleAlert className="h-4 w-4 text-yellow-500" />
+                  <TriangleAlert className="h-4 w-4 text-warning" />
                 </TooltipTrigger>
                 <TooltipContent className="flex items-center gap-2">
-                  <TriangleAlert className="h-4 w-4 text-yellow-600" /> Function not found. Please check the file.
+                  <TriangleAlert className="h-4 w-4 text-warning" /> Function not found. Please check the file.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           )}
           <Button
             size="icon"
-            variant="ghost"
+            variant="outline"
             type="button"
             onClick={() => {
               onChange(functionIdentifier);
@@ -192,27 +192,27 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Capture Error:</label>
+        <label className="font-mono text-sm text-primary">Capture Error:</label>
         <Checkbox
-          className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
+          className="inline h-5 w-5 border-primary/10 bg-transparent text-xs"
           checked={allowError}
           onCheckedChange={onAllowErrorChange}
         />
         <InfoTooltip content="When enabled, errors from the function do not terminate the program and can be piped to other nodes (via the output labeled 'Error')." />
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Capture Stdout:</label>
+        <label className="font-mono text-sm text-primary">Capture Stdout:</label>
         <Checkbox
-          className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
+          className="inline h-5 w-5 border-primary/10 bg-transparent text-xs"
           checked={propagateStdout}
           onCheckedChange={onPropagateStdoutChange}
         />
         <InfoTooltip content="When enabled, stdout (e.g. from using `print`) can be piped to other nodes." />
       </div>
       <div className="flex items-center gap-4">
-        <label className="font-mono text-sm text-zinc-400">Capture Stderr:</label>
+        <label className="font-mono text-sm text-primary">Capture Stderr:</label>
         <Checkbox
-          className="inline h-5 w-5 border-zinc-400 bg-transparent text-xs"
+          className="inline h-5 w-5 border-primary/10 bg-transparent text-xs"
           checked={propagateStderr}
           onCheckedChange={onPropagateStderrChange}
         />
@@ -222,17 +222,17 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
   ) : (
     <div className="min-w-[280px] px-2">
       <div className="flex items-center gap-3">
-        <ParenthesesIcon size={20} className="text-zinc-400" />
+        <ParenthesesIcon size={20} className="text-primary" />
         <div className="flex flex-col">
-          <span className="text-xs text-zinc-400">Function Identifier</span>
-          <span className="font-mono font-medium text-white">
+          <span className="text-xs text-primary/60">Function Identifier</span>
+          <span className="font-mono font-medium text-primary">
             {(step as PyRunFunctionStep).function_identifier || "- (Run file)"}
           </span>
         </div>
       </div>
       <div className="my-4 flex flex-col items-start gap-2">
         <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
-          <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+          <div className="flex h-full items-center gap-1 bg-warning px-2 py-1 text-warning-foreground">
             <CircleXIcon className="h-4 w-4" />
             <span className="font-medium">On error</span>
           </div>
@@ -243,7 +243,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
         <div className="flex gap-2">
           {(step as PyRunFunctionStep).propagate_stdout && (
             <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
-              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-primary">
                 <MessageCircleMoreIcon className="h-4 w-4" />
                 <span className="font-medium">Stdout</span>
               </div>
@@ -251,7 +251,7 @@ const PyRunMetadata: React.FC<OwnProps> = ({ step, editable }) => {
           )}
           {(step as PyRunFunctionStep).propagate_stderr && (
             <Badge className="flex overflow-hidden bg-transparent p-0 text-xs" variant="outline">
-              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-slate-800">
+              <div className="flex h-full items-center gap-1 bg-pyrun px-2 py-1 text-primary">
                 <MessageCircleXIcon className="h-4 w-4" />
                 <span className="font-medium">Stderr</span>
               </div>

@@ -98,7 +98,7 @@ const MultipleResponseForm: React.FC<OwnProps> = ({ initialValue, onSubmit }) =>
             </div>
           </FormSection>
           <div className="mt-12">
-            <Button className="bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
+            <Button variant="default">Submit</Button>
           </div>
         </form>
       </Form>

@@ -15,12 +15,12 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ title, description, child
     <div className="flex flex-col gap-6">
       <TaskSection>
         <TaskSectionHeader content="Title" />
-        <span className="text-zinc-100">{title}</span>
+        <span>{title}</span>
       </TaskSection>
       {description && (
         <TaskSection>
           <TaskSectionHeader content="Description" />
-          <p className="whitespace-pre-line text-sm text-zinc-100">{description}</p>
+          <p className="whitespace-pre-line text-sm">{description}</p>
         </TaskSection>
       )}
       {children}

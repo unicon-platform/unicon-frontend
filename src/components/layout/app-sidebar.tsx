@@ -115,7 +115,7 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-0 bg-[#2e2931]">
+    <Sidebar collapsible="icon" className="border-0">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Unicon</SidebarGroupLabel>

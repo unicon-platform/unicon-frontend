@@ -33,7 +33,7 @@ export const SocketLabelInput: React.FC<SocketLabelInputProps> = ({
     <input
       type="text"
       className={cn(
-        "nodrag inline max-w-fit rounded-sm border border-gray-500/50 bg-transparent px-2 py-1 text-xs",
+        "nodrag inline max-w-fit rounded-sm border border-primary/50 bg-transparent px-2 py-1 text-xs",
         ...className,
       )}
       value={localValue}
@@ -96,7 +96,7 @@ export const SocketDataInput: React.FC<SocketDataInputProps> = ({
       ref={inputRef}
       type="text"
       className={cn(
-        "nodrag inline max-w-fit rounded-sm border border-gray-500/50 bg-transparent px-2 py-1 font-mono text-xs",
+        "nodrag inline max-w-fit rounded-sm border border-primary/50 bg-transparent px-2 py-1 font-mono text-xs",
         ...className,
       )}
       value={inputString}

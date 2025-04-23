@@ -16,7 +16,7 @@ export const ProblemFiles: React.FC<ProblemFileProps> = ({ files }) => {
         {files.map((file) => (
           <a
             key={file.id}
-            className="flex w-fit cursor-pointer items-center gap-2 rounded-md bg-zinc-800 p-4 px-8 transition-colors hover:bg-zinc-700 hover:underline"
+            className="flex w-fit cursor-pointer items-center gap-2 rounded-md p-4 px-8 transition-colors hover:underline"
             download={file.path}
             onClick={() => downloadFile(file.key)}
           >

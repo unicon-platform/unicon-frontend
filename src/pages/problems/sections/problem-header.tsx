@@ -52,7 +52,7 @@ export const ProblemHeader: React.FC<ProblemHeaderProps> = ({ problem, projectId
               title="Finalize Submission"
               description="Are you sure you want to submit? Ensure that you have mark your attempts for submission."
             >
-              <Button variant="primary">Finalize</Button>
+              <Button variant="destructive">Finalize</Button>
             </ConfirmationDialog>
           )}
         </div>

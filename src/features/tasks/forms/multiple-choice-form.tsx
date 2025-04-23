@@ -91,7 +91,7 @@ const MultipleChoiceForm: React.FC<OwnProps> = ({ title, initialValue, onSubmit 
           </FormSection>
 
           <div className="ml-4 mt-12">
-            <Button className="bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
+            <Button variant="default">Submit</Button>
           </div>
         </form>
       </Form>

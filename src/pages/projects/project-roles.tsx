@@ -30,7 +30,7 @@ const ProjectRoles = () => {
 
         {project.add_roles && (
           <AddRoleDialog projectId={id}>
-            <Button variant="ghost" className="hover:text-purple-300">
+            <Button variant="ghost">
               <Plus /> New role
             </Button>
           </AddRoleDialog>

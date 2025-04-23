@@ -75,7 +75,7 @@ const EditProjectGroup = () => {
         <div className="flex gap-2">
           {project.create_groups && (
             <EditGroupDialog projectId={projectId} group={group}>
-              <Button variant="ghost" className="hover:text-purple-300">
+              <Button variant="ghost">
                 <GoPencil /> Edit details
               </Button>
             </EditGroupDialog>
@@ -106,7 +106,8 @@ const EditProjectGroup = () => {
             {filteredUsersNotInGroup?.map((user) => (
               <Card
                 className={cn("cursor-pointer p-2", {
-                  "bg-red-950": group.members.filter((member) => user.id === member.user.id).length > 0,
+                  "bg-destructive text-destructive-foreground":
+                    group.members.filter((member) => user.id === member.user.id).length > 0,
                 })}
                 onClick={() => {
                   setUsersInGroup([...usersInGroup, { user, is_supervisor: false }]);
@@ -116,7 +117,7 @@ const EditProjectGroup = () => {
                   <Checkbox className="h-4 w-4" checked={false} />
                   {user.username} <Badge variant="secondary">{userMap.get(user.id)?.roles[0]?.name}</Badge>
                   {user.group_members.length > 0 && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm">
                       existing member of group(s): {user.group_members.map((group_member) => group_member.group.name)}
                     </span>
                   )}
@@ -131,7 +132,8 @@ const EditProjectGroup = () => {
             {usersInGroup.map((groupMember) => (
               <Card
                 className={cn("flex cursor-pointer items-center justify-between p-2", {
-                  "bg-lime-950": group.members.filter((member) => groupMember.user.id === member.user.id).length === 0,
+                  "bg-success text-success-foreground":
+                    group.members.filter((member) => groupMember.user.id === member.user.id).length === 0,
                 })}
                 onClick={() => {
                   setUsersInGroup(usersInGroup.filter((member) => member.user.id !== groupMember.user.id));

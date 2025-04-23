@@ -6,7 +6,7 @@ import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/compo
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table-overflow";
 
 type OwnProps = {
   socket: OutputSocket;

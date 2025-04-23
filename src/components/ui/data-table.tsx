@@ -14,7 +14,7 @@ import { InfoIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
 
 interface DataWithOptionalClassname {
@@ -60,7 +60,7 @@ export function DataTable<TData extends ExtendedData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="bg-primary/5">
                       <div className="flex items-center gap-2">
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                         {(header.column.columnDef as ExtendedColumnDef<TData, unknown>).tooltip && (

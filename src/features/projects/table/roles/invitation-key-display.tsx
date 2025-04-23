@@ -22,7 +22,7 @@ const InvitationKeyDisplay: React.FC<OwnProps> = ({ invitationKey, variant, clas
 
   const variantClasses =
     variant === "border"
-      ? "text-mono w-fit cursor-pointer text-nowrap rounded-md border border-slate-500 p-2 text-slate-300"
+      ? "w-full text-mono justify-between cursor-pointer text-nowrap rounded-md border border-primary/20 hover:bg-primary/5 p-2"
       : "cursor-pointer";
   return (
     <div onClick={onClick} className={cn("flex items-center gap-2", variantClasses, className)}>

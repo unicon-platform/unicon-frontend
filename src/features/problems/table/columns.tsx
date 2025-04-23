@@ -36,7 +36,7 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
           {!isOpen && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <InfoIcon className="h-4 w-4 text-zinc-500" />
+                <InfoIcon className="h-4 w-4" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>This problem is not available yet.</p>
@@ -56,7 +56,7 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
       ) : (
         <Tooltip>
           <TooltipTrigger asChild>
-            <BanIcon className="h-4 w-4 text-zinc-500" />
+            <BanIcon className="h-4 w-4" />
           </TooltipTrigger>
           <TooltipContent>
             <p>No due date set, submissions will not be considered late as long as the problem is open</p>
@@ -74,7 +74,7 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
       ) : (
         <Tooltip>
           <TooltipTrigger asChild>
-            <BanIcon className="h-4 w-4 text-zinc-500" />
+            <BanIcon className="h-4 w-4" />
           </TooltipTrigger>
           <TooltipContent>
             <p>No lock date set, problem will always be open for submissions</p>
@@ -91,18 +91,12 @@ export const columns: ExtendedColumnDef<ProblemBaseWithPermissions>[] = [
       return (
         <div className="flex items-center gap-2">
           {row.original.view && (
-            <Link
-              to={`/projects/${row.original.project_id}/problems/${id}`}
-              className="hover:text-purple-300 hover:underline"
-            >
+            <Link to={`/projects/${row.original.project_id}/problems/${id}`} className="hover:opacity-50">
               <ExternalLinkIcon size={18} />
             </Link>
           )}
           {row.original.edit && (
-            <Link
-              to={`/projects/${row.original.project_id}/problems/${id}/edit`}
-              className="hover:text-purple-300 hover:underline"
-            >
+            <Link to={`/projects/${row.original.project_id}/problems/${id}/edit`} className="hover:opacity-50">
               <PenLineIcon size={18} />
             </Link>
           )}

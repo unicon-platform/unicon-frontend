@@ -1,6 +1,8 @@
 import { AxiosError } from "axios";
 import { isRouteErrorResponse, Link, useRouteError } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
+
 export const Unauthorized = new Error("Unauthorized");
 export const NotFound = new Error("Not Found");
 
@@ -55,12 +57,9 @@ const ErrorPage: React.FC<OwnProps> = () => {
         <h1 className="text-3xl font-bold text-foreground sm:text-4xl">{errorStatus}</h1>
         <p className="mt-4 text-muted-foreground">{errorMessage}</p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-          >
-            Go to Homepage
-          </Link>
+          <Button asChild variant="default">
+            <Link to="/">Go to Homepage</Link>
+          </Button>
         </div>
       </div>
     </div>

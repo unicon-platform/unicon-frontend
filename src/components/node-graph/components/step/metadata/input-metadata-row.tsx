@@ -9,7 +9,7 @@ import { SocketDataInput, SocketLabelInput } from "@/components/node-graph/compo
 import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table-overflow";
 import { GraphContext } from "@/features/problems/components/tasks/graph-context";
 import { cn, isUniconFile } from "@/lib/utils";
 
@@ -43,7 +43,7 @@ const InputMetadataRow: React.FC<OwnProps> = ({
   const isSharedTaskFile = files.some((file) => isUniconFile(socket.data) && file.id === socket.data?.id);
   const rowIsSelected = selectedSocketId === socket.id && selectedStepId === step.id;
   return (
-    <TableRow className={cn({ "!bg-emerald-900 hover:bg-emerald-800": rowIsSelected })}>
+    <TableRow className={cn({ "!bg-primary/5 hover:bg-primary/10": rowIsSelected })}>
       <TableCell>
         {isEditable && (
           <Button size={"sm"} className="h-fit w-fit px-1 py-1" variant="secondary" onClick={onDelete} type="button">

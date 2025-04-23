@@ -20,7 +20,6 @@ const Organisations = () => {
         <div className="flex gap-2">
           <Button
             variant="ghost"
-            className="hover:text-purple-300"
             onClick={() => {
               setJoinDialogOpen(true);
             }}
@@ -28,7 +27,7 @@ const Organisations = () => {
             <Plus /> Join organisation
           </Button>
           <Link to="/organisations/new" className="flex gap-1">
-            <Button variant="ghost" className="hover:text-purple-300">
+            <Button variant="ghost">
               <Plus /> New organisation
             </Button>
           </Link>
@@ -48,9 +47,9 @@ const Organisations = () => {
         {!isLoading && organisations?.length === 0 && (
           <EmptyPlaceholder description="No organisations found.">
             <br />
-            <span className="text-gray-500">
+            <span>
               If you're looking to submit solutions, check out{" "}
-              <Link to="/projects" className="text-purple-500 hover:text-purple-500/80">
+              <Link to="/projects" className="hover:opacity-50">
                 Projects
               </Link>
               .

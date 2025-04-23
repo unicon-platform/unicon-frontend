@@ -32,7 +32,7 @@ const ProgrammingResult: React.FC<OwnProps> = ({ taskAttempt, problemId }) => {
               return (
                 <TabsTrigger value={testcaseResult.id} key={testcaseResult.id}>
                   #{index + 1} {testcase.name} {testcase.is_private ? "(Private)" : ""}
-                  <span className={cn("ml-2", passed ? "text-green-400" : "text-red-400")}>{passed ? "✓" : "✗"}</span>
+                  <span className={cn("ml-2", passed ? "text-success" : "text-destructive")}>{passed ? "✓" : "✗"}</span>
                 </TabsTrigger>
               );
             })}
