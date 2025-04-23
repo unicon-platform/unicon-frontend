@@ -4,7 +4,6 @@ import {
   AdmonitionDirectiveDescriptor,
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
-  // ChangeAdmonitionType,
   codeBlockPlugin,
   codeMirrorPlugin,
   CodeToggle,
@@ -15,9 +14,7 @@ import {
   imagePlugin,
   InsertAdmonition,
   InsertCodeBlock,
-  // InsertFrontmatter,
   InsertImage,
-  // InsertSandpack,
   InsertTable,
   InsertThematicBreak,
   linkDialogPlugin,
@@ -28,7 +25,6 @@ import {
   MDXEditor,
   quotePlugin,
   Separator,
-  // ShowSandpackInfo,
   StrikeThroughSupSubToggles,
   tablePlugin,
   thematicBreakPlugin,
@@ -63,7 +59,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, diffMa
 
     for (const match of matches) {
       // We use split-join because replaceAll is only supported on es2021 or later
-      // In addition replace also somehow replaces $$ with $
+      // In addition, replace also somehow replaces $$ with $
       const unescaped = match[0].split("\\_").join("_");
       markdown = markdown.split(match[0]).join(unescaped);
     }
@@ -71,54 +67,55 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, diffMa
   };
 
   return (
-    <MDXEditor
-      markdown={markdown}
-      // className="dark-theme dark-editor"
-      onChange={onChangeInternal}
-      contentEditableClassName="prose max-w-none"
-      plugins={[
-        headingsPlugin(),
-        quotePlugin(),
-        listsPlugin(),
-        thematicBreakPlugin(),
-        tablePlugin(),
-        linkPlugin(),
-        linkDialogPlugin(),
-        imagePlugin(),
-        diffSourcePlugin({
-          diffMarkdown: diffMarkdown,
-          viewMode: "rich-text",
-          readOnlyDiff: true,
-        }),
-        codeBlockPlugin({ defaultCodeBlockLanguage: "py" }),
-        codeMirrorPlugin({ codeBlockLanguages: codeBlockLanguages }),
-        markdownShortcutPlugin(),
-        directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
-        toolbarPlugin({
-          toolbarContents: () => (
-            <DiffSourceToggleWrapper>
-              <UndoRedo />
-              <BoldItalicUnderlineToggles />
-              <CodeToggle />
-              <Separator />
-              <StrikeThroughSupSubToggles />
-              <Separator />
-              <ListsToggle />
-              <Separator />
-              <BlockTypeSelect />
-              <Separator />
-              <CreateLink />
-              <InsertImage />
-              <Separator />
-              <InsertTable />
-              <InsertThematicBreak />
-              <Separator />
-              <InsertCodeBlock />
-              <InsertAdmonition />
-            </DiffSourceToggleWrapper>
-          ),
-        }),
-      ]}
-    />
+    <div className="rounded-sm bg-white">
+      <MDXEditor
+        markdown={markdown}
+        onChange={onChangeInternal}
+        contentEditableClassName="prose max-w-none"
+        plugins={[
+          headingsPlugin(),
+          quotePlugin(),
+          listsPlugin(),
+          thematicBreakPlugin(),
+          tablePlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          imagePlugin(),
+          diffSourcePlugin({
+            diffMarkdown: diffMarkdown,
+            viewMode: "rich-text",
+            readOnlyDiff: true,
+          }),
+          codeBlockPlugin({ defaultCodeBlockLanguage: "py" }),
+          codeMirrorPlugin({ codeBlockLanguages: codeBlockLanguages }),
+          markdownShortcutPlugin(),
+          directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
+          toolbarPlugin({
+            toolbarContents: () => (
+              <DiffSourceToggleWrapper>
+                <UndoRedo />
+                <BoldItalicUnderlineToggles />
+                <CodeToggle />
+                <Separator />
+                <StrikeThroughSupSubToggles />
+                <Separator />
+                <ListsToggle />
+                <Separator />
+                <BlockTypeSelect />
+                <Separator />
+                <CreateLink />
+                <InsertImage />
+                <Separator />
+                <InsertTable />
+                <InsertThematicBreak />
+                <Separator />
+                <InsertCodeBlock />
+                <InsertAdmonition />
+              </DiffSourceToggleWrapper>
+            ),
+          }),
+        ]}
+      />
+    </div>
   );
 };

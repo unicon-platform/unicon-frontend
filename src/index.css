@@ -112,8 +112,3 @@ table > :last-child > :last-child > :last-child {
     @apply bg-background text-foreground;
   }
 }
-
-.mdxeditor {
-  border-radius: 5px;
-  background-color: white;
-}
