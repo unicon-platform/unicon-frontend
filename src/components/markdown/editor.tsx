@@ -67,55 +67,54 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, diffMa
   };
 
   return (
-    <div className="rounded-sm bg-white">
-      <MDXEditor
-        markdown={markdown}
-        onChange={onChangeInternal}
-        contentEditableClassName="prose max-w-none"
-        plugins={[
-          headingsPlugin(),
-          quotePlugin(),
-          listsPlugin(),
-          thematicBreakPlugin(),
-          tablePlugin(),
-          linkPlugin(),
-          linkDialogPlugin(),
-          imagePlugin(),
-          diffSourcePlugin({
-            diffMarkdown: diffMarkdown,
-            viewMode: "rich-text",
-            readOnlyDiff: true,
-          }),
-          codeBlockPlugin({ defaultCodeBlockLanguage: "py" }),
-          codeMirrorPlugin({ codeBlockLanguages: codeBlockLanguages }),
-          markdownShortcutPlugin(),
-          directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
-          toolbarPlugin({
-            toolbarContents: () => (
-              <DiffSourceToggleWrapper>
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <CodeToggle />
-                <Separator />
-                <StrikeThroughSupSubToggles />
-                <Separator />
-                <ListsToggle />
-                <Separator />
-                <BlockTypeSelect />
-                <Separator />
-                <CreateLink />
-                <InsertImage />
-                <Separator />
-                <InsertTable />
-                <InsertThematicBreak />
-                <Separator />
-                <InsertCodeBlock />
-                <InsertAdmonition />
-              </DiffSourceToggleWrapper>
-            ),
-          }),
-        ]}
-      />
-    </div>
+    <MDXEditor
+      className="rounded-sm bg-white"
+      markdown={markdown}
+      onChange={onChangeInternal}
+      contentEditableClassName="prose max-w-none"
+      plugins={[
+        headingsPlugin(),
+        quotePlugin(),
+        listsPlugin(),
+        thematicBreakPlugin(),
+        tablePlugin(),
+        linkPlugin(),
+        linkDialogPlugin(),
+        imagePlugin(),
+        diffSourcePlugin({
+          diffMarkdown: diffMarkdown,
+          viewMode: "rich-text",
+          readOnlyDiff: true,
+        }),
+        codeBlockPlugin({ defaultCodeBlockLanguage: "py" }),
+        codeMirrorPlugin({ codeBlockLanguages: codeBlockLanguages }),
+        markdownShortcutPlugin(),
+        directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
+        toolbarPlugin({
+          toolbarContents: () => (
+            <DiffSourceToggleWrapper>
+              <UndoRedo />
+              <BoldItalicUnderlineToggles />
+              <CodeToggle />
+              <Separator />
+              <StrikeThroughSupSubToggles />
+              <Separator />
+              <ListsToggle />
+              <Separator />
+              <BlockTypeSelect />
+              <Separator />
+              <CreateLink />
+              <InsertImage />
+              <Separator />
+              <InsertTable />
+              <InsertThematicBreak />
+              <Separator />
+              <InsertCodeBlock />
+              <InsertAdmonition />
+            </DiffSourceToggleWrapper>
+          ),
+        }),
+      ]}
+    />
   );
 };
