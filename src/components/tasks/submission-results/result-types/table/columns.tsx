@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { OutputSocket, Testcase } from "@/api";
+import { OutputRenderer } from "@/components/tasks/submission-results/result-types/table/output-renderer";
 
 export type Comparison = {
   operator: "<" | "=" | ">";
@@ -33,7 +34,14 @@ export const columns: ColumnDef<Result>[] = [
   {
     accessorFn: ({ value }) => JSON.stringify(value, null, 2),
     header: "Got",
-    cell: ({ getValue }) => <p className="whitespace-pre-wrap font-mono">{getValue<string>().replace(/\\n/g, "\n")}</p>,
+    cell: ({ getValue }) => <OutputRenderer output={getValue<string>()} />,
+  },
+  {
+    id: "operator",
+    header: "",
+    cell: ({ row }) => {
+      return <div>{row.original.socketMetadata.comparison?.operator ?? ""}</div>;
+    },
   },
   {
     id: "expected",
@@ -43,14 +51,7 @@ export const columns: ColumnDef<Result>[] = [
       if (!socketMetadata.comparison) {
         return <div></div>;
       }
-
-      const operator = socketMetadata.comparison.operator;
-      const expected = socketMetadata.comparison.value;
-      return (
-        <div className="font-mono">
-          {operator} {JSON.stringify(expected)}
-        </div>
-      );
+      return <OutputRenderer output={JSON.stringify(socketMetadata.comparison.value)} />;
     },
   },
 ];

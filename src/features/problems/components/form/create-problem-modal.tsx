@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { parseISO } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-import { DateTimeField, RadioBooleanField, TextAreaField, TextField } from "@/components/form/fields";
+import { DateTimeField, RadioBooleanField, TextField } from "@/components/form/fields";
 import ErrorAlert from "@/components/form/fields/error-alert";
+import { MarkdownEditor } from "@/components/markdown/editor";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
@@ -61,11 +62,20 @@ const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {
   const projectId = useProjectId();
 
   const [error, setError] = useState("");
+  const [description, setDescription] = useState("");
 
   const form = useForm<ProblemFormType>({
     resolver: zodResolver(problemFormSchema),
     defaultValues: problemFormDefault,
   });
+
+  useEffect(() => {
+    form.setValue("description", description);
+  }, [description, form]);
+
+  const onChangeDescription = (markdown: string) => {
+    setDescription(markdown);
+  };
 
   const createProblemMutation = useCreateProblem(projectId);
   const navigate = useNavigate();
@@ -100,7 +110,8 @@ const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
               <TextField label="Title" name="name" />
-              <TextAreaField label="Description" name="description" rows={5} />
+              <label>Description</label>
+              <MarkdownEditor markdown={description} onChange={onChangeDescription} />
 
               <div className="my-2 grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <DateTimeField name="started_at" label="Release Date" />

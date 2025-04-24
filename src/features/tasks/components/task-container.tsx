@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 
+import { MarkdownRenderer } from "@/components/markdown/renderer";
 import TaskSection from "@/features/tasks/components/task-section";
 import TaskSectionHeader from "@/features/tasks/components/task-section-header";
 
@@ -20,7 +21,9 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ title, description, child
       {description && (
         <TaskSection>
           <TaskSectionHeader content="Description" />
-          <p className="whitespace-pre-line text-sm">{description}</p>
+          <div className="prose max-w-none dark:prose-invert">
+            <MarkdownRenderer markdown={description} />
+          </div>
         </TaskSection>
       )}
       {children}

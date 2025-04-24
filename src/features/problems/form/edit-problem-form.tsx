@@ -5,9 +5,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Problem } from "@/api";
-import { DateTimeField, RadioBooleanField, TextAreaField, TextField } from "@/components/form/fields";
+import { DateTimeField, RadioBooleanField, TextField } from "@/components/form/fields";
 import ErrorAlert from "@/components/form/fields/error-alert";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
+import { MarkdownEditor } from "@/components/markdown/editor";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import EditProblemFilesSection, { BufferedFiles } from "@/features/problems/form/edit-problem-files";
@@ -55,6 +56,7 @@ type ProblemFormType = z.infer<typeof problemFormSchema>;
 
 const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
   const [error, setError] = useState("");
+  const [description, setDescription] = useState(problem.description);
 
   const updateProblemMutation = useUpdateProblem(id);
 
@@ -62,6 +64,14 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
     resolver: zodResolver(problemFormSchema),
     defaultValues: problem,
   });
+
+  useEffect(() => {
+    form.setValue("description", description);
+  }, [description, form]);
+
+  const onChangeDescription = (markdown: string) => {
+    setDescription(markdown);
+  };
 
   const [bufferedFiles, setBufferedFiles] = useState<BufferedFiles>({ filesToAdd: [], fileIdsToRemove: [] });
   const hasBufferedFileState = bufferedFiles.filesToAdd.length > 0 || bufferedFiles.fileIdsToRemove.length > 0;
@@ -147,9 +157,14 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
             <div className="sticky top-0">
               <h2 className="min-w-[200px] text-lg font-medium">Problem details</h2>
             </div>
-            <div className="flex w-full flex-col gap-4">
+            <div className="flex w-full min-w-0 flex-col gap-4">
               <TextField label="Title" name="name" />
-              <TextAreaField label="Description" name="description" rows={5} />
+              <label>Description</label>
+              <MarkdownEditor
+                markdown={description}
+                diffMarkdown={problem.description}
+                onChange={onChangeDescription}
+              />
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <DateTimeField name="started_at" label="Release Date" />
                 <DateTimeField name="ended_at" label="Due Date" />

@@ -1,6 +1,7 @@
 import { CircleAlert } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 type OwnProps = {
   message: string;
@@ -9,7 +10,7 @@ type OwnProps = {
 
 const ErrorAlert: React.FC<OwnProps> = ({ message, className }) => {
   return (
-    <Alert variant="destructive" className={className}>
+    <Alert variant="destructive" className={cn(className, "flex gap-4")}>
       <div>
         <CircleAlert className="h-5 w-5" />
       </div>

@@ -12,7 +12,7 @@ const FormSection: React.FC<FormSectionProps> = ({ title, description, children 
         <h2 className="w-[250px] text-lg font-medium">{title}</h2>
         {description && <div className={"w-[180px] text-sm text-muted-foreground"}>{description}</div>}
       </div>
-      <div className="flex w-full flex-col gap-4">{children}</div>
+      <div className="flex w-full min-w-0 flex-col gap-4">{children}</div>
     </div>
   );
 };
