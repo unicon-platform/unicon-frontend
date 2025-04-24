@@ -36,7 +36,7 @@ const EditTasksDisplay: React.FC<OwnProps> = ({ tasks, problemId, projectId, han
 
   return (
     <div>
-      <div className="sticky top-0 z-20 w-full">
+      <div className="w-full">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">Tasks</h2>
           <CreateTaskPopover>

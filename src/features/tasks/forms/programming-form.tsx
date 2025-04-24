@@ -482,7 +482,7 @@ const ProgrammingForm: React.FC<ProgrammingFormProps> = ({ title, initialValue, 
           </FormSection>
           <hr />
           <div className="flex w-full flex-col items-start">
-            <div className="sticky top-0 z-20 w-full">
+            <div className="top-0 z-20 w-full md:sticky">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">Testcases</h2>
                 <Button variant="outline" type="button" onClick={addTestcase}>

@@ -50,7 +50,7 @@ const FileTab: React.FC<FileTabProps> = ({ fileName, onFileNameChange, onFileClo
   }, [isEditing]);
 
   return (
-    <div className="group flex h-8 items-center gap-1.5 border px-3 text-primary">
+    <div className="group flex h-8 items-center gap-1.5 rounded-t-sm border-l border-r border-t px-3 text-primary">
       <FileIcon size={15} />
       {isEditing ? (
         <input
@@ -120,7 +120,7 @@ const FileEditor: React.FC<FileEditorProps> = ({
 
   return (
     <div className={cn("flex h-full grow flex-col", className)}>
-      <div className="flex border-b">
+      <div className="flex">
         <FileTab
           fileName={fileName}
           onFileNameChange={updateFileName}

@@ -21,9 +21,7 @@ const TaskContainer: React.FC<TaskContainerProps> = ({ title, description, child
       {description && (
         <TaskSection>
           <TaskSectionHeader content="Description" />
-          <div className="prose max-w-none dark:prose-invert">
-            <MarkdownRenderer markdown={description} />
-          </div>
+          <MarkdownRenderer markdown={description} />
         </TaskSection>
       )}
       {children}

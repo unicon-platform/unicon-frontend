@@ -30,7 +30,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, buffered
 
   return (
     <div className="flex w-full flex-col items-start gap-6 lg:flex-row lg:gap-0">
-      <div className="sticky top-0">
+      <div className="top-0 md:sticky">
         <h2 className="min-w-[200px] text-lg font-medium">Files</h2>
       </div>
       <div className="flex w-full flex-col gap-4">

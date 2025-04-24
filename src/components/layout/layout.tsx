@@ -8,7 +8,6 @@ import AppSidebar from "@/components/layout/app-sidebar";
 import Breadcrumb from "@/components/layout/breadcrumb";
 import { LoadingSpinner } from "@/components/layout/loader";
 import { PageContainer } from "@/components/layout/page-container";
-import { ModeToggle } from "@/components/mode-toggle";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -52,13 +51,10 @@ const Layout: React.FC<PropsWithChildren> = () => {
               {user && (
                 <>
                   <AppSidebar pathname={pathname} />
-                  <main className="w-full p-4">
-                    <div className="flex w-full justify-between">
-                      <div className="flex items-center gap-2">
-                        <SidebarTrigger />
-                        <Breadcrumb />
-                      </div>
-                      <ModeToggle />
+                  <main className="w-full overflow-y-auto overflow-x-hidden p-4">
+                    <div className="flex items-center gap-2">
+                      <SidebarTrigger />
+                      <Breadcrumb />
                     </div>
                     <PageContainer>
                       <Suspense fallback={<LoadingPage />}>

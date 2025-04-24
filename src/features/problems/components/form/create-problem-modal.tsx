@@ -105,7 +105,7 @@ const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {
         <DialogHeader>
           <DialogTitle>New problem</DialogTitle>
         </DialogHeader>
-        <div>
+        <div className="min-w-0">
           {error && <ErrorAlert message={error} />}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">

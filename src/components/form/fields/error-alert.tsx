@@ -10,7 +10,7 @@ type OwnProps = {
 
 const ErrorAlert: React.FC<OwnProps> = ({ message, className }) => {
   return (
-    <Alert variant="destructive" className={cn(className, "flex gap-4")}>
+    <Alert variant="destructive" className={cn(className, "flex gap-4 bg-destructive text-destructive-foreground")}>
       <div>
         <CircleAlert className="h-5 w-5" />
       </div>

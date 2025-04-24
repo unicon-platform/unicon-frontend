@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp, FileQuestion, Group, ListChecks, User2 } from "lucide-react";
+import { ChevronDown, ChevronUp, FileQuestion, Group, ListChecks, MessageCircleCode, User2 } from "lucide-react";
 import { AiFillSecurityScan } from "react-icons/ai";
 import { GoPeople, GoProject, GoProjectSymlink } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 
 import { logout, OrganisationPublicWithProjects, ProjectPublicWithProblems } from "@/api";
+import { ModeToggle } from "@/components/mode-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -118,7 +119,13 @@ const AppSidebar: React.FC<OwnProps> = ({ pathname }) => {
     <Sidebar collapsible="icon" className="border-0">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Unicon</SidebarGroupLabel>
+          <SidebarGroup className="flex flex-row items-center justify-between">
+            <span className="flex gap-1 font-semibold">
+              <MessageCircleCode className="rotate-180 -scale-x-100 scale-y-90" /> Unicon
+            </span>{" "}
+            <ModeToggle />
+          </SidebarGroup>
+          <SidebarGroupLabel>{user.username}</SidebarGroupLabel>
           <SidebarMenu>
             {SIDEBAR_ITEMS.map(({ icon, label, path }) => (
               <SidebarMenuItem key={label}>
