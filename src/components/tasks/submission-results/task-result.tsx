@@ -72,8 +72,13 @@ const CompletionIndicator: React.FC<CompletionIndicatorProps> = ({ start, end, c
   );
 };
 
+const PENDING_STATUS_LIST = ["PENDING", "PENDING_PUSH"];
+
+const PENDING_MESSAGE = "Hold tight! Your submission is being evaluated... ⏳";
+
 const ATTEMPT_STATUS_MESSAGE: Record<TaskEvalStatus, string> = {
-  PENDING: "Hold tight! Your submission is being evaluated... ⏳",
+  PENDING: PENDING_MESSAGE,
+  PENDING_PUSH: PENDING_MESSAGE,
   SKIPPED: "Hmm, this needs a human touch! 👀 Your submission requires manual grading by an instructor.",
   FAILED: "Oh no! Something went wrong 😭 It is not your fault though, please contact an administrator for help.",
   // NOTE: This is placeholder for type safety, if the attempt runs successfully, we will show the actual result
@@ -139,7 +144,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
   const renderResult = (attemptResult: TaskResult) => {
     if (attemptResult.status !== "SUCCESS") {
       const completedAtEstimate: Date | null | false =
-        attemptResult.status === "PENDING" && getCompletedAtEstimate(attemptResult);
+        PENDING_STATUS_LIST.includes(attemptResult.status) && getCompletedAtEstimate(attemptResult);
       return (
         <>
           <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
@@ -172,7 +177,7 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         <CardTitle className="flex items-center gap-4">
           <StatusIndicator
             color={attemptResult ? TaskEvalStatusColorMap[attemptResult.status] : "bg-purple-400"}
-            pulse={attemptResult ? attemptResult.status == "PENDING" : false}
+            pulse={attemptResult ? PENDING_STATUS_LIST.includes(attemptResult.status) : false}
           />
           <span className="text-lg font-medium">{title}</span>
           {taskAttempt.marked_for_submission && (
