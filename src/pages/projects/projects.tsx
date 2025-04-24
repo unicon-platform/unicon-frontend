@@ -61,13 +61,11 @@ const Projects = () => {
                   onClick={() => toggleOrg(orgId)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-md text-primary-foreground`}>
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-md text-primary`}>
                       <UsersIcon className="h-5 w-5" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-medium">
-                        {orgName} (<span className="font-mono">#{orgId}</span>)
-                      </h2>
+                      <h2 className="text-lg font-medium">{orgName}</h2>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Folder className="h-3.5 w-3.5" />
                         <span>
@@ -95,9 +93,7 @@ const Projects = () => {
                               <FolderOpen className="h-4 w-4" />
                             </div>
                             <div>
-                              <h3 className="font-medium group-hover:text-primary">
-                                {project.name} (<span className="font-mono">#{project.id}</span>)
-                              </h3>
+                              <h3 className="font-medium group-hover:text-primary">{project.name}</h3>
                               <div className="mt-1 flex items-center gap-2">
                                 {project.roles[0] && (
                                   <Badge variant="secondary" className="flex items-center gap-1 px-2 py-0.5 text-xs">

@@ -39,9 +39,7 @@ const ProjectGroups = () => {
             <CardTitle className="p-2">
               <div className="flex justify-between">
                 <div>
-                  <h4 className="text-2xl font-[450]">
-                    {group.name} ({group.members.length})
-                  </h4>
+                  <h4 className="text-2xl font-[450]">{group.name}</h4>
                   <p className="text-sm font-normal text-muted-foreground">
                     {group.members.length} member
                     {group.members.length !== 1 && "s"}
