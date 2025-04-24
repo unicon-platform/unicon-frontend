@@ -37,13 +37,7 @@ const FileInputButton: React.FC<React.HTMLProps<HTMLInputElement> & OwnProps & {
         onChange={(e) => onFileChange(e.target.files)}
       />
 
-      <Button
-        size={buttonSize ?? "sm"}
-        className={className ?? "mt-3 h-fit w-fit px-1 py-1"}
-        variant={"secondary"}
-        onClick={onBtnClick}
-        type="button"
-      >
+      <Button size={buttonSize} className={className} variant={"outline"} onClick={onBtnClick} type="button">
         <Upload className={iconClassName ?? "h-2 w-2"} />
         {buttonText}
       </Button>

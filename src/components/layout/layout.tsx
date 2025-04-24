@@ -42,16 +42,16 @@ const Layout: React.FC<PropsWithChildren> = () => {
   }, [setUser, userProfile, isLoading]);
 
   return (
-    <main className="flex h-screen w-screen flex-col overflow-y-auto bg-[#141414]">
+    <main className="flex h-screen w-screen flex-col">
       <DndProvider backend={HTML5Backend}>
         <TooltipProvider>
           <SidebarProvider>
             <Toaster />
-            <div className="flex max-h-screen w-full text-neutral-300">
+            <div className="flex max-h-screen w-full">
               {user && (
                 <>
                   <AppSidebar pathname={pathname} />
-                  <main className="w-full overflow-auto p-4">
+                  <main className="w-full overflow-y-auto overflow-x-hidden p-4">
                     <div className="flex items-center gap-2">
                       <SidebarTrigger />
                       <Breadcrumb />

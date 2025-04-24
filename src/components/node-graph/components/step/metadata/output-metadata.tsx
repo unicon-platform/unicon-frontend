@@ -5,7 +5,7 @@ import { OutputSocket, OutputStep } from "@/api";
 import OutputMetadataRow from "@/components/node-graph/components/step/metadata/output-metadata-row";
 import OutputTable from "@/components/node-graph/components/step/output-table/output-table";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { GraphActionType, GraphDispatchContext, SocketDir } from "@/features/problems/components/tasks/graph-context";
 import { createSocket } from "@/lib/compute-graph";
 

@@ -5,7 +5,7 @@ import { RolePublicWithInvitationKeys } from "@/api";
 import UnsavedChangesHandler from "@/components/form/unsaved-changes-handler";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { getProjectById, useUpdateRoles } from "@/features/projects/queries";
 
 type OwnProps = {
@@ -70,43 +70,43 @@ const RolePermissionsTable: React.FC<OwnProps> = ({ data, projectId }) => {
         <TableHeader>
           <TableRow>
             <TableHead rowSpan={2} className="text-center">
-              role
+              Role
             </TableHead>
             <TableHead colSpan={5} className="border-l text-center">
-              problems
+              Problems
             </TableHead>
             <TableHead colSpan={4} className="border-l text-center">
-              restricted problems
+              Restricted problems
             </TableHead>
             <TableHead colSpan={4} className="border-l text-center">
-              submissions
+              Submissions
             </TableHead>
             <TableHead colSpan={4} className="border-l text-center">
-              groups
+              Groups
             </TableHead>
           </TableRow>
           <TableRow>
             {/* problems */}
-            <TableHead className="border-l text-center">view</TableHead>
-            <TableHead className="border-l text-center">view details</TableHead>
-            <TableHead className="border-l text-center">create</TableHead>
-            <TableHead className="border-l text-center">update</TableHead>
-            <TableHead className="border-l text-center">delete</TableHead>
+            <TableHead className="border-l text-center">View</TableHead>
+            <TableHead className="border-l text-center">View details</TableHead>
+            <TableHead className="border-l text-center">Create</TableHead>
+            <TableHead className="border-l text-center">Update</TableHead>
+            <TableHead className="border-l text-center">Delete</TableHead>
             {/* restricted problems */}
-            <TableHead className="border-l text-center">view</TableHead>
-            <TableHead className="border-l text-center">view details</TableHead>
-            <TableHead className="border-l text-center">update</TableHead>
-            <TableHead className="border-l text-center">delete</TableHead>
+            <TableHead className="border-l text-center">View</TableHead>
+            <TableHead className="border-l text-center">View details</TableHead>
+            <TableHead className="border-l text-center">Update</TableHead>
+            <TableHead className="border-l text-center">Delete</TableHead>
             {/* submissions */}
-            <TableHead className="border-l text-center">create</TableHead>
-            <TableHead className="border-l text-center">view own</TableHead>
-            <TableHead className="border-l text-center">view supervised</TableHead>
-            <TableHead className="border-l text-center">view all</TableHead>
+            <TableHead className="border-l text-center">Create</TableHead>
+            <TableHead className="border-l text-center">View own</TableHead>
+            <TableHead className="border-l text-center">View supervised</TableHead>
+            <TableHead className="border-l text-center">View all</TableHead>
             {/* groups */}
-            <TableHead className="border-l text-center">view</TableHead>
-            <TableHead className="border-l text-center">create</TableHead>
-            <TableHead className="border-l text-center">update</TableHead>
-            <TableHead className="border-l text-center">delete</TableHead>
+            <TableHead className="border-l text-center">View</TableHead>
+            <TableHead className="border-l text-center">Create</TableHead>
+            <TableHead className="border-l text-center">Update</TableHead>
+            <TableHead className="border-l text-center">Delete</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="align-center">

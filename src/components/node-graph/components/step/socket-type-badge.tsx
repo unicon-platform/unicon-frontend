@@ -20,7 +20,7 @@ const SocketTypeBadge: React.FC<OwnProps> = ({ socket }) => {
   }
 
   return (
-    <Badge className={"w-fit border-dashed border-blue-300 text-[0.5rem] leading-[0.75rem]"} variant={"outline"}>
+    <Badge className={"w-fit border-dashed border-info text-[0.5rem] leading-[0.75rem]"} variant={"outline"}>
       {socket.data_type === "PythonObject" ? (
         <>
           <AiOutlinePython className="mr-1" />

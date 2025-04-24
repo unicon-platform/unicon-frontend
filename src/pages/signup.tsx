@@ -8,6 +8,7 @@ import { z } from "zod";
 import { signup } from "@/api";
 import ErrorAlert from "@/components/form/fields/error-alert";
 import TextField from "@/components/form/fields/text-field";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -76,14 +77,16 @@ const SignUp = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center">
+      <div className="fixed left-5 top-5">
+        <ModeToggle />
+      </div>
       <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-        <h1 className="font-mono text-5xl text-purple-400">Unicon 🦄</h1>
-        <h2 className="mt-1 text-xl italic text-neutral-300">
-          <span className="text-purple-400 underline">Uni</span>versal Programming{" "}
-          <span className="text-purple-400 underline">Con</span>
+        <h1 className="text-5xl font-medium">Unicon 🦄</h1>
+        <h2 className="mt-1 text-xl">
+          <span className="">Uni</span>versal Programming <span className="">Con</span>
           test Platform
         </h2>
-        <Card className="mt-8 w-full border-neutral-500 bg-neutral-800 p-6 sm:max-w-lg">
+        <Card className="mt-8 w-full p-6 sm:max-w-lg">
           <CardContent>
             <Box className="space-y-6">
               {isError && <ErrorAlert message={"Your username is already taken. Please try again."} />}
@@ -137,10 +140,7 @@ const SignUp = () => {
                       </label>
                     </div>
                   </div>
-                  <Button
-                    className="w-full bg-violet-600 text-white hover:bg-violet-600 hover:opacity-80"
-                    type="submit"
-                  >
+                  <Button className="w-full" type="submit">
                     Sign up
                   </Button>
                 </form>
@@ -148,7 +148,7 @@ const SignUp = () => {
             </Box>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Link to="/" className="text-violet-300 hover:opacity-80">
+            <Link to="/" className="text-primary hover:opacity-50">
               Already have an account? Log in.
             </Link>
           </CardFooter>

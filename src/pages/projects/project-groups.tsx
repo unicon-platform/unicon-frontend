@@ -6,7 +6,7 @@ import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import AddGroupDialog from "@/features/projects/components/add-group-dialog";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 import { getProjectById, getProjectGroupsById } from "@/features/projects/queries";
@@ -26,7 +26,7 @@ const ProjectGroups = () => {
         <h2 className="text-2xl font-semibold">Groups</h2>
         {project.create_groups && (
           <AddGroupDialog projectId={id}>
-            <Button variant="ghost" className="hover:text-purple-300">
+            <Button variant="ghost">
               <Plus /> New group
             </Button>
           </AddGroupDialog>
@@ -39,10 +39,8 @@ const ProjectGroups = () => {
             <CardTitle className="p-2">
               <div className="flex justify-between">
                 <div>
-                  <h4 className="text-2xl font-[450]">
-                    {group.name} ({group.members.length})
-                  </h4>
-                  <p className="text-sm font-normal text-gray-400">
+                  <h4 className="text-2xl font-[450]">{group.name}</h4>
+                  <p className="text-sm font-normal text-muted-foreground">
                     {group.members.length} member
                     {group.members.length !== 1 && "s"}
                   </p>
@@ -69,7 +67,7 @@ const ProjectGroups = () => {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{member.user.username}</TableCell>
                       <TableCell>
-                        {member.is_supervisor ? <Badge variant="green">supervisor</Badge> : <Badge>member</Badge>}
+                        {member.is_supervisor ? <Badge variant="destructive">Supervisor</Badge> : <Badge>Member</Badge>}
                       </TableCell>
                     </TableRow>
                   ))}

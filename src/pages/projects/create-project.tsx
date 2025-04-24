@@ -59,7 +59,7 @@ const CreateProject = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <TextField name="name" label="Name" />
           <div>
-            <Button className="bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Submit</Button>
+            <Button variant="default">Submit</Button>
           </div>
         </form>
       </Form>

@@ -6,10 +6,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { cn } from "@/lib/utils";
 
 const BADGE_COLOUR_MAP: Record<TaskType, string> = {
-  MULTIPLE_CHOICE_TASK: "bg-blue-400",
+  MULTIPLE_CHOICE_TASK: "bg-sky-400",
   MULTIPLE_RESPONSE_TASK: "bg-red-400",
-  SHORT_ANSWER_TASK: "bg-yellow-400",
-  PROGRAMMING_TASK: "bg-green-400",
+  SHORT_ANSWER_TASK: "bg-orange-400",
+  PROGRAMMING_TASK: "bg-emerald-400",
 };
 
 const BADGE_NAME_MAP: Record<TaskType, string> = {
@@ -43,7 +43,7 @@ export const MaxAttemptsBadge = ({ maxAttempts }: { maxAttempts: number | null }
       </span>
     </TooltipContent>
     <TooltipTrigger>
-      <Badge className="bg-gray-400 py-1">
+      <Badge className="bg-primary py-1">
         {maxAttempts === null ? "Unlimited" : maxAttempts} Attempt{maxAttempts === 1 ? "" : "s"}
       </Badge>
     </TooltipTrigger>

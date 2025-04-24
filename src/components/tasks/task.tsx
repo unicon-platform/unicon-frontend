@@ -39,6 +39,6 @@ export function Task({
         />
       );
     default:
-      return <div className="font-mono text-red-400">Task type not supported</div>;
+      return <div className="font-mono text-destructive">Task type not supported</div>;
   }
 }

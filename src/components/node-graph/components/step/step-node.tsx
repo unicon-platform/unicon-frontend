@@ -172,9 +172,9 @@ export function StepNode({ data }: { data: Step }) {
   );
 
   return (
-    <div className="rounded-b-lg bg-[#141414]">
+    <div className="rounded-b-lg bg-contrast text-contrast-foreground shadow-xl">
       <NodeHeader step={data} edit={editable} deleteStep={deleteStep} />
-      <div className="flex min-w-52 flex-col gap-2 rounded-b-lg border-x-2 border-b-2 py-3">
+      <div className="flex min-w-52 flex-col gap-2 rounded-b-lg border-x-2 border-b-2 border-primary/25 py-3">
         <div className={cn("flex flex-col gap-2", { "flex-col-reverse": !socketsInMetadata })}>
           <div className="flex flex-row justify-between gap-8">
             <NodeSlotGroup type="target" sockets={inControlSockets} />

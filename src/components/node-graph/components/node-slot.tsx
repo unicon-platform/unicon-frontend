@@ -6,6 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { File as UniconFile, StepSocket } from "@/api";
 import { SocketLabelInput } from "@/components/node-graph/components/step/node-input";
 import SocketTypeBadge from "@/components/node-graph/components/step/socket-type-badge";
+import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,20 +42,20 @@ const DataSocketDefaultValuePopover = ({
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-60 bg-zinc-900">
+      <PopoverContent className="w-60 bg-contrast">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-zinc-200">Default Value</h4>
-            <p className="text-xs text-zinc-400">This value will be used when no input is connected</p>
+            <h4 className="text-sm font-medium text-primary">Default Value</h4>
+            <p className="text-xs text-primary">This value will be used when no input is connected</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="value" className="text-xs text-zinc-400">
+            <Label htmlFor="value" className="text-xs text-primary">
               Value
             </Label>
             <Input
               id="value"
               placeholder="Enter default value..."
-              className="h-8 border-zinc-700 bg-zinc-800"
+              className="h-8"
               onChange={(e) => debouncedOnValueChanged(e.target.value)}
             />
           </div>
@@ -79,15 +80,15 @@ const DataSocketDefaultValueDisplay = ({
   };
   const content = hasDefaultValue ? (
     <div className="flex items-center gap-2 py-1">
-      <div className="rounded-md border border-zinc-700/50 bg-zinc-800/50 px-2 py-1 hover:cursor-pointer hover:bg-zinc-800">
+      <div className="rounded-md border border-primary/10 bg-primary/5 px-2 py-1 hover:cursor-pointer hover:bg-primary/10">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-400">Default:</span>
-          <span className="font-mono text-xs text-orange-400">{JSON.stringify(socketData)}</span>
+          <span className="text-xs text-primary">Default:</span>
+          <span className="font-mono text-xs text-warning">{JSON.stringify(socketData)}</span>
           {onValueChanged && (
             <button
               type="button"
               onClick={handleDeleteClick}
-              className="rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+              className="rounded-full p-0.5 text-primary transition-colors hover:bg-destructive hover:text-destructive-foreground/60"
             >
               <XIcon className="h-3 w-3" />
             </button>
@@ -96,7 +97,7 @@ const DataSocketDefaultValueDisplay = ({
       </div>
     </div>
   ) : onValueChanged ? (
-    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-white/10">
+    <Button variant="outline" size="icon" className="h-6 w-6">
       <PlusIcon className="h-4 w-4" />
     </Button>
   ) : null;
@@ -144,12 +145,12 @@ const ControlSocket = ({ type, socket }: { type: HandleType; socket: StepSocket 
     <div className={cn("flex h-fit items-center gap-1 px-1", { "flex-row-reverse": type === "target" })}>
       {socket.label && (
         <>
-          <Badge variant="outline" className="border-[#73F777]">
-            <span className="font-mono font-light uppercase text-zinc-200">{socket.label}</span>
+          <Badge variant="outline" className="border-[#10b981]">
+            <span className="font-mono font-light uppercase text-primary">{socket.label}</span>
           </Badge>
         </>
       )}
-      <ArrowBigRightIcon size={25} color="#73F777" />
+      <ArrowBigRightIcon size={25} color="#10b981" />
     </div>
   );
 };
@@ -164,8 +165,10 @@ export function NodeSlot({
   hideType = false,
   handleStyle,
 }: NodeSlotProps) {
+  const { theme } = useTheme();
   const connections = useNodeConnections({ handleType: type, handleId: socket.id });
   const hasConnections = connections.length > 0;
+  const colors = theme === "light" ? ["black", "white"] : ["white", "black"];
   return (
     <div>
       <div
@@ -178,12 +181,12 @@ export function NodeSlot({
           style={{
             width: "12px",
             height: "12px",
-            backgroundColor: hasConnections ? "white" : "black",
-            border: "1px solid white",
+            backgroundColor: hasConnections ? colors[0] : colors[1],
+            border: "1px solid " + colors[0],
             ...(handleStyle ?? {}),
           }} // NOTE: Override default position to use flex positioning
           className={twJoin(
-            "bg-neutral-700",
+            "bg-primary",
             type === "target" && "rounded-bl-full rounded-tl-full",
             type === "source" && "rounded-br-full rounded-tr-full",
           )}

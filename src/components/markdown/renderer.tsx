@@ -1,5 +1,5 @@
 import "katex/dist/katex.min.css";
-import "highlight.js/styles/github.css";
+import "highlight.js/styles/atom-one-dark.css";
 
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -14,6 +14,10 @@ type MarkdownRendererProps = {
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
   return (
-    <Markdown remarkPlugins={[remarkGfm, remarkMath, remarkRehype, rehypeKatex, rehypeHighlight]}>{markdown}</Markdown>
+    <article className="markdown prose max-w-none dark:prose-invert prose-pre:bg-transparent prose-pre:p-0">
+      <Markdown remarkPlugins={[remarkGfm, remarkMath, remarkRehype, rehypeKatex, rehypeHighlight]}>
+        {markdown}
+      </Markdown>
+    </article>
   );
 };

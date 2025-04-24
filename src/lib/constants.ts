@@ -44,8 +44,8 @@ export const StepTypeIconMap: Record<StepType, IconName> = {
 };
 
 export const TaskEvalStatusColorMap: ReadOnlyMap<TaskEvalStatus, string> = {
-  SUCCESS: "bg-green-400",
-  PENDING: "bg-yellow-400",
+  SUCCESS: "bg-emerald-400",
+  PENDING: "bg-orange-400",
   FAILED: "bg-red-400",
   SKIPPED: "bg-gray-400",
 };

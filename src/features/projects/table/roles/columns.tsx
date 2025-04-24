@@ -12,7 +12,7 @@ export const columns: ColumnDef<RolePublicWithInvitationKeys>[] = [
   },
   {
     cell: ({ row }) => {
-      return <InvitationKeyDisplay invitationKey={row.original.invitation_keys[0]?.key} />;
+      return <InvitationKeyDisplay variant="border" invitationKey={row.original.invitation_keys[0]?.key} />;
     },
     header: "Invitation Key",
   },

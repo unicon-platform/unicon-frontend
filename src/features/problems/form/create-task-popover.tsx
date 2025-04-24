@@ -11,9 +11,7 @@ const CreateTaskPopover: React.FC<PropsWithChildren> = ({ children }) => {
   const projectId = useProjectId();
   return (
     <Popover>
-      <PopoverTrigger className="text-purple-400 hover:text-purple-400/80" asChild>
-        {children}
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent>
         <div className="flex flex-col">
           <Link to={`/projects/${projectId}/problems/${id}/edit/tasks/new/programming`}>

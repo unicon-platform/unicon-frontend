@@ -6,7 +6,7 @@ import FileInputButton from "@/components/form/inputs/file-input-button";
 import EmptyPlaceholder from "@/components/layout/empty-placeholder";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { formatDateShort } from "@/utils/date";
 
 export type BufferedFiles = {
@@ -30,7 +30,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, buffered
 
   return (
     <div className="flex w-full flex-col items-start gap-6 lg:flex-row lg:gap-0">
-      <div className="sticky top-0">
+      <div className="top-0 md:sticky">
         <h2 className="min-w-[200px] text-lg font-medium">Files</h2>
       </div>
       <div className="flex w-full flex-col gap-4">
@@ -104,7 +104,7 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, buffered
                     </TableCell>
                     <TableCell>
                       <a
-                        className="underline decoration-gray-500 hover:decoration-white"
+                        className="underline decoration-primary hover:decoration-primary/20"
                         href={import.meta.env.VITE_BACKEND_URL + "/files/" + file.key}
                         download={file.path.split("/").pop()!}
                       >
@@ -128,14 +128,14 @@ const EditProblemFilesSection: React.FC<OwnProps> = ({ supportingFiles, buffered
                   </TableCell>
                   <TableCell>
                     <a
-                      className="underline decoration-gray-500 hover:decoration-white"
+                      className="underline decoration-primary hover:decoration-primary/20"
                       href={URL.createObjectURL(file)}
                       download={file.name}
                     >
                       {file.name}
                     </a>
                   </TableCell>
-                  <TableCell className="italic text-zinc-500">[ Not yet saved ] </TableCell>
+                  <TableCell className="italic">[ Not yet saved ] </TableCell>
                 </TableRow>
               ))}
             </TableBody>

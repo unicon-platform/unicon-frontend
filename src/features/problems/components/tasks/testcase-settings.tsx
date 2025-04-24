@@ -59,7 +59,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
           <DialogDescription />
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <h3 className="text-sm font-[450] text-zinc-400">Main</h3>
+          <h3 className="text-sm font-[450]">Main</h3>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -86,7 +86,7 @@ const TestcaseSettings: React.FC<OwnProps> = ({ onDelete, settings, onSettingsCh
           </div>
           {!isPrivate && (
             <div className="mt-2">
-              <h3 className="text-sm font-[450] text-zinc-400">Visibility</h3>
+              <h3 className="text-sm font-[450]">Visibility</h3>
               <div className="mt-2 flex flex-col gap-1">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">

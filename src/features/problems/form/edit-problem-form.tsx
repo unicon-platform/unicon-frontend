@@ -149,12 +149,12 @@ const EditProblemForm: React.FC<OwnProps> = ({ id, problem }) => {
         <div className="flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold">Edit problem</h1>
-            <Button variant="primary">Save</Button>
+            <Button variant="default">Save</Button>
           </div>
           {error && <ErrorAlert message={error} />}
           {/* Problem details */}
           <div className="flex w-full flex-col items-start gap-6 lg:flex-row lg:gap-0">
-            <div className="sticky top-0">
+            <div className="top-0 md:sticky">
               <h2 className="min-w-[200px] text-lg font-medium">Problem details</h2>
             </div>
             <div className="flex w-full min-w-0 flex-col gap-4">

@@ -12,8 +12,6 @@ const badgeVariants = cva(
         secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
-        green: "border-transparent bg-green-300 text-primary-foreground shadow hover:bg-green-300/80",
-        orange: "border-transparent border-orange-300 shadow",
       },
     },
     defaultVariants: {
@@ -28,5 +26,4 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export { Badge, badgeVariants };

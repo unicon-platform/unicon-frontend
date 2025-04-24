@@ -105,7 +105,7 @@ const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {
         <DialogHeader>
           <DialogTitle>New problem</DialogTitle>
         </DialogHeader>
-        <div>
+        <div className="min-w-0">
           {error && <ErrorAlert message={error} />}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
@@ -128,7 +128,7 @@ const CreateProblemModal: React.FC<OwnProps> = ({ setOpen }) => {
                 <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button className="bg-purple-600 text-white hover:bg-purple-600 hover:bg-opacity-80">Create</Button>
+                <Button variant="default">Create</Button>
               </div>
             </form>
           </Form>

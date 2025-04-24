@@ -1,6 +1,6 @@
 import { parseISO } from "date-fns";
 
-import { TimeDisplay } from "@/components/ui/time-display";
+import { TimeDisplay } from "@/components/ui/time-display-bg";
 
 type ProblemTimelineProps = {
   startedAt?: string | null;

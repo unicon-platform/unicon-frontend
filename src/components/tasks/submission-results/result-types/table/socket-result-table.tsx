@@ -7,7 +7,9 @@ type OwnProps = {
 
 const SocketResultTable: React.FC<OwnProps> = ({ data }) => {
   data.forEach((result) => {
-    result.className = result.correct ? "bg-green-800/30 hover:bg-green-800/0" : "bg-red-800/30 hover:bg-red-800/0";
+    result.className = result.correct
+      ? "bg-success/30 hover:bg-success/40"
+      : "bg-destructive/30 hover:bg-destructive/40";
   });
   return <DataTable columns={columns} data={data} hidePagination />;
 };

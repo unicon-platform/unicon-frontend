@@ -40,12 +40,12 @@ const Organisation = () => {
       <div className="flex justify-between">
         <div className="flex flex-col">
           <h2 className="text-3xl font-semibold">{organisation.name}</h2>
-          <p className="text-gray-500">{organisation.description}</p>
+          <p>{organisation.description}</p>
         </div>
         <div className="flex items-start gap-2">
           {organisation.edit && (
             <EditOrganisationDialog organisation={organisation}>
-              <Button variant="ghost" className="hover:text-purple-300">
+              <Button variant="ghost">
                 <Edit /> Edit details
               </Button>
             </EditOrganisationDialog>
@@ -72,7 +72,7 @@ const Organisation = () => {
         <h2 className="text-2xl font-semibold">Projects</h2>
         <Link to={`/organisations/${id}/projects/new`} className="flex gap-1">
           {organisation.edit && (
-            <Button variant="ghost" className="hover:text-purple-300">
+            <Button variant="ghost">
               <Plus /> New Project
             </Button>
           )}

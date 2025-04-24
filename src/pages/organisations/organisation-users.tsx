@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   getOrganisationMembersById,
   useCreateOrganisationInvitationKey,
@@ -52,22 +53,30 @@ const OrganisationUsers = () => {
         {/* Owner */}
         <div>
           <div className="text-xl font-semibold">Owner</div>
-          <p className="text-slate-500">
+          <p className="text-muted-foreground">
             An owner has full permissions for the organisation and its projects, including managing member
             roles/invitations and transferring ownership.
           </p>
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Crown />
+          <div className="mt-4 flex flex-col gap-2">
+            <Card className="flex items-center justify-between gap-2 px-4 py-2">
               <div>{data.owner.username}</div>
-            </div>
-            <div className="text-gray-500">Owner</div>
+              <div className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="ghost">
+                      <Crown />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Owner</TooltipContent>
+                </Tooltip>
+              </div>
+            </Card>
           </div>
         </div>
         {/* Admin */}
         <div>
           <div className="text-xl font-semibold">Admins</div>
-          <p className="text-slate-500">
+          <p className="text-muted-foreground">
             Admins can edit the organization and fully manage projects but cannot manage organization roles or delete
             the organization.
           </p>
@@ -76,11 +85,10 @@ const OrganisationUsers = () => {
               <Card key={admin.user.id} className="flex items-center justify-between gap-2 px-4 py-2">
                 <div>{admin.user.username}</div>
                 <div className="flex items-center gap-2">
-                  <div className="text-gray-500">Admin</div>
                   {canEditRoles && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="hover:text-purple-300">
+                        <Button variant="ghost">
                           <EllipsisVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -126,7 +134,7 @@ const OrganisationUsers = () => {
                     onConfirm={() => deleteKeyMutation.mutate(adminInvitationKey.id)}
                     description="Are you sure you want to delete this invitation key?"
                   >
-                    <Button variant="secondary">Delete</Button>
+                    <Button variant="destructive">Delete</Button>
                   </ConfirmationDialog>
                 </div>
               ) : (
@@ -140,17 +148,18 @@ const OrganisationUsers = () => {
         {/* Observers */}
         <div>
           <div className="text-xl font-semibold">Observers</div>
-          <p className="text-slate-500">Observers can view the organisation and its projects but cannot modify them.</p>
+          <p className="text-muted-foreground">
+            Observers can view the organisation and its projects but cannot modify them.
+          </p>
           <div className="mt-4 flex flex-col gap-2">
             {observers.map((observer) => (
               <Card key={observer.user.id} className="flex items-center justify-between gap-2 px-4 py-2">
                 <div>{observer.user.username}</div>
                 <div className="flex items-center gap-2">
-                  <div className="text-gray-500">Observer</div>
                   {canEditRoles && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="hover:text-purple-300">
+                        <Button variant="ghost">
                           <EllipsisVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -196,7 +205,7 @@ const OrganisationUsers = () => {
                     onConfirm={() => deleteKeyMutation.mutate(observerInvitationKey.id)}
                     description="Are you sure you want to delete this invitation key?"
                   >
-                    <Button variant="secondary" onClick={() => deleteKeyMutation.mutate(observerInvitationKey.id)}>
+                    <Button variant="destructive" onClick={() => deleteKeyMutation.mutate(observerInvitationKey.id)}>
                       Delete
                     </Button>
                   </ConfirmationDialog>

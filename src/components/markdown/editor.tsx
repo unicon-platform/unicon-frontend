@@ -11,6 +11,7 @@ import {
   diffSourcePlugin,
   DiffSourceToggleWrapper,
   directivesPlugin,
+  headingsPlugin,
   imagePlugin,
   InsertAdmonition,
   InsertCodeBlock,
@@ -31,7 +32,8 @@ import {
   toolbarPlugin,
   UndoRedo,
 } from "@mdxeditor/editor";
-import { headingsPlugin } from "@mdxeditor/editor";
+
+import { useTheme } from "@/components/theme-provider";
 
 type MarkdownEditorProps = {
   markdown: string;
@@ -66,12 +68,16 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ markdown, diffMa
     if (onChange) onChange(markdown, initialMarkdownNormalize);
   };
 
+  const { theme } = useTheme();
+
   return (
     <MDXEditor
-      className="rounded-sm bg-white"
+      className={
+        "rounded-sm border bg-contrast text-primary" + " " + (theme === "dark" ? "dark-theme dark-editor" : "")
+      }
       markdown={markdown}
       onChange={onChangeInternal}
-      contentEditableClassName="prose max-w-none"
+      contentEditableClassName="prose markdown max-w-none dark:prose-invert prose-pre:bg-transparent prose-pre:p-0"
       plugins={[
         headingsPlugin(),
         quotePlugin(),

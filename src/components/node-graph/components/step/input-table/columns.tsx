@@ -16,7 +16,7 @@ const ValueDisplay: React.FC<{ row: InputSocket & { step: InputStep } }> = ({ ro
   const censored = !row.public && !problem?.view_hidden_details;
 
   if (censored) {
-    return <span className="italic text-zinc-500">-Redacted-</span>;
+    return <span className="italic text-primary/50">-Redacted-</span>;
   }
   return data && isUniconFile(data) ? (
     <ViewFileButton socket={row} step={row.step} />

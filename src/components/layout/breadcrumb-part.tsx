@@ -18,7 +18,7 @@ interface BreadcrumbPartProps<T> {
   extractData: (data: T) => BreadcrumbDisplay[];
 }
 
-const DEFAULT_TITLE = "Unicon 🌈";
+const DEFAULT_TITLE = "Unicon";
 
 export function DynamicBreadcrumbPart<T>({ queryOptions, extractData, isFirst, isLast }: BreadcrumbPartProps<T>) {
   const { data, isLoading } = useQuery({ ...queryOptions, enabled: !!queryOptions });

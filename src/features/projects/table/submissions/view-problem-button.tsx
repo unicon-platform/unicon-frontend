@@ -10,10 +10,7 @@ type OwnProps = {
 const ViewProblemButton = ({ problem }: OwnProps) => {
   const projectId = useProjectId();
   return (
-    <Link
-      to={`/projects/${projectId}/problems/${problem.id}`}
-      className="text-ellipsis text-nowrap hover:text-purple-300 hover:underline"
-    >
+    <Link to={`/projects/${projectId}/problems/${problem.id}`} className="text-ellipsis text-nowrap hover:underline">
       {problem.name}
     </Link>
   );

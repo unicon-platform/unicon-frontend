@@ -3,7 +3,7 @@ import { CheckIcon, EqualApproximatelyIcon, XIcon } from "lucide-react";
 
 import { LeaderboardUser, LeaderboardUserTaskResult, ProgrammingTask, TaskAttemptPublic } from "@/api";
 import InfoTooltip from "@/components/ui/info-tooltip";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import { getProblemById, getProblemLeaderboardById } from "@/features/problems/queries";
 import { useProblemId, useProjectId } from "@/features/projects/hooks/use-id";
 import { ProblemHeader } from "@/pages/problems/sections/problem-header";
@@ -50,11 +50,11 @@ const LeaderboardRow = ({ userResult, tasks, rank }: LeaderboardRowProps) => {
           <TableCell key={task.id}>
             <div className="flex items-center gap-2">
               {taskAttempt.passed ? (
-                <CheckIcon className="h-8 w-8 text-green-500" />
+                <CheckIcon className="h-8 w-8 text-success" />
               ) : taskAttempt.score > 0 ? (
-                <EqualApproximatelyIcon className="h-8 w-8 text-yellow-500" />
+                <EqualApproximatelyIcon className="h-8 w-8 text-warning" />
               ) : (
-                <XIcon className="h-8 w-8 text-red-500" />
+                <XIcon className="h-8 w-8 text-destructive" />
               )}
               <div className="flex flex-col">
                 <span>
@@ -119,7 +119,7 @@ const ProblemLeaderboard = ({ id }: ProblemLeaderboardProps) => {
                       Task {index + 1} <InfoTooltip content={task.title} />
                     </div>
                     {task.min_score_to_pass !== null && (
-                      <div className="flex items-center gap-2 text-sm text-zinc-500">
+                      <div className="flex items-center gap-2 text-sm">
                         {task.min_score_to_pass} point{task.min_score_to_pass !== 1 && "s"} to pass
                       </div>
                     )}

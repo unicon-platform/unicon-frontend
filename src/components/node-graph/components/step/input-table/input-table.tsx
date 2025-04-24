@@ -17,7 +17,7 @@ const InputTable: React.FC<OwnProps> = ({ data, step }) => {
       columns={columns}
       data={data.map((row) => {
         const rowIsSelected = selectedSocketId === row.id && selectedStepId === step.id;
-        return { ...row, step, className: rowIsSelected && "bg-emerald-900 hover:bg-emerald-800" };
+        return { ...row, step, className: rowIsSelected && "bg-primary/5 hover:bg-primary/10" };
       })}
       hidePagination
       hideOverflow

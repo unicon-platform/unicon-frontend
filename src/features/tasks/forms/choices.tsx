@@ -38,12 +38,7 @@ const Choices: React.FC<OwnProps> = ({ choices, onDragEnd, isChecked, onCheck, o
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Checkbox
-                      className="mt-[2px] h-8 w-8"
-                      iconClassName="h-6 w-6"
-                      checked={isChecked(index)}
-                      onClick={() => onCheck(index)}
-                    />
+                    <Checkbox className="mt-[2px] h-8 w-8" checked={isChecked(index)} onClick={() => onCheck(index)} />
                     <div className="flex-grow">
                       <TextField name={`choices[${index}].text`} />
                     </div>

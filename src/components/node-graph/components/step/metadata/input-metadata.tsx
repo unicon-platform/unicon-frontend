@@ -6,7 +6,7 @@ import { InputSocket, InputStep, StepSocket } from "@/api";
 import InputTable from "@/components/node-graph/components/step/input-table/input-table";
 import InputMetadataRow from "@/components/node-graph/components/step/metadata/input-metadata-row";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table-overflow";
 import {
   GraphActionType,
   GraphContext,

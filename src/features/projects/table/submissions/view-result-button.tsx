@@ -1,5 +1,7 @@
+import { EyeIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import { useProjectId } from "@/features/projects/hooks/use-id";
 
 type OwnProps = {
@@ -9,9 +11,12 @@ type OwnProps = {
 const ViewResultButton = ({ submissionId }: OwnProps) => {
   const projectId = useProjectId();
   return (
-    <Link to={`/projects/${projectId}/submissions/${submissionId}`} className="hover:text-purple-300 hover:underline">
-      View results
-    </Link>
+    <Button asChild variant="outline">
+      <Link to={`/projects/${projectId}/submissions/${submissionId}`}>
+        <EyeIcon />
+        View
+      </Link>
+    </Button>
   );
 };
 

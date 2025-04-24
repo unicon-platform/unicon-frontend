@@ -9,9 +9,7 @@ export const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ descript
     description.length > 0 && (
       <div className="flex flex-col gap-2">
         <div className="text-lg font-medium">Description</div>
-        <div className="prose max-w-none dark:prose-invert">
-          <MarkdownRenderer markdown={description} />
-        </div>
+        <MarkdownRenderer markdown={description} />
       </div>
     )
   );

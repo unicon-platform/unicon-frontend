@@ -2,6 +2,7 @@
 import JSONGrid from "@redheadphone/react-json-grid";
 import { ChevronsUpDown } from "lucide-react";
 
+import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -28,14 +29,17 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({ output }) => {
   output = output.replace(/\\n/g, "\n");
   const outputObject = tryParseJSONObject(output);
 
+  const { theme } = useTheme();
+
   if (outputObject) {
     return (
       <Collapsible>
         <JSONGrid
           data={outputObject}
-          theme={"default"}
+          theme={theme === "dark" ? "default" : "defaultLight"}
           customTheme={{
             bgColor: "transparent",
+            cellBorderColor: theme === "dark" ? "#ffffff2a" : "#0000002a",
             tableHeaderBgColor: "transparent",
             selectHighlightBgColor: "#ffffff1a",
           }}
@@ -48,7 +52,7 @@ export const OutputRenderer: React.FC<OutputRendererProps> = ({ output }) => {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="space-y-2">
-          <div className="w-full rounded-md border p-2 font-mono text-sm shadow-sm">
+          <div className="w-full rounded-md border border-primary/20 p-2 font-mono text-sm shadow-sm">
             <p className="whitespace-pre-wrap font-mono">{output}</p>
           </div>
         </CollapsibleContent>
