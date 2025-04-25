@@ -7,7 +7,7 @@ import MultipleChoiceResult from "@/components/tasks/submission-results/result-t
 import MultipleResponseResult from "@/components/tasks/submission-results/result-types/multiple-response-result";
 import ProgrammingResult from "@/components/tasks/submission-results/result-types/programming-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProgressInterval } from "@/components/ui/progress";
+import { ProgressIntervalIndeterminate } from "@/components/ui/progress-interval-indeterminate";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { REFETCH_ATTEMPTS_INTERVAL_MS } from "@/constants";
 import { TaskEvalStatusColorMap } from "@/lib/constants";
@@ -144,7 +144,11 @@ const TaskResultCard: React.FC<TaskResultCardProps> = ({ problemId, taskAttempt,
         <>
           <span className="font-mono text-sm text-zinc-400">{ATTEMPT_STATUS_MESSAGE[attemptResult.status]}</span>
           {completedAtEstimate && (
-            <ProgressInterval start={parseISO(attemptResult.started_at)} end={completedAtEstimate} className="mt-6" />
+            <ProgressIntervalIndeterminate
+              start={parseISO(attemptResult.started_at)}
+              end={completedAtEstimate}
+              className="mt-6"
+            />
           )}
         </>
       );

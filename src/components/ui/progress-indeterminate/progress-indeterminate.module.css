@@ -1,0 +1,16 @@
+@keyframes progress-indeterminate {
+  from {
+    left: -50%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.progress-indeterminate {
+  animation: progress-indeterminate 3s infinite ease-in-out;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  width: 50%;
+}
