@@ -94,3 +94,4 @@ const ProgressInterval: React.FC<ProgressIntervalProps> = ({
 };
 
 export { Progress, ProgressInterval };
+export type { ProgressIntervalProps };
