@@ -739,7 +739,7 @@ export type TaskAttemptResult = {
     has_private_failure?: boolean;
 };
 
-export type TaskEvalStatus = 'SUCCESS' | 'PENDING' | 'SKIPPED' | 'FAILED';
+export type TaskEvalStatus = 'SUCCESS' | 'PENDING' | 'SKIPPED' | 'FAILED' | 'PENDING_PUSH';
 
 export type TaskOrm = {
     id: number;
